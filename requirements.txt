@@ -1,0 +1,53 @@
+# Core LangGraph
+langgraph>=0.3.27
+langgraph-sdk>=0.1.66
+langgraph-cli
+
+# LangChain
+langchain-core>=0.2.38
+langchain-anthropic
+langchain-community
+
+# Speech Processing
+SpeechRecognition
+pyttsx3
+pyaudio
+openai-whisper
+pvporcupine
+soundfile
+
+# Local LLM
+ollama
+
+# Vector Database
+chromadb
+sentence-transformers
+
+# Web Capabilities
+tavily-python
+selenium
+beautifulsoup4
+requests
+
+# Vision and Screen
+pillow
+opencv-python
+pyautogui
+mss
+
+# Image Generation
+diffusers
+transformers
+torch
+torchvision
+
+# GUI
+customtkinter
+matplotlib
+
+# Utilities
+python-dotenv
+asyncio
+aiohttp
+structlog
+tenacity

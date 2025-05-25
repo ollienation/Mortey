@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "mortey": "./src/mortey/agent.py:graph"
+  },
+  "env": ".env"
+}
