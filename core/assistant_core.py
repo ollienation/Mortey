@@ -9,6 +9,8 @@ from agents.chat_agent import ChatAgent
 from agents.web_agent import WebAgent
 from agents.coder_agent import CoderAgent
 from core.controller import ControllerAgent
+from config.settings import config
+from config.llm_manager import llm_manager
 
 @dataclass
 class AssistantSession:
@@ -37,8 +39,7 @@ class AssistantCore:
     
     def _build_workflow(self):
         """Build the same LangGraph workflow but for text processing"""
-        from langgraph.graph import StateGraph, START, END
-        import ollama
+        from langgraph.graph import StateGraph, START, End
         
         # Same workflow as voice assistant
         class AssistantState(dict):
@@ -52,50 +53,62 @@ class AssistantCore:
             verification_result: str
         
         async def router_node(state: AssistantState) -> AssistantState:
-            """Route using local LLM"""
+            """Route using configured provider and model"""
             prompt = f"""
             Route this request to the appropriate agent:
             User: {state['user_input']}
             
             Available agents:
-            - CODER: Programming, code generation, debugging, technical questions
-            - WEB: Web search, current information, news, weather, general knowledge
-            - CHAT: General conversation, greetings, personal questions
+            - WEB: Information lookup, repository browsing, current data, research
+            - CODER: Code generation, technical implementation, debugging
+            - CHAT: General conversation, explanations, greetings
             
-            Respond with only the agent name: CODER, WEB, or CHAT
+            Respond with only: WEB, CODER, or CHAT
             """
             
             try:
-                response = await asyncio.to_thread(
-                    ollama.generate, 
-                    model="llama3.2:3b", 
-                    prompt=prompt
+                # Use LLM manager with routing task
+                response = await llm_manager.generate(
+                    task="routing",
+                    prompt=prompt,
+                    max_tokens=10
                 )
-                agent_choice = response['response'].strip().upper()
+                
+                agent_choice = response.strip().upper()
+                
+                # Keyword-based overrides
+                user_input_lower = state['user_input'].lower()
+                if any(keyword in user_input_lower for keyword in [
+                    'look at', 'check', 'find', 'search', 'browse', 'repository', 'repo'
+                ]):
+                    agent_choice = 'WEB'
                 
                 if agent_choice not in ['CODER', 'WEB', 'CHAT']:
                     agent_choice = 'CHAT'
                 
                 state['agent_choice'] = agent_choice
                 state['current_agent'] = agent_choice
-                print(f"🎯 Routed to: {agent_choice}")
+                
+                # Get current provider info for logging
+                provider = config.get_default_provider_for_task("routing")
+                model = config.get_provider_config(provider).model
+                print(f"🎯 Routed to: {agent_choice} (using {provider}/{model})")
                 
             except Exception as e:
                 print(f"❌ Routing error: {e}")
-                state['agent_choice'] = 'CHAT'
-                state['current_agent'] = 'CHAT'
+                # Smart fallback logic
+                user_input_lower = state['user_input'].lower()
+                if any(keyword in user_input_lower for keyword in ['look', 'find', 'search', 'repo']):
+                    agent_choice = 'WEB'
+                elif any(keyword in user_input_lower for keyword in ['code', 'function', 'script']):
+                    agent_choice = 'CODER'
+                else:
+                    agent_choice = 'CHAT'
+                
+                state['agent_choice'] = agent_choice
+                state['current_agent'] = agent_choice
             
             return state
-        
-        async def web_node(state: AssistantState) -> AssistantState:
-            """Web agent node"""
-            result = await self.web_agent.search_and_browse(state)
-            return result
-        
-        async def coder_node(state: AssistantState) -> AssistantState:
-            """Coder agent node"""
-            result = await self.coder_agent.generate_code(state)
-            return result
         
         async def chat_node(state: AssistantState) -> AssistantState:
             """Chat agent node"""
