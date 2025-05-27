@@ -39,6 +39,7 @@ load_dotenv()
 
 # Load other stuff
 import numpy as np
+import re
 import sys
 import warnings
 import asyncio
