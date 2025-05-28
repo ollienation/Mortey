@@ -43,7 +43,17 @@ class CoderAgent:
         """Generate code and actually save it using LangChain tools"""
         
         user_input = state.get('user_input', '')
+            
+        # Check if this is a file listing request
+        file_listing_keywords = [
+            'what files', 'which files', 'list files', 'show files',
+            'files in workspace', 'workspace files', 'directory contents'
+        ]
         
+        if any(keyword in user_input.lower() for keyword in file_listing_keywords):
+            # Route to direct file listing instead of code generation
+            return await self.list_workspace_files(state)
+
         # Update thinking state
         state['thinking_state'] = {
             'active_agent': 'CODER',
@@ -198,6 +208,68 @@ class CoderAgent:
         user_lower = user_input.lower()
         return any(indicator in user_lower for indicator in save_indicators)
     
+    async def list_workspace_files(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        """List files in the workspace directory using LangChain tools"""
+        
+        user_input = state.get('user_input', '')
+        
+        try:
+            if self.list_tool:
+                # Use LangChain list_directory tool directly
+                file_list_result = await asyncio.to_thread(self.list_tool.invoke, {})
+                
+                # Format the response nicely
+                if file_list_result and file_list_result.strip():
+                    files = file_list_result.strip().split('\n')
+                    response = f"Files in workspace ({config.workspace_dir}):\n\n"
+                    for i, file in enumerate(files, 1):
+                        response += f"{i}. {file}\n"
+                    
+                    if len(files) == 1 and files[0] == '':
+                        response = "The workspace directory is empty."
+                else:
+                    response = "The workspace directory is empty."
+            else:
+                # Fallback to manual directory listing
+                workspace_path = config.workspace_dir
+                if workspace_path.exists():
+                    files = [f.name for f in workspace_path.iterdir() if f.is_file()]
+                    if files:
+                        response = f"Files in workspace ({workspace_path}):\n\n"
+                        for i, file in enumerate(sorted(files), 1):
+                            response += f"{i}. {file}\n"
+                    else:
+                        response = "The workspace directory is empty."
+                else:
+                    response = f"Workspace directory does not exist: {workspace_path}"
+            
+            return {
+                **state,
+                'output_content': response,
+                'output_type': 'file_list',
+                'thinking_state': {
+                    'active_agent': 'CODER',
+                    'current_task': 'File listing complete',
+                    'progress': 1.0,
+                    'details': 'Workspace files listed successfully'
+                }
+            }
+            
+        except Exception as e:
+            print(f"❌ Error listing workspace files: {e}")
+            return {
+                **state,
+                'output_content': f"Error listing workspace files: {str(e)}",
+                'output_type': 'error',
+                'thinking_state': {
+                    'active_agent': 'CODER',
+                    'current_task': 'Error occurred',
+                    'progress': 1.0,
+                    'details': f'Error: {str(e)}'
+                }
+            }
+
+
     def _extract_filename(self, user_input: str) -> str:
         """Extract or generate filename from user request"""
         import re

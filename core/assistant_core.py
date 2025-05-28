@@ -58,24 +58,46 @@ class AssistantCore:
             User: {state['user_input']}
             
             Available agents:
-            - WEB: Information lookup, repository browsing, current data, research
-            - CODER: Code generation, technical implementation, debugging
-            - CHAT: General conversation, explanations, greetings
+            - CHAT: General conversation, file browsing (read-only), listing files, reading file contents
+            - CODER: Code generation, file creation, programming tasks
+            - WEB: Web search, current information, news, weather
             
-            Respond with only: WEB, CODER, or CHAT
+            Routing Guidelines:
+            - Use CHAT for file browsing, listing files, reading files (read-only operations)
+            - Use CODER only for code generation and file creation/modification
+            - Use WEB for external information searches
+            
+            Examples:
+            - "what files are in workspace" → CHAT
+            - "read file contents" → CHAT
+            - "show me the files" → CHAT
+            - "create a Python script" → CODER
+            - "search for tutorials" → WEB
+            
+            Respond with only: CHAT, CODER, or WEB
             """
             
             try:
-                # Use node-specific configuration for router
                 response = await llm_manager.generate_for_node("router", prompt)
                 agent_choice = response.strip().upper()
                 
-                # Keyword-based overrides for common patterns
+                # Enhanced routing overrides
                 user_input_lower = state['user_input'].lower()
+                
+                # Route file browsing to CHAT (read-only)
                 if any(keyword in user_input_lower for keyword in [
-                    'look at', 'check', 'find', 'search', 'browse', 'repository', 'repo'
+                    'what files', 'which files', 'list files', 'show files',
+                    'read file', 'file contents', 'workspace files', 'browse files'
                 ]):
-                    agent_choice = 'WEB'
+                    agent_choice = 'CHAT'
+                    print(f"🔄 File browsing override: Routed to CHAT")
+                
+                # Route code generation to CODER
+                elif any(keyword in user_input_lower for keyword in [
+                    'create', 'generate', 'write code', 'make a script', 'build'
+                ]):
+                    agent_choice = 'CODER'
+                    print(f"🔄 Code generation override: Routed to CODER")
                 
                 if agent_choice not in ['CODER', 'WEB', 'CHAT']:
                     agent_choice = 'CHAT'
@@ -86,17 +108,8 @@ class AssistantCore:
                 
             except Exception as e:
                 print(f"❌ Routing error: {e}")
-                # Smart fallback based on keywords
-                user_input_lower = state['user_input'].lower()
-                if any(keyword in user_input_lower for keyword in ['look', 'find', 'search', 'repo']):
-                    agent_choice = 'WEB'
-                elif any(keyword in user_input_lower for keyword in ['code', 'function', 'script']):
-                    agent_choice = 'CODER'
-                else:
-                    agent_choice = 'CHAT'
-                
-                state['agent_choice'] = agent_choice
-                state['current_agent'] = agent_choice
+                state['agent_choice'] = 'CHAT'
+                state['current_agent'] = 'CHAT'
             
             return state
 
@@ -112,13 +125,13 @@ class AssistantCore:
                 return state
 
         async def coder_node(state: AssistantState) -> AssistantState:
-            """Coder agent node with high token limit"""
+            """Coder agent node that handles both code generation and file operations"""
             try:
                 result = await self.coder_agent.generate_code(state)
                 return result
             except Exception as e:
-                print(f"❌ Coder agent error: {e}")
-                state['output_content'] = "I had trouble generating code for that request."
+                print(f"❌ Coder node error: {e}")
+                state['output_content'] = f"Error in coder agent: {str(e)}"
                 state['output_type'] = 'error'
                 return state
 
