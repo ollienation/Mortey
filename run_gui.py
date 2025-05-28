@@ -43,8 +43,14 @@ def check_dependencies():
     except ImportError:
         missing_deps.append("anthropic")
     
+    # OpenAI is optional - just warn if missing
+    try:
+        import openai
+    except ImportError:
+        print("⚠️  OpenAI package not installed - OpenAI provider disabled")
+    
     if missing_deps:
-        print(f"❌ Missing dependencies: {', '.join(missing_deps)}")
+        print(f"❌ Missing required dependencies: {', '.join(missing_deps)}")
         print("💡 Install with: pip install -r requirements.txt")
         return False
     
@@ -54,9 +60,16 @@ def check_configuration():
     """Check if essential configuration is present"""
     issues = []
     
-    if not config.anthropic_api_key:
+    # Check if any LLM providers are available
+    if not config.get_available_providers():
+        issues.append("No LLM providers configured with API keys")
+    
+    # Check for Anthropic specifically (since it's your default)
+    anthropic_provider = config.get_provider_config("anthropic")
+    if not anthropic_provider or not anthropic_provider.api_key:
         issues.append("ANTHROPIC_API_KEY not found in environment")
     
+    # Check workspace directory
     if not config.workspace_dir.exists():
         try:
             config.workspace_dir.mkdir(parents=True, exist_ok=True)
@@ -68,7 +81,7 @@ def check_configuration():
         print("⚠️  Configuration issues found:")
         for issue in issues:
             print(f"   - {issue}")
-        print("💡 Copy .env.template to .env and configure your settings")
+        print("💡 Check your .env file and llm_config.yaml")
         return False
     
     return True

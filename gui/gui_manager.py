@@ -65,6 +65,23 @@ class GUIManager:
         # Update GUI status based on voice assistant state
         if hasattr(self.voice_assistant, 'current_state'):
             self.gui.update_status(self.voice_assistant.current_state)
+
+        self.start_status_monitoring()
+
+    def start_status_monitoring(self):
+        """Start monitoring agent status"""
+        def update_status():
+            from core.agent_monitor import agent_monitor
+            status = agent_monitor.get_status_summary()
+            
+            # Update GUI status (you'll need to add this to your ChatGUI)
+            if hasattr(self.gui, 'update_agent_status'):
+                self.gui.update_agent_status(status)
+            
+            # Schedule next update
+            self.gui.root.after(1000, update_status)  # Update every second
+        
+        update_status()
     
     def run(self):
         """Start the GUI"""

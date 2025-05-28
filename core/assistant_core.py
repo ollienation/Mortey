@@ -32,16 +32,15 @@ class AssistantCore:
         # Session management
         self.current_session: Optional[AssistantSession] = None
         
-        # Build workflow (same as voice assistant but without speech)
+        # Build workflow
         self.workflow = self._build_workflow()
         
         print("🤖 Assistant Core initialized")
     
     def _build_workflow(self):
-        """Build the same LangGraph workflow but for text processing"""
-        from langgraph.graph import StateGraph, START, End
+        """Build the LangGraph workflow for text processing"""
+        from langgraph.graph import StateGraph, START, END  # FIXED: END not End
         
-        # Same workflow as voice assistant
         class AssistantState(dict):
             user_input: str
             agent_choice: str
@@ -51,9 +50,9 @@ class AssistantCore:
             output_content: str
             output_type: str
             verification_result: str
-        
+                
         async def router_node(state: AssistantState) -> AssistantState:
-            """Route using configured provider and model"""
+            """Route using node-specific configuration"""
             prompt = f"""
             Route this request to the appropriate agent:
             User: {state['user_input']}
@@ -67,16 +66,11 @@ class AssistantCore:
             """
             
             try:
-                # Use LLM manager with routing task
-                response = await llm_manager.generate(
-                    task="routing",
-                    prompt=prompt,
-                    max_tokens=10
-                )
-                
+                # Use node-specific configuration for router
+                response = await llm_manager.generate_for_node("router", prompt)
                 agent_choice = response.strip().upper()
                 
-                # Keyword-based overrides
+                # Keyword-based overrides for common patterns
                 user_input_lower = state['user_input'].lower()
                 if any(keyword in user_input_lower for keyword in [
                     'look at', 'check', 'find', 'search', 'browse', 'repository', 'repo'
@@ -88,15 +82,11 @@ class AssistantCore:
                 
                 state['agent_choice'] = agent_choice
                 state['current_agent'] = agent_choice
-                
-                # Get current provider info for logging
-                provider = config.get_default_provider_for_task("routing")
-                model = config.get_provider_config(provider).model
-                print(f"🎯 Routed to: {agent_choice} (using {provider}/{model})")
+                print(f"🎯 Routed to: {agent_choice}")
                 
             except Exception as e:
                 print(f"❌ Routing error: {e}")
-                # Smart fallback logic
+                # Smart fallback based on keywords
                 user_input_lower = state['user_input'].lower()
                 if any(keyword in user_input_lower for keyword in ['look', 'find', 'search', 'repo']):
                     agent_choice = 'WEB'
@@ -109,21 +99,48 @@ class AssistantCore:
                 state['current_agent'] = agent_choice
             
             return state
-        
+
+        async def web_node(state: AssistantState) -> AssistantState:
+            """Web agent node"""
+            try:
+                result = await self.web_agent.search_and_browse(state)
+                return result
+            except Exception as e:
+                print(f"❌ Web agent error: {e}")
+                state['output_content'] = "I had trouble searching for that information."
+                state['output_type'] = 'error'
+                return state
+
+        async def coder_node(state: AssistantState) -> AssistantState:
+            """Coder agent node with high token limit"""
+            try:
+                result = await self.coder_agent.generate_code(state)
+                return result
+            except Exception as e:
+                print(f"❌ Coder agent error: {e}")
+                state['output_content'] = "I had trouble generating code for that request."
+                state['output_type'] = 'error'
+                return state
+
         async def chat_node(state: AssistantState) -> AssistantState:
-            """Chat agent node"""
-            state['assistant_name'] = "Mortey"
-            result = await self.chat_agent.chat(state)
-            return result
-        
+            """Chat agent node with node-specific configuration"""
+            try:
+                result = await self.chat_agent.chat(state)
+                return result
+            except Exception as e:
+                print(f"❌ Chat agent error: {e}")
+                state['output_content'] = "I'm having trouble right now. Please try again."
+                state['output_type'] = 'error'
+                return state
+
         async def controller_node(state: AssistantState) -> AssistantState:
-            """Controller node"""
+            """Controller node with minimal tokens for safety checks"""
             try:
                 result = await self.controller.verify_output(state)
                 return result
             except Exception as e:
                 print(f"❌ Controller error: {e}")
-                state['verification_result'] = 'approved'
+                state['verification_result'] = 'approved'  # Safe fallback
                 return state
         
         # Build workflow

@@ -1,21 +1,33 @@
 import os
 import asyncio
 from typing import Dict, Any, List
-from anthropic import Anthropic
+from config.llm_manager import llm_manager
+from config.settings import config
+from tools.file_tools import FileSystemTools
 from tavily import TavilyClient
 
-from tools.file_tools import FileSystemTools
-
 class CoderAgent:
-    """Enhanced code generation agent with file system tools and web search"""
+    """Enhanced code generation agent with actual LangChain tool integration"""
     
     def __init__(self, llm_service=None, workspace_dir: str = None):
         self.llm_service = llm_service
-        self.anthropic = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         
-        # SIMPLIFIED: Use the modern file tools
+        # Initialize file tools with LangChain toolkit
         self.file_tools = FileSystemTools(workspace_dir)
         self.tools = self.file_tools.get_tools()
+        
+        # Get specific tools for direct use
+        self.write_tool = None
+        self.read_tool = None
+        self.list_tool = None
+        
+        for tool in self.tools:
+            if tool.name == "write_file":
+                self.write_tool = tool
+            elif tool.name == "read_file":
+                self.read_tool = tool
+            elif tool.name == "list_directory":
+                self.list_tool = tool
         
         # Initialize Tavily for web search
         tavily_api_key = os.getenv("TAVILY_API_KEY")
@@ -24,9 +36,11 @@ class CoderAgent:
         else:
             self.tavily_client = None
             print("⚠️ TAVILY_API_KEY not found - web search disabled for coder")
+        
+        print(f"🛠️ Coder agent initialized with {len(self.tools)} LangChain tools")
     
     async def generate_code(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate code with file system access and web search"""
+        """Generate code and actually save it using LangChain tools"""
         
         user_input = state.get('user_input', '')
         
@@ -39,9 +53,9 @@ class CoderAgent:
         }
         
         try:
-            # Step 1: Determine what tools are needed
+            # Step 1: Determine what's needed
             needs_search = await self._should_search_web(user_input)
-            needs_files = await self._should_use_files(user_input)
+            needs_file_save = self._should_save_file(user_input)
             
             # Step 2: Gather context
             search_context = ""
@@ -52,27 +66,66 @@ class CoderAgent:
                 state['thinking_state']['progress'] = 0.3
                 search_context = await self._search_coding_info(user_input)
             
-            if needs_files:
-                state['thinking_state']['current_task'] = 'Analyzing workspace files'
-                state['thinking_state']['progress'] = 0.5
-                file_context = await self._analyze_workspace(user_input)
+            # Get workspace context
+            if self.list_tool:
+                try:
+                    file_list = await asyncio.to_thread(self.list_tool.invoke, {})
+                    file_context = f"Workspace files: {file_list}"
+                except Exception as e:
+                    file_context = f"Workspace access error: {str(e)}"
             
-            # Step 3: Generate response with all available tools
+            # Step 3: Generate code
             state['thinking_state']['current_task'] = 'Generating code solution'
-            state['thinking_state']['progress'] = 0.7
+            state['thinking_state']['progress'] = 0.6
             
-            response = await self._generate_code_with_tools(user_input, search_context, file_context)
+            code_response = await self._generate_code_response(user_input, search_context, file_context)
+            
+            # Step 4: Save file if requested
+            if needs_file_save and self.write_tool:
+                state['thinking_state']['current_task'] = 'Saving code file'
+                state['thinking_state']['progress'] = 0.8
+                
+                filename = self._extract_filename(user_input)
+                code_content = self._extract_code_from_response(code_response)
+                
+                if code_content:
+                    temp_filename = f"temp_{filename}"
+                    
+                    try:
+                        # Actually invoke the LangChain write_file tool
+                        save_result = await asyncio.to_thread(
+                            self.write_tool.invoke,
+                            {
+                                "file_path": temp_filename,
+                                "text": code_content
+                            }
+                        )
+                        
+                        print(f"✅ File saved using LangChain tool: {temp_filename}")
+                        
+                        # Store file info for controller to rename after approval
+                        state['temp_filename'] = temp_filename
+                        state['final_filename'] = filename
+                        state['file_saved'] = True
+                        
+                        # Update response to include save confirmation
+                        code_response += f"\n\n✅ Code saved as temporary file: {temp_filename}"
+                        code_response += f"\nWill be renamed to: {filename} after verification"
+                        
+                    except Exception as e:
+                        print(f"❌ Error saving file with LangChain tool: {e}")
+                        code_response += f"\n\n❌ Error saving file: {str(e)}"
             
             return {
                 **state,
-                'output_content': response,
+                'output_content': code_response,
                 'output_type': 'code',
                 'code_context': {
                     'language': 'python',
                     'request': user_input,
                     'web_search_used': bool(search_context),
-                    'file_tools_used': bool(file_context),
-                    'generated_at': 'now'
+                    'file_saved': needs_file_save,
+                    'tools_used': len(self.tools)
                 },
                 'thinking_state': {
                     'active_agent': 'CODER',
@@ -83,22 +136,164 @@ class CoderAgent:
             }
             
         except Exception as e:
+            print(f"❌ Coder agent error: {e}")
             return {
                 **state,
-                'output_content': f"Sorry, I encountered an error: {str(e)}",
-                'output_type': 'error'
+                'output_content': f"Error generating code: {str(e)}",
+                'output_type': 'error',
+                'thinking_state': {
+                    'active_agent': 'CODER',
+                    'current_task': 'Error occurred',
+                    'progress': 1.0,
+                    'details': f'Error: {str(e)}'
+                }
             }
     
-    # ADD BACK: Your existing methods from current coder_agent.py
+    async def _generate_code_response(self, user_input: str, search_context: str, file_context: str) -> str:
+        """Generate code response using LLM manager"""
+        
+        # Build context strings separately
+        web_context = f"Web Search Context:\n{search_context}\n" if search_context else ""
+        workspace_context = f"Workspace Context:\n{file_context}\n" if file_context else ""
+        
+        # Build comprehensive prompt
+        prompt = f"""
+        You are an expert programmer. Generate clean, working code for this request:
+        
+        User Request: {user_input}
+        
+        {web_context}
+        
+        {workspace_context}
+        
+        Available LangChain Tools:
+        - write_file: Save code to files
+        - read_file: Read existing files
+        - list_directory: List workspace contents
+        - create_project: Create project structures
+        - analyze_code: Analyze code files
+        
+        Instructions:
+        1. Provide complete, working code
+        2. Include brief explanation of what the code does
+        3. Add usage examples if helpful
+        4. Do NOT use XML tags or simulate file operations
+        5. Just provide the code and explanation
+        
+        Keep explanations concise since this may be spoken aloud.
+        """
+        try:
+            response = await llm_manager.generate_for_node("coder", prompt)
+            return response
+        except Exception as e:
+            return f"Error generating code response: {str(e)}"
+    
+    def _should_save_file(self, user_input: str) -> bool:
+        """Determine if user wants to save code to a file"""
+        save_indicators = [
+            'save', 'create file', 'write to file', 'save as', 'create',
+            'make a file', 'generate file', 'write file'
+        ]
+        
+        user_lower = user_input.lower()
+        return any(indicator in user_lower for indicator in save_indicators)
+    
+    def _extract_filename(self, user_input: str) -> str:
+        """Extract or generate filename from user request"""
+        import re
+        
+        # Look for explicit filename in request
+        patterns = [
+            r'save.*?as\s+"([^"]+)"',
+            r'save.*?as\s+([^\s]+)',
+            r'create.*?file\s+"([^"]+)"',
+            r'create.*?file\s+([^\s]+)',
+            r'name.*?it\s+"([^"]+)"',
+            r'call.*?it\s+"([^"]+)"'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, user_input, re.IGNORECASE)
+            if match:
+                filename = match.group(1)
+                # Ensure .py extension
+                if not filename.endswith('.py'):
+                    filename += '.py'
+                return filename
+        
+        # Generate filename based on content
+        user_lower = user_input.lower()
+        if "gui" in user_lower or "tkinter" in user_lower:
+            return "gui_app.py"
+        elif "test" in user_lower:
+            return "test_script.py"
+        elif "web" in user_lower or "flask" in user_lower or "django" in user_lower:
+            return "web_app.py"
+        elif "api" in user_lower:
+            return "api_server.py"
+        elif "game" in user_lower:
+            return "game.py"
+        else:
+            return "generated_code.py"
+    
+    def _extract_code_from_response(self, response: str) -> str:
+        """Extract actual Python code from LLM response"""
+        import re
+        
+        # Look for code blocks first (``````)
+        code_patterns = [
+            r'``````',
+            r'``````',
+            r'``````'
+        ]
+        
+        for pattern in code_patterns:
+            match = re.search(pattern, response, re.DOTALL)
+            if match:
+                return match.group(1).strip()
+        
+        # If no code blocks, extract Python-like content
+        lines = response.split('\n')
+        code_lines = []
+        in_code = False
+        
+        for line in lines:
+            # Start collecting when we see Python syntax
+            if (line.strip().startswith(('import ', 'from ', 'def ', 'class ', '#!', 'if __name__')) or
+                'import ' in line or 'def ' in line):
+                in_code = True
+            
+            if in_code:
+                # Stop if we hit explanatory text
+                if (line.strip() and 
+                    not line.startswith((' ', '\t', '#')) and 
+                    not any(line.strip().startswith(x) for x in [
+                        'import', 'from', 'def', 'class', 'if', 'for', 'while', 
+                        'try', 'with', 'async', 'return', 'print', 'app', 'root'
+                    ]) and
+                    any(word in line.lower() for word in [
+                        'this code', 'the script', 'explanation', 'usage', 'run this'
+                    ])):
+                    break
+                code_lines.append(line)
+        
+        extracted_code = '\n'.join(code_lines).strip()
+        
+        # Validate that we have actual code
+        if len(extracted_code) > 20 and ('import ' in extracted_code or 'def ' in extracted_code):
+            return extracted_code
+        
+        return ""
+    
     async def _should_search_web(self, user_input: str) -> bool:
         """Determine if web search would help with this coding request"""
+        
         # Keywords that suggest web search would be helpful
         search_indicators = [
             'latest', 'newest', 'current', 'recent', 'updated',
             'best practices', 'how to', 'tutorial', 'example',
             'documentation', 'api', 'library', 'framework',
-            'error', 'fix', 'solve', 'troubleshoot',
-            'compare', 'difference', 'vs', 'alternative'
+            'error', 'fix', 'solve', 'troubleshoot'
         ]
         
         # Check for specific technologies that might need current info
@@ -106,16 +301,14 @@ class CoderAgent:
             'react', 'vue', 'angular', 'nextjs', 'svelte',
             'tensorflow', 'pytorch', 'scikit', 'pandas',
             'fastapi', 'django', 'flask', 'express',
-            'docker', 'kubernetes', 'aws', 'azure', 'gcp'
+            'docker', 'kubernetes', 'aws', 'azure'
         ]
         
         user_lower = user_input.lower()
-        
-        # Search if user mentions search indicators or specific technologies
         has_search_indicator = any(indicator in user_lower for indicator in search_indicators)
         has_tech_keyword = any(tech in user_lower for tech in tech_keywords)
         
-        # Also use Claude to make intelligent decision
+        # Use LLM for intelligent decision if not obvious
         if not (has_search_indicator or has_tech_keyword):
             try:
                 decision_prompt = f"""
@@ -133,29 +326,21 @@ class CoderAgent:
                 Respond with only "YES" or "NO"
                 """
                 
-                message = await asyncio.to_thread(
-                    self.anthropic.messages.create,
-                    model="claude-sonnet-4-20250514",
-                    max_tokens=10,
-                    messages=[{"role": "user", "content": decision_prompt}]
-                )
-                
-                decision = message.content[0].text.strip().upper()
-                return decision == "YES"
+                decision = await llm_manager.generate_for_node("router", decision_prompt)
+                return "YES" in decision.upper()
                 
             except Exception as e:
                 print(f"❌ Search decision error: {e}")
                 return False
         
         return has_search_indicator or has_tech_keyword
-
+    
     async def _search_coding_info(self, user_input: str) -> str:
         """Search for coding-related information using Tavily"""
         
         try:
             # Create targeted search query for coding
             search_query = await self._create_search_query(user_input)
-            
             print(f"🔍 Searching for coding info: {search_query}")
             
             # Use Tavily to search for coding information
@@ -165,7 +350,7 @@ class CoderAgent:
                 search_depth="advanced",
                 include_answer=True,
                 include_raw_content=True,
-                max_results=3  # Limit for focused results
+                max_results=3
             )
             
             # Process and format search results
@@ -173,18 +358,17 @@ class CoderAgent:
             
             # Add AI-generated answer if available
             if search_response.get('answer'):
-                context += f"## Search Summary\n{search_response['answer']}\n\n"
+                context += f"Search Summary: {search_response['answer']}\n\n"
             
             # Add relevant search results
             if search_response.get('results'):
-                context += "## Relevant Resources\n"
+                context += "Relevant Resources:\n"
                 for i, result in enumerate(search_response['results'][:2], 1):
-                    context += f"{i}. **{result.get('title', 'Unknown')}**\n"
-                    context += f"   URL: {result.get('url', '')}\n"
+                    context += f"{i}. {result.get('title', 'Unknown')}\n"
                     if result.get('content'):
                         # Limit content length
-                        content = result['content'][:500] + "..." if len(result['content']) > 500 else result['content']
-                        context += f"   Content: {content}\n\n"
+                        content = result['content'][:300] + "..." if len(result['content']) > 300 else result['content']
+                        context += f"   {content}\n\n"
             
             return context
             
@@ -209,88 +393,10 @@ class CoderAgent:
             Return only the search query, optimized for finding coding information.
             """
             
-            message = await asyncio.to_thread(
-                self.anthropic.messages.create,
-                model="claude-sonnet-4-20250514",
-                max_tokens=100,
-                messages=[{"role": "user", "content": query_prompt}]
-            )
-            
-            return message.content[0].text.strip()
+            query = await llm_manager.generate_for_node("router", query_prompt)
+            return query.strip()
             
         except Exception as e:
             print(f"❌ Query creation error: {e}")
             # Fallback to original request with coding keywords
             return f"{user_input} programming tutorial example"
-    
-    # NEW: File system methods
-    async def _should_use_files(self, user_input: str) -> bool:
-        """Determine if file operations are needed"""
-        file_indicators = [
-            'create project', 'new project', 'analyze code', 'read file',
-            'save to file', 'write file', 'project structure',
-            'list files', 'workspace', 'directory'
-        ]
-        
-        return any(indicator in user_input.lower() for indicator in file_indicators)
-    
-    async def _analyze_workspace(self, user_input: str) -> str:
-        """Analyze workspace for relevant files"""
-        try:
-            # List files in workspace
-            list_tool = next(tool for tool in self.tools if tool.name == "list_directory")
-            file_list = list_tool.invoke({})
-            
-            context = f"**Workspace Contents:**\n{file_list}\n\n"
-            
-            return context
-            
-        except Exception as e:
-            return f"Error analyzing workspace: {str(e)}"
-    
-    async def _generate_code_with_tools(self, user_input: str, search_context: str, file_context: str) -> str:
-        """Generate code response with tool access and web search"""
-        
-        # Build tool descriptions for the prompt
-        tool_descriptions = "\n".join([
-            f"- **{tool.name}**: {tool.description}" 
-            for tool in self.tools
-        ])
-        
-        prompt = f"""
-        You are an expert programmer with access to file system tools and web search. Help with this coding request:
-        
-        User Request: {user_input}
-        
-        Available File Tools:
-        {tool_descriptions}
-        
-        Workspace Context:
-        {file_context}
-        
-        Web Search Context:
-        {search_context}
-        
-        Instructions:
-        1. If the user wants to create files or projects, suggest using the appropriate tools
-        2. Provide clear, working code with explanations
-        3. If file operations are needed, explain what tools to use
-        4. Use web search information when relevant
-        5. Keep responses practical and focused on the user's request
-        6. Mention the workspace directory: {self.file_tools.workspace_dir}
-        
-        Response should be helpful for voice interaction (concise but complete).
-        """
-        
-        try:
-            message = await asyncio.to_thread(
-                self.anthropic.messages.create,
-                model="claude-sonnet-4-20250514",
-                max_tokens=2000,
-                messages=[{"role": "user", "content": prompt}]
-            )
-            
-            return message.content[0].text
-            
-        except Exception as e:
-            return f"I encountered an error generating code: {str(e)}"
