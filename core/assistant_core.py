@@ -4,7 +4,6 @@ from dataclasses import dataclass
 import uuid
 import time
 
-from core.voice_assistant import VoiceAssistant
 from agents.chat_agent import ChatAgent
 from agents.web_agent import WebAgent
 from agents.coder_agent import CoderAgent
@@ -32,14 +31,21 @@ class AssistantCore:
         # Session management
         self.current_session: Optional[AssistantSession] = None
         
+        # GUI callback for unified handling
+        self.gui_callback = None
+        
         # Build workflow
         self.workflow = self._build_workflow()
         
         print("🤖 Assistant Core initialized")
     
+    def set_gui_callback(self, callback):
+        """Set GUI callback for unified message handling"""
+        self.gui_callback = callback
+    
     def _build_workflow(self):
         """Build the LangGraph workflow for text processing"""
-        from langgraph.graph import StateGraph, START, END  # FIXED: END not End
+        from langgraph.graph import StateGraph, START, END
         
         class AssistantState(dict):
             user_input: str
@@ -50,7 +56,23 @@ class AssistantCore:
             output_content: str
             output_type: str
             verification_result: str
-                
+            
+            # Voice-specific extensions
+            voice_mode: bool = False
+            requires_speech_output: bool = False
+            voice_session_id: str = ""
+            
+            # Controller feedback
+            controller_feedback: str = ""
+            loop_count: int = 0
+            max_loops: int = 3
+            verification_required: bool = False
+            
+            # File handling
+            temp_filename: str = ""
+            final_filename: str = ""
+            file_saved: bool = False
+        
         async def router_node(state: AssistantState) -> AssistantState:
             """Route using node-specific configuration"""
             prompt = f"""
@@ -61,18 +83,6 @@ class AssistantCore:
             - CHAT: General conversation, file browsing (read-only), listing files, reading file contents
             - CODER: Code generation, file creation, programming tasks
             - WEB: Web search, current information, news, weather
-            
-            Routing Guidelines:
-            - Use CHAT for file browsing, listing files, reading files (read-only operations)
-            - Use CODER only for code generation and file creation/modification
-            - Use WEB for external information searches
-            
-            Examples:
-            - "what files are in workspace" → CHAT
-            - "read file contents" → CHAT
-            - "show me the files" → CHAT
-            - "create a Python script" → CODER
-            - "search for tutorials" → WEB
             
             Respond with only: CHAT, CODER, or WEB
             """
@@ -112,7 +122,7 @@ class AssistantCore:
                 state['current_agent'] = 'CHAT'
             
             return state
-
+        
         async def web_node(state: AssistantState) -> AssistantState:
             """Web agent node"""
             try:
@@ -123,9 +133,9 @@ class AssistantCore:
                 state['output_content'] = "I had trouble searching for that information."
                 state['output_type'] = 'error'
                 return state
-
+        
         async def coder_node(state: AssistantState) -> AssistantState:
-            """Coder agent node that handles both code generation and file operations"""
+            """Coder agent node"""
             try:
                 result = await self.coder_agent.generate_code(state)
                 return result
@@ -134,9 +144,9 @@ class AssistantCore:
                 state['output_content'] = f"Error in coder agent: {str(e)}"
                 state['output_type'] = 'error'
                 return state
-
+        
         async def chat_node(state: AssistantState) -> AssistantState:
-            """Chat agent node with node-specific configuration"""
+            """Chat agent node"""
             try:
                 result = await self.chat_agent.chat(state)
                 return result
@@ -145,16 +155,44 @@ class AssistantCore:
                 state['output_content'] = "I'm having trouble right now. Please try again."
                 state['output_type'] = 'error'
                 return state
-
+        
         async def controller_node(state: AssistantState) -> AssistantState:
-            """Controller node with minimal tokens for safety checks"""
+            """Controller node"""
             try:
                 result = await self.controller.verify_output(state)
                 return result
             except Exception as e:
                 print(f"❌ Controller error: {e}")
-                state['verification_result'] = 'approved'  # Safe fallback
+                state['verification_result'] = 'approved'
                 return state
+        
+        async def output_handler_node(state: AssistantState) -> AssistantState:
+            """Handle output based on interaction mode"""
+            output_content = state.get('output_content', '')
+            current_agent = state.get('current_agent', '')
+            
+            # For chat agent, ensure verification_result is set
+            if current_agent.lower() == 'chat' and not state.get('verification_result'):
+                state['verification_result'] = 'approved'
+            
+            # Always update GUI if callback exists
+            if self.gui_callback:
+                try:
+                    self.gui_callback("Mortey", output_content)
+                except Exception as e:
+                    print(f"❌ GUI callback error: {e}")
+            
+            # Handle voice output if in voice mode
+            if state.get('voice_mode', False) and state.get('requires_speech_output', False):
+                state['speech_output_ready'] = True
+                
+                # Truncate for speech if needed
+                if len(output_content) > 500:
+                    state['speech_content'] = output_content[:500] + "... I can provide more details if you'd like."
+                else:
+                    state['speech_content'] = output_content
+            
+            return state
         
         # Build workflow
         workflow = StateGraph(AssistantState)
@@ -164,6 +202,7 @@ class AssistantCore:
         workflow.add_node("coder", coder_node)
         workflow.add_node("chat", chat_node)
         workflow.add_node("controller", controller_node)
+        workflow.add_node("output_handler", output_handler_node)  # ADD THIS
         
         workflow.add_edge(START, "router")
         workflow.add_conditional_edges(
@@ -176,11 +215,24 @@ class AssistantCore:
             }
         )
         
+        # Different paths: chat bypasses controller, others go through it
         workflow.add_edge("web", "controller")
         workflow.add_edge("coder", "controller")
-        workflow.add_edge("chat", "controller")
+        workflow.add_edge("chat", "output_handler")  # Chat bypasses controller
+        
+        # Controller routing
         workflow.add_conditional_edges(
             "controller",
+            lambda state: "router" if state.get('verification_required', False) else "output_handler",
+            {
+                "router": "router",  # Revision loop
+                "output_handler": "output_handler"
+            }
+        )
+        
+        # End from output handler
+        workflow.add_conditional_edges(
+            "output_handler",
             lambda state: "end",
             {"end": END}
         )
@@ -210,7 +262,9 @@ class AssistantCore:
             'message_count': self.current_session.message_count,
             'output_content': '',
             'output_type': '',
-            'verification_result': ''
+            'verification_result': '',
+            'voice_mode': False,
+            'requires_speech_output': False
         }
         
         try:
@@ -226,3 +280,18 @@ class AssistantCore:
         except Exception as e:
             print(f"❌ Processing error: {e}")
             return f"I encountered an error: {str(e)}"
+    
+    async def process_message_with_voice_state(self, voice_state: Dict[str, Any]) -> Dict[str, Any]:
+        """Process message with voice-specific state extensions"""
+        try:
+            # Process through existing workflow
+            result = await self.workflow.ainvoke(voice_state)
+            return result
+        except Exception as e:
+            print(f"❌ Voice state processing error: {e}")
+            return {
+                **voice_state,
+                'output_content': f"I encountered an error: {str(e)}",
+                'output_type': 'error',
+                'verification_result': 'approved'
+            }

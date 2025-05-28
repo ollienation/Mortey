@@ -7,7 +7,7 @@ from tools.file_tools import FileSystemTools
 from tavily import TavilyClient
 
 class CoderAgent:
-    """Enhanced code generation agent with actual LangChain tool integration"""
+    """Enhanced code generation agent with controller feedback integration"""
     
     def __init__(self, llm_service=None, workspace_dir: str = None):
         self.llm_service = llm_service
@@ -40,20 +40,12 @@ class CoderAgent:
         print(f"🛠️ Coder agent initialized with {len(self.tools)} LangChain tools")
     
     async def generate_code(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate code and actually save it using LangChain tools"""
+        """Generate code with controller feedback integration"""
         
         user_input = state.get('user_input', '')
-            
-        # Check if this is a file listing request
-        file_listing_keywords = [
-            'what files', 'which files', 'list files', 'show files',
-            'files in workspace', 'workspace files', 'directory contents'
-        ]
+        controller_feedback = state.get('controller_feedback', '')
+        loop_count = state.get('loop_count', 0)
         
-        if any(keyword in user_input.lower() for keyword in file_listing_keywords):
-            # Route to direct file listing instead of code generation
-            return await self.list_workspace_files(state)
-
         # Update thinking state
         state['thinking_state'] = {
             'active_agent': 'CODER',
@@ -84,11 +76,13 @@ class CoderAgent:
                 except Exception as e:
                     file_context = f"Workspace access error: {str(e)}"
             
-            # Step 3: Generate code
+            # Step 3: Generate code with controller feedback
             state['thinking_state']['current_task'] = 'Generating code solution'
             state['thinking_state']['progress'] = 0.6
             
-            code_response = await self._generate_code_response(user_input, search_context, file_context)
+            code_response = await self._generate_code_response(
+                user_input, search_context, file_context, controller_feedback, loop_count
+            )
             
             # Step 4: Save file if requested
             if needs_file_save and self.write_tool:
@@ -135,13 +129,14 @@ class CoderAgent:
                     'request': user_input,
                     'web_search_used': bool(search_context),
                     'file_saved': needs_file_save,
-                    'tools_used': len(self.tools)
+                    'tools_used': len(self.tools),
+                    'revision_attempt': loop_count
                 },
                 'thinking_state': {
                     'active_agent': 'CODER',
                     'current_task': 'Code generation complete',
                     'progress': 1.0,
-                    'details': 'Ready for verification'
+                    'details': 'Ready for controller verification'
                 }
             }
             
@@ -159,39 +154,70 @@ class CoderAgent:
                 }
             }
     
-    async def _generate_code_response(self, user_input: str, search_context: str, file_context: str) -> str:
-        """Generate code response using LLM manager"""
+    async def _generate_code_response(self, user_input: str, search_context: str, 
+                                    file_context: str, controller_feedback: str, 
+                                    loop_count: int) -> str:
+        """Generate code response using LLM manager with controller feedback"""
         
-        # Build context strings separately
+        # Build context strings separately to avoid f-string issues
         web_context = f"Web Search Context:\n{search_context}\n" if search_context else ""
         workspace_context = f"Workspace Context:\n{file_context}\n" if file_context else ""
         
-        # Build comprehensive prompt
-        prompt = f"""
-        You are an expert programmer. Generate clean, working code for this request:
+        # Handle controller feedback for revisions
+        if loop_count > 0 and controller_feedback:
+            print(f"🔄 Controller feedback received: {controller_feedback}")
+            
+            # Build revision prompt with controller feedback
+            prompt = f"""
+You are an expert programmer. The controller reviewed your previous code and provided feedback.
+
+Controller Feedback: "{controller_feedback}"
+
+Original User Request: {user_input}
+
+{web_context}
+
+{workspace_context}
+
+Please generate improved code that specifically addresses the controller's feedback.
+
+Instructions:
+1. Fix the issues mentioned in the controller feedback
+2. Provide complete, working code without placeholders
+3. Include proper imports and error handling
+4. Add brief explanation of improvements made
+5. Do NOT use XML tags or simulate file operations
+
+Keep explanations concise since this may be spoken aloud.
+"""
+        else:
+            # Build regular first-attempt prompt
+            prompt = f"""
+You are an expert programmer. Generate clean, working code for this request:
+
+User Request: {user_input}
+
+{web_context}
+
+{workspace_context}
+
+Available LangChain Tools:
+- write_file: Save code to files
+- read_file: Read existing files
+- list_directory: List workspace contents
+- create_project: Create project structures
+- analyze_code: Analyze code files
+
+Instructions:
+1. Provide complete, working code without placeholders
+2. Include necessary imports and proper error handling
+3. Add brief explanation of what the code does
+4. Add usage examples if helpful
+5. Do NOT use XML tags or simulate file operations
+
+Keep explanations concise since this may be spoken aloud.
+"""
         
-        User Request: {user_input}
-        
-        {web_context}
-        
-        {workspace_context}
-        
-        Available LangChain Tools:
-        - write_file: Save code to files
-        - read_file: Read existing files
-        - list_directory: List workspace contents
-        - create_project: Create project structures
-        - analyze_code: Analyze code files
-        
-        Instructions:
-        1. Provide complete, working code
-        2. Include brief explanation of what the code does
-        3. Add usage examples if helpful
-        4. Do NOT use XML tags or simulate file operations
-        5. Just provide the code and explanation
-        
-        Keep explanations concise since this may be spoken aloud.
-        """
         try:
             response = await llm_manager.generate_for_node("coder", prompt)
             return response
@@ -208,68 +234,6 @@ class CoderAgent:
         user_lower = user_input.lower()
         return any(indicator in user_lower for indicator in save_indicators)
     
-    async def list_workspace_files(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """List files in the workspace directory using LangChain tools"""
-        
-        user_input = state.get('user_input', '')
-        
-        try:
-            if self.list_tool:
-                # Use LangChain list_directory tool directly
-                file_list_result = await asyncio.to_thread(self.list_tool.invoke, {})
-                
-                # Format the response nicely
-                if file_list_result and file_list_result.strip():
-                    files = file_list_result.strip().split('\n')
-                    response = f"Files in workspace ({config.workspace_dir}):\n\n"
-                    for i, file in enumerate(files, 1):
-                        response += f"{i}. {file}\n"
-                    
-                    if len(files) == 1 and files[0] == '':
-                        response = "The workspace directory is empty."
-                else:
-                    response = "The workspace directory is empty."
-            else:
-                # Fallback to manual directory listing
-                workspace_path = config.workspace_dir
-                if workspace_path.exists():
-                    files = [f.name for f in workspace_path.iterdir() if f.is_file()]
-                    if files:
-                        response = f"Files in workspace ({workspace_path}):\n\n"
-                        for i, file in enumerate(sorted(files), 1):
-                            response += f"{i}. {file}\n"
-                    else:
-                        response = "The workspace directory is empty."
-                else:
-                    response = f"Workspace directory does not exist: {workspace_path}"
-            
-            return {
-                **state,
-                'output_content': response,
-                'output_type': 'file_list',
-                'thinking_state': {
-                    'active_agent': 'CODER',
-                    'current_task': 'File listing complete',
-                    'progress': 1.0,
-                    'details': 'Workspace files listed successfully'
-                }
-            }
-            
-        except Exception as e:
-            print(f"❌ Error listing workspace files: {e}")
-            return {
-                **state,
-                'output_content': f"Error listing workspace files: {str(e)}",
-                'output_type': 'error',
-                'thinking_state': {
-                    'active_agent': 'CODER',
-                    'current_task': 'Error occurred',
-                    'progress': 1.0,
-                    'details': f'Error: {str(e)}'
-                }
-            }
-
-
     def _extract_filename(self, user_input: str) -> str:
         """Extract or generate filename from user request"""
         import re
@@ -309,54 +273,42 @@ class CoderAgent:
             return "generated_code.py"
     
     def _extract_code_from_response(self, response: str) -> str:
-        """Extract actual Python code from LLM response"""
+        """Extract actual Python code from LLM response, handling markdown and plain text."""
         import re
-        
-        # Look for code blocks first (``````)
-        code_patterns = [
-            r'``````',
-            r'``````',
-            r'``````'
-        ]
-        
-        for pattern in code_patterns:
-            match = re.search(pattern, response, re.DOTALL)
-            if match:
-                return match.group(1).strip()
-        
-        # If no code blocks, extract Python-like content
+
+        # 1. Try to extract code from triple backtick code blocks (with or without 'python')
+        code_block = re.search(r"``````", response)
+        if code_block:
+            code = code_block.group(1).strip()
+            return code
+
+        # 2. Fallback: collect lines that look like Python code
         lines = response.split('\n')
         code_lines = []
         in_code = False
-        
         for line in lines:
-            # Start collecting when we see Python syntax
+            # Start collecting at first sign of code
             if (line.strip().startswith(('import ', 'from ', 'def ', 'class ', '#!', 'if __name__')) or
                 'import ' in line or 'def ' in line):
                 in_code = True
-            
             if in_code:
-                # Stop if we hit explanatory text
-                if (line.strip() and 
-                    not line.startswith((' ', '\t', '#')) and 
-                    not any(line.strip().startswith(x) for x in [
-                        'import', 'from', 'def', 'class', 'if', 'for', 'while', 
-                        'try', 'with', 'async', 'return', 'print', 'app', 'root'
-                    ]) and
-                    any(word in line.lower() for word in [
-                        'this code', 'the script', 'explanation', 'usage', 'run this'
-                    ])):
+                # Stop collecting if we hit a likely explanation or markdown
+                if (line.strip().startswith('```') or # Check for new code block start
+                    line.strip().lower().startswith(('explanation', 'usage', 'output', 'the code', 'to run'))):
                     break
                 code_lines.append(line)
-        
-        extracted_code = '\n'.join(code_lines).strip()
-        
-        # Validate that we have actual code
-        if len(extracted_code) > 20 and ('import ' in extracted_code or 'def ' in extracted_code):
-            return extracted_code
-        
+        code = '\n'.join(code_lines).strip()
+
+
+        # 3. Final cleanup: remove trailing triple backticks if present
+        while code.endswith('```'):
+            code = code[:-3].strip()
+
+        # 4. Only return if it looks like real code
+        if len(code) > 20 and ('import ' in code or 'def ' in code or 'class ' in code):
+            return code
         return ""
-    
+        
     async def _should_search_web(self, user_input: str) -> bool:
         """Determine if web search would help with this coding request"""
         

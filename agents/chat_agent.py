@@ -200,10 +200,10 @@ class ChatAgent:
         User: {user_input}
         
         Guidelines:
-        - Keep responses under 50 words since this may be spoken aloud
-        - Be conversational, friendly, and helpful
+        - Keep responses short and concise since this may be spoken aloud
+        - Be friendly and helpful
         - If users ask about files, remind them you can list or read files in the workspace
-        - Stay in character as a voice assistant
+        - Stay in character as a assistant
         """
         
         try:

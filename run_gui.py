@@ -106,10 +106,6 @@ async def async_main():
     try:
         manager = GUIManager()
         
-        # Add welcome message with system info
-        welcome_msg = f"Welcome! Running from {config.project_root.name}"
-        manager.gui.add_message("System", welcome_msg, "system")
-        
         # Start the GUI (this blocks until window is closed)
         manager.run()
         

@@ -218,22 +218,16 @@ class ChatGUI:
             status_text = f"🎤 Voice Mode - Say '{wake_word}' to activate"
             self.status_label.config(text=status_text, fg=self.gui_config['voice_active_color'])
             
-            # Start voice assistant if callback provided
+            # Call voice callback (sync, not async)
             if self.voice_callback:
-                threading.Thread(
-                    target=lambda: asyncio.run(self.voice_callback(True)),
-                    daemon=True
-                ).start()
+                self.voice_callback(True)
         else:
             self.voice_button.config(text="🎤 Enable Voice", style='Voice.TButton')
             self.status_label.config(text="💬 Text Mode - Voice Disabled", fg="#888888")
             
-            # Stop voice assistant if callback provided
+            # Call voice callback (sync, not async)
             if self.voice_callback:
-                threading.Thread(
-                    target=lambda: asyncio.run(self.voice_callback(False)),
-                    daemon=True
-                ).start()
+                self.voice_callback(False)
     
     def set_voice_callback(self, callback: Callable):
         """Set callback for voice toggle"""
@@ -279,11 +273,9 @@ class ChatGUI:
             self.add_message("User", message)
             self.message_entry.delete(0, tk.END)
             
+            # Call message callback (sync, let gui_manager handle async)
             if self.message_callback:
-                threading.Thread(
-                    target=lambda: asyncio.run(self.message_callback(message)),
-                    daemon=True
-                ).start()
+                self.message_callback(message)
     
     def update_status(self, status: str, color: str = "#888888"):
         """Update the status indicator"""

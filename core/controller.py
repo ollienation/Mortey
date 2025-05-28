@@ -393,45 +393,19 @@ class ControllerAgent:
             )
     
     async def _enhanced_quality_check(self, content: str, user_input: str, output_type: str) -> SafetyCheck:
-        """Enhanced quality check with security considerations"""
+        """Enhanced quality check with specific feedback generation"""
         
-        # Basic quality metrics
+        if output_type == "code":
+            return await self._analyze_code_and_provide_feedback(content, user_input)
+        
+        # Other quality checks for non-code content...
         if len(content.strip()) < 5:
             return SafetyCheck(
                 passed=False,
-                reason="Response too short",
+                reason="Response too brief. Provide more detail.",
                 confidence=0.9,
                 action=VerificationResult.NEEDS_REVISION
             )
-        
-        # Check for potential information leakage
-        info_leak_patterns = [
-            r'/home/\w+',
-            r'/usr/\w+',
-            r'C:\\Users\\',
-            r'localhost:\d+',
-            r'\d+\.\d+\.\d+\.\d+'  # IP addresses
-        ]
-        
-        for pattern in info_leak_patterns:
-            if re.search(pattern, content):
-                logger.warning("Potential information leakage detected")
-                return SafetyCheck(
-                    passed=False,
-                    reason="Response may contain system information",
-                    confidence=0.8,
-                    action=VerificationResult.HUMAN_REVIEW
-                )
-        
-        # Code quality checks
-        if output_type == "code":
-            if len(content) > 100 and "import " not in content and "def " not in content:
-                return SafetyCheck(
-                    passed=False,
-                    reason="Code output doesn't appear to contain proper code structure",
-                    confidence=0.7,
-                    action=VerificationResult.NEEDS_REVISION
-                )
         
         return SafetyCheck(
             passed=True,
@@ -439,6 +413,108 @@ class ControllerAgent:
             confidence=0.9,
             action=VerificationResult.APPROVED
         )
+
+    async def _analyze_code_and_provide_feedback(self, code_content: str, user_request: str) -> SafetyCheck:
+        """Controller analyzes code and provides specific feedback"""
+        
+        # Use LLM to analyze code quality and provide feedback
+        analysis_prompt = f"""
+        Analyze this code for quality and completeness:
+        
+        User Request: {user_request}
+        Generated Code: {code_content[:1000]}
+        
+        Check for:
+        1. Missing imports or dependencies
+        2. Incomplete functions (TODO, ..., etc.)
+        3. Syntax errors or issues
+        4. Missing error handling
+        5. Code structure problems
+        
+        If issues found, provide ONE concise fix instruction (max 50 chars).
+        If code is good, respond "APPROVED".
+        
+        Response format: "APPROVED" or "Fix: [specific instruction]"
+        """
+        
+        try:
+            feedback = await llm_manager.generate_for_node("controller", analysis_prompt)
+            
+            if "APPROVED" in feedback.upper():
+                return SafetyCheck(
+                    passed=True,
+                    reason="Code quality approved",
+                    confidence=0.9,
+                    action=VerificationResult.APPROVED
+                )
+            else:
+                # Extract the fix instruction
+                fix_instruction = feedback.replace("Fix:", "").strip()[:50]
+                return SafetyCheck(
+                    passed=False,
+                    reason=fix_instruction,
+                    confidence=0.8,
+                    action=VerificationResult.NEEDS_REVISION
+                )
+                
+        except Exception as e:
+            # Fallback to basic checks
+            return self._basic_code_checks(code_content)
+
+    def _basic_code_checks(self, code_content: str) -> SafetyCheck:
+        """Basic code quality checks as fallback"""
+        
+        if len(code_content) < 20:
+            return SafetyCheck(
+                passed=False,
+                reason="Code too short. Add complete implementation.",
+                confidence=0.9,
+                action=VerificationResult.NEEDS_REVISION
+            )
+        
+        if "import " not in code_content and len(code_content) > 100:
+            return SafetyCheck(
+                passed=False,
+                reason="Missing imports. Add necessary imports.",
+                confidence=0.8,
+                action=VerificationResult.NEEDS_REVISION
+            )
+        
+        if "..." in code_content or "TODO" in code_content:
+            return SafetyCheck(
+                passed=False,
+                reason="Replace placeholders with actual code.",
+                confidence=0.9,
+                action=VerificationResult.NEEDS_REVISION
+            )
+        
+        return SafetyCheck(
+            passed=True,
+            reason="Basic code checks passed",
+            confidence=0.7,
+            action=VerificationResult.APPROVED
+        )
+
+    def _create_revision_response(self, state: Dict[str, Any], reason: str) -> Dict[str, Any]:
+        """Create revision response with controller's feedback"""
+        
+        # Controller provides the feedback, not the coder
+        concise_feedback = reason if len(reason) <= 50 else reason[:47] + "..."
+        
+        return {
+            **state,
+            'verification_result': VerificationResult.NEEDS_REVISION.value,
+            'verification_required': True,
+            'loop_count': state.get('loop_count', 0) + 1,
+            'controller_feedback': concise_feedback,  # Controller's feedback
+            'output_content': f"Revision needed: {concise_feedback}",
+            'thinking_state': {
+                'active_agent': 'CONTROLLER',
+                'current_task': 'Requesting code revision',
+                'progress': 0.7,
+                'details': f'Feedback: {concise_feedback}'
+            }
+        }
     
     def _requires_human_review(self, user_input: str, content: str) -> bool:
         """Determine if human review is required"""
