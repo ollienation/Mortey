@@ -12,6 +12,7 @@ Mortey is an AI-powered voice assistant with chat, web search, and code generati
 ## Under development ⏳
 - GUI with chat logging and voice toggle
 - File processing
+- Conversational memory
 
 ## Future Goals 🎯
 - Vision and image processing agents
