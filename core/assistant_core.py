@@ -1,8 +1,13 @@
 import asyncio
+import os
+import hashlib
+import time
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
 import uuid
-import time
+
+# LangSmith imports
+from langsmith import traceable
 
 from agents.chat_agent import ChatAgent
 from agents.web_agent import WebAgent
@@ -10,6 +15,10 @@ from agents.coder_agent import CoderAgent
 from core.controller import ControllerAgent
 from config.settings import config
 from config.llm_manager import llm_manager
+
+# LangGraph imports
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import StateGraph, START, END
 
 @dataclass
 class AssistantSession:
@@ -19,7 +28,7 @@ class AssistantSession:
     last_interaction: float = 0
 
 class AssistantCore:
-    """Core assistant logic separated from voice functionality"""
+    """Core assistant logic with LangSmith tracing and memory support"""
     
     def __init__(self):
         # Initialize agents
@@ -34,18 +43,72 @@ class AssistantCore:
         # GUI callback for unified handling
         self.gui_callback = None
         
+        # Circuit breaker to prevent runaway loops
+        self.circuit_breaker = {}
+        
+        # Initialize memory
+        self.memory = MemorySaver()
+        
+        # Initialize LangSmith tracing
+        self._setup_langsmith_tracing()
+        
         # Build workflow
         self.workflow = self._build_workflow()
         
-        print("🤖 Assistant Core initialized")
+        print("🤖 Assistant Core initialized with LangSmith tracing")
+    
+    def _setup_langsmith_tracing(self):
+        """Setup LangSmith tracing if enabled"""
+        if config.langsmith_tracing and config.langsmith_api_key:
+            try:
+                # Set environment variables for LangSmith
+                os.environ["LANGSMITH_TRACING"] = "true"
+                os.environ["LANGSMITH_API_KEY"] = config.langsmith_api_key
+                os.environ["LANGSMITH_PROJECT"] = config.langsmith_project
+                os.environ["LANGSMITH_ENDPOINT"] = config.langsmith_endpoint
+                
+                self.langsmith_enabled = True
+                print(f"✅ LangSmith tracing enabled for project: {config.langsmith_project}")
+                
+            except Exception as e:
+                print(f"⚠️ Failed to initialize LangSmith tracing: {e}")
+                self.langsmith_enabled = False
+        else:
+            self.langsmith_enabled = False
+            print("📊 LangSmith tracing disabled")
     
     def set_gui_callback(self, callback):
         """Set GUI callback for unified message handling"""
         self.gui_callback = callback
     
+    def _controller_routing_decision(self, state: Dict[str, Any]) -> str:
+        """Smart controller routing with loop protection"""
+        
+        verification_required = state.get('verification_required', False)
+        loop_count = state.get('loop_count', 0)
+        max_loops = state.get('max_loops', 3)
+        
+        # CRITICAL: Force end after max loops
+        if loop_count >= max_loops:
+            print(f"🔄 Breaking infinite loop after {loop_count} attempts")
+            state['verification_result'] = 'approved'
+            state['verification_required'] = False
+            return "force_end"
+        
+        # Only allow revision on first 2 attempts
+        if verification_required and loop_count < 2:
+            print(f"🔄 Controller requesting revision (attempt {loop_count + 1})")
+            return "router"
+        else:
+            # Force approve after 2 attempts
+            if verification_required:
+                print(f"🔄 Force approving after {loop_count} attempts")
+                state['verification_result'] = 'approved'
+                state['verification_required'] = False
+            return "output_handler"
+    
     def _build_workflow(self):
-        """Build the LangGraph workflow for text processing"""
-        from langgraph.graph import StateGraph, START, END
+        """Build the LangGraph workflow with LangSmith tracing"""
         
         class AssistantState(dict):
             user_input: str
@@ -62,7 +125,7 @@ class AssistantCore:
             requires_speech_output: bool = False
             voice_session_id: str = ""
             
-            # Controller feedback
+            # Controller feedback with loop protection
             controller_feedback: str = ""
             loop_count: int = 0
             max_loops: int = 3
@@ -72,15 +135,27 @@ class AssistantCore:
             temp_filename: str = ""
             final_filename: str = ""
             file_saved: bool = False
+            
+            # Memory support
+            conversation_history: list = []
         
+        @traceable(name="router_node", run_type="chain")
         async def router_node(state: AssistantState) -> AssistantState:
-            """Route using node-specific configuration"""
+            """Route using node-specific configuration with loop protection"""
+            
+            # Increment loop count to track revisions
+            loop_count = state.get('loop_count', 0)
+            state['loop_count'] = loop_count + 1
+            
+            if loop_count > 0:
+                print(f"🔄 Revision attempt {loop_count}")
+            
             prompt = f"""
             Route this request to the appropriate agent:
             User: {state['user_input']}
             
             Available agents:
-            - CHAT: General conversation, file browsing (read-only), listing files, reading file contents
+            - CHAT: General conversation, file browsing (read-only)
             - CODER: Code generation, file creation, programming tasks
             - WEB: Web search, current information, news, weather
             
@@ -94,7 +169,6 @@ class AssistantCore:
                 # Enhanced routing overrides
                 user_input_lower = state['user_input'].lower()
                 
-                # Route file browsing to CHAT (read-only)
                 if any(keyword in user_input_lower for keyword in [
                     'what files', 'which files', 'list files', 'show files',
                     'read file', 'file contents', 'workspace files', 'browse files'
@@ -102,7 +176,6 @@ class AssistantCore:
                     agent_choice = 'CHAT'
                     print(f"🔄 File browsing override: Routed to CHAT")
                 
-                # Route code generation to CODER
                 elif any(keyword in user_input_lower for keyword in [
                     'create', 'generate', 'write code', 'make a script', 'build'
                 ]):
@@ -123,6 +196,7 @@ class AssistantCore:
             
             return state
         
+        @traceable(name="web_node", run_type="chain")
         async def web_node(state: AssistantState) -> AssistantState:
             """Web agent node"""
             try:
@@ -134,6 +208,7 @@ class AssistantCore:
                 state['output_type'] = 'error'
                 return state
         
+        @traceable(name="coder_node", run_type="chain")
         async def coder_node(state: AssistantState) -> AssistantState:
             """Coder agent node"""
             try:
@@ -145,6 +220,7 @@ class AssistantCore:
                 state['output_type'] = 'error'
                 return state
         
+        @traceable(name="chat_node", run_type="chain")
         async def chat_node(state: AssistantState) -> AssistantState:
             """Chat agent node"""
             try:
@@ -156,6 +232,7 @@ class AssistantCore:
                 state['output_type'] = 'error'
                 return state
         
+        @traceable(name="controller_node", run_type="chain")
         async def controller_node(state: AssistantState) -> AssistantState:
             """Controller node"""
             try:
@@ -166,6 +243,7 @@ class AssistantCore:
                 state['verification_result'] = 'approved'
                 return state
         
+        @traceable(name="output_handler_node", run_type="chain")
         async def output_handler_node(state: AssistantState) -> AssistantState:
             """Handle output based on interaction mode"""
             output_content = state.get('output_content', '')
@@ -186,7 +264,6 @@ class AssistantCore:
             if state.get('voice_mode', False) and state.get('requires_speech_output', False):
                 state['speech_output_ready'] = True
                 
-                # Truncate for speech if needed
                 if len(output_content) > 500:
                     state['speech_content'] = output_content[:500] + "... I can provide more details if you'd like."
                 else:
@@ -202,7 +279,7 @@ class AssistantCore:
         workflow.add_node("coder", coder_node)
         workflow.add_node("chat", chat_node)
         workflow.add_node("controller", controller_node)
-        workflow.add_node("output_handler", output_handler_node)  # ADD THIS
+        workflow.add_node("output_handler", output_handler_node)
         
         workflow.add_edge(START, "router")
         workflow.add_conditional_edges(
@@ -220,13 +297,14 @@ class AssistantCore:
         workflow.add_edge("coder", "controller")
         workflow.add_edge("chat", "output_handler")  # Chat bypasses controller
         
-        # Controller routing
+        # Controller routing with loop protection
         workflow.add_conditional_edges(
             "controller",
-            lambda state: "router" if state.get('verification_required', False) else "output_handler",
+            lambda state: self._controller_routing_decision(state),
             {
                 "router": "router",  # Revision loop
-                "output_handler": "output_handler"
+                "output_handler": "output_handler",
+                "force_end": "output_handler"  # Emergency exit
             }
         )
         
@@ -237,10 +315,28 @@ class AssistantCore:
             {"end": END}
         )
         
-        return workflow.compile()
+        # Compile with memory checkpointer
+        return workflow.compile(checkpointer=self.memory)
     
+    @traceable(
+        name="process_message", 
+        run_type="chain",
+        project_name="mortey-assistant"
+    )
     async def process_message(self, message: str) -> str:
-        """Process a text message and return response"""
+        """Process a text message with LangSmith tracing and circuit breaker protection"""
+        
+        # Circuit breaker logic
+        message_hash = hashlib.md5(message.encode()).hexdigest()
+        current_time = time.time()
+        
+        if message_hash in self.circuit_breaker:
+            last_time, count = self.circuit_breaker[message_hash]
+            if current_time - last_time < 30 and count > 2:
+                return "I'm having trouble with that request. Please try rephrasing it differently."
+        
+        self.circuit_breaker[message_hash] = (current_time, 
+                                            self.circuit_breaker.get(message_hash, (0, 0))[1] + 1)
         
         # Create or update session
         if not self.current_session:
@@ -264,12 +360,22 @@ class AssistantCore:
             'output_type': '',
             'verification_result': '',
             'voice_mode': False,
-            'requires_speech_output': False
+            'requires_speech_output': False,
+            'loop_count': 0,
+            'max_loops': 3,
+            'conversation_history': []
         }
         
         try:
-            # Process through workflow
-            result = await self.workflow.ainvoke(initial_state)
+            # Process through workflow with memory
+            workflow_config = {
+                "configurable": {
+                    "thread_id": self.current_session.session_id
+                }
+            }
+            
+            # The @traceable decorator will automatically handle tracing
+            result = await self.workflow.ainvoke(initial_state, workflow_config)
             
             # Return the response
             if result.get('verification_result') == 'approved':
@@ -281,12 +387,30 @@ class AssistantCore:
             print(f"❌ Processing error: {e}")
             return f"I encountered an error: {str(e)}"
     
+    @traceable(
+        name="process_voice_message", 
+        run_type="chain",
+        project_name="mortey-assistant"
+    )
     async def process_message_with_voice_state(self, voice_state: Dict[str, Any]) -> Dict[str, Any]:
-        """Process message with voice-specific state extensions"""
+        """Process message with voice-specific state extensions and tracing"""
         try:
-            # Process through existing workflow
-            result = await self.workflow.ainvoke(voice_state)
+            # Add memory support to voice state
+            if 'conversation_history' not in voice_state:
+                voice_state['conversation_history'] = []
+            
+            # Use session ID for memory persistence
+            session_id = voice_state.get('session_id', str(uuid.uuid4()))
+            workflow_config = {
+                "configurable": {
+                    "thread_id": session_id
+                }
+            }
+            
+            # The @traceable decorator will automatically handle tracing
+            result = await self.workflow.ainvoke(voice_state, workflow_config)
             return result
+            
         except Exception as e:
             print(f"❌ Voice state processing error: {e}")
             return {

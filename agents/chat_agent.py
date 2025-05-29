@@ -195,7 +195,7 @@ class ChatAgent:
         user_input = state.get('user_input', '')
         
         prompt = f"""
-        You are {assistant_name}, a helpful voice assistant with file browsing capabilities.
+        You are {assistant_name}, a helpful assistant with file browsing capabilities.
         
         User: {user_input}
         
@@ -203,7 +203,7 @@ class ChatAgent:
         - Keep responses short and concise since this may be spoken aloud
         - Be friendly and helpful
         - If users ask about files, remind them you can list or read files in the workspace
-        - Stay in character as a assistant
+        - Stay in character as an assistant
         """
         
         try:

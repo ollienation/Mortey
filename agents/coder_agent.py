@@ -7,7 +7,7 @@ from tools.file_tools import FileSystemTools
 from tavily import TavilyClient
 
 class CoderAgent:
-    """Enhanced code generation agent with controller feedback integration"""
+    """Enhanced code generation agent with controller feedback integration and smart search logic"""
     
     def __init__(self, llm_service=None, workspace_dir: str = None):
         self.llm_service = llm_service
@@ -40,7 +40,7 @@ class CoderAgent:
         print(f"🛠️ Coder agent initialized with {len(self.tools)} LangChain tools")
     
     async def generate_code(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate code with controller feedback integration"""
+        """Generate code with controller feedback integration and smart search logic"""
         
         user_input = state.get('user_input', '')
         controller_feedback = state.get('controller_feedback', '')
@@ -55,18 +55,20 @@ class CoderAgent:
         }
         
         try:
-            # Step 1: Determine what's needed
+            # Step 1: Smart search decision
             needs_search = await self._should_search_web(user_input)
             needs_file_save = self._should_save_file(user_input)
             
-            # Step 2: Gather context
+            # Step 2: Gather context (only if needed)
             search_context = ""
             file_context = ""
             
             if needs_search and self.tavily_client:
-                state['thinking_state']['current_task'] = 'Searching for coding information'
+                state['thinking_state']['current_task'] = 'Searching for relevant coding information'
                 state['thinking_state']['progress'] = 0.3
                 search_context = await self._search_coding_info(user_input)
+            else:
+                print("🔄 Skipping web search - not needed for this request")
             
             # Get workspace context
             if self.list_tool:
@@ -96,7 +98,7 @@ class CoderAgent:
                     temp_filename = f"temp_{filename}"
                     
                     try:
-                        # Actually invoke the LangChain write_file tool
+                        # Use LangChain write_file tool
                         save_result = await asyncio.to_thread(
                             self.write_tool.invoke,
                             {
@@ -157,17 +159,19 @@ class CoderAgent:
     async def _generate_code_response(self, user_input: str, search_context: str, 
                                     file_context: str, controller_feedback: str, 
                                     loop_count: int) -> str:
-        """Generate code response using LLM manager with controller feedback"""
+        """Generate code response with improved prompting and conditional context inclusion"""
         
-        # Build context strings separately to avoid f-string issues
-        web_context = f"Web Search Context:\n{search_context}\n" if search_context else ""
+        # Only include web context if it's actually relevant
+        web_context = ""
+        if search_context and len(search_context.strip()) > 50:
+            web_context = f"Web Search Context:\n{search_context}\n"
+        
         workspace_context = f"Workspace Context:\n{file_context}\n" if file_context else ""
         
         # Handle controller feedback for revisions
         if loop_count > 0 and controller_feedback:
             print(f"🔄 Controller feedback received: {controller_feedback}")
             
-            # Build revision prompt with controller feedback
             prompt = f"""
 You are an expert programmer. The controller reviewed your previous code and provided feedback.
 
@@ -176,17 +180,22 @@ Controller Feedback: "{controller_feedback}"
 Original User Request: {user_input}
 
 {web_context}
-
 {workspace_context}
 
 Please generate improved code that specifically addresses the controller's feedback.
 
 Instructions:
 1. Fix the issues mentioned in the controller feedback
-2. Provide complete, working code without placeholders
-3. Include proper imports and error handling
-4. Add brief explanation of improvements made
-5. Do NOT use XML tags or simulate file operations
+2. Provide ONLY the code that should be saved to the file
+3. Do NOT include file writing operations or save commands
+4. Include proper imports and error handling
+5. Add a brief explanation AFTER the code block
+
+Format your response as:
+
+[YOUR CODE HERE]
+
+Brief explanation: [What the code does and how it addresses the feedback]
 
 Keep explanations concise since this may be spoken aloud.
 """
@@ -198,22 +207,21 @@ You are an expert programmer. Generate clean, working code for this request:
 User Request: {user_input}
 
 {web_context}
-
 {workspace_context}
 
-Available LangChain Tools:
-- write_file: Save code to files
-- read_file: Read existing files
-- list_directory: List workspace contents
-- create_project: Create project structures
-- analyze_code: Analyze code files
-
 Instructions:
-1. Provide complete, working code without placeholders
-2. Include necessary imports and proper error handling
-3. Add brief explanation of what the code does
-4. Add usage examples if helpful
-5. Do NOT use XML tags or simulate file operations
+1. Provide ONLY the code that should be saved to the file
+2. Do NOT include file writing operations or save commands
+3. Do NOT duplicate the code in explanations
+4. Include necessary imports and proper error handling
+5. Add a brief explanation AFTER the code block
+6. The file will be automatically saved using LangChain tools
+
+Format your response as:
+
+[YOUR CODE HERE]
+
+Brief explanation: [What the code does]
 
 Keep explanations concise since this may be spoken aloud.
 """
@@ -223,37 +231,40 @@ Keep explanations concise since this may be spoken aloud.
             return response
         except Exception as e:
             return f"Error generating code response: {str(e)}"
-    
     def _should_save_file(self, user_input: str) -> bool:
         """Determine if user wants to save code to a file"""
         save_indicators = [
             'save', 'create file', 'write to file', 'save as', 'create',
-            'make a file', 'generate file', 'write file'
+            'make a file', 'generate file', 'write file', 'filename', 'file name'
         ]
         
         user_lower = user_input.lower()
         return any(indicator in user_lower for indicator in save_indicators)
     
     def _extract_filename(self, user_input: str) -> str:
-        """Extract or generate filename from user request"""
+        """Extract or generate filename from user request with improved patterns"""
         import re
         
-        # Look for explicit filename in request
+        # Look for explicit filename in request with improved patterns
         patterns = [
-            r'save.*?as\s+"([^"]+)"',
-            r'save.*?as\s+([^\s]+)',
-            r'create.*?file\s+"([^"]+)"',
-            r'create.*?file\s+([^\s]+)',
+            r'save.*?(?:as|with.*?name|file.*?name)\s+"([^"]+)"',
+            r'save.*?(?:as|with.*?name|file.*?name)\s+([^\s]+)',
+            r'file.*?name\s+"([^"]+)"',
+            r'file.*?name\s+([^\s]+)',
             r'name.*?it\s+"([^"]+)"',
-            r'call.*?it\s+"([^"]+)"'
+            r'call.*?it\s+"([^"]+)"',
+            r'save.*?file\s+(\w+)',
+            r'filename\s+(\w+)',
+            r'call.*?(\w+)\.py',
+            r'name.*?(\w+)\.py'
         ]
         
         for pattern in patterns:
             match = re.search(pattern, user_input, re.IGNORECASE)
             if match:
-                filename = match.group(1)
-                # Ensure .py extension
-                if not filename.endswith('.py'):
+                filename = match.group(1).strip()
+                # Don't automatically add .py if user didn't specify extension
+                if '.' not in filename:
                     filename += '.py'
                 return filename
         
@@ -273,89 +284,100 @@ Keep explanations concise since this may be spoken aloud.
             return "generated_code.py"
     
     def _extract_code_from_response(self, response: str) -> str:
-        """Extract actual Python code from LLM response, handling markdown and plain text."""
+        """Extract actual Python code from LLM response with improved parsing"""
         import re
-
-        # 1. Try to extract code from triple backtick code blocks (with or without 'python')
-        code_block = re.search(r"``````", response)
-        if code_block:
-            code = code_block.group(1).strip()
-            return code
-
-        # 2. Fallback: collect lines that look like Python code
+        
+        # Look for code blocks first
+        code_patterns = [
+            r'``````',
+            r'``````',
+            r'``````'
+        ]
+        
+        for pattern in code_patterns:
+            match = re.search(pattern, response, re.DOTALL)
+            if match:
+                code = match.group(1).strip()
+                return code
+        
+        # If no code blocks, extract Python-like content
         lines = response.split('\n')
         code_lines = []
         in_code = False
+        
         for line in lines:
-            # Start collecting at first sign of code
+            # Start collecting when we see Python syntax
             if (line.strip().startswith(('import ', 'from ', 'def ', 'class ', '#!', 'if __name__')) or
                 'import ' in line or 'def ' in line):
                 in_code = True
+            
             if in_code:
-                # Stop collecting if we hit a likely explanation or markdown
-                if (line.strip().startswith('```') or # Check for new code block start
-                    line.strip().lower().startswith(('explanation', 'usage', 'output', 'the code', 'to run'))):
+                # Stop if we hit explanatory text
+                if (line.strip() and 
+                    not line.startswith((' ', '\t', '#')) and 
+                    any(word in line.lower() for word in [
+                        'this code', 'the script', 'explanation', 'usage', 'what this does',
+                        'brief explanation', 'how it works'
+                    ])):
                     break
+                    
                 code_lines.append(line)
-        code = '\n'.join(code_lines).strip()
-
-
-        # 3. Final cleanup: remove trailing triple backticks if present
-        while code.endswith('```'):
-            code = code[:-3].strip()
-
-        # 4. Only return if it looks like real code
-        if len(code) > 20 and ('import ' in code or 'def ' in code or 'class ' in code):
-            return code
-        return ""
         
+        extracted_code = '\n'.join(code_lines).strip()
+        
+        # Validate that we have actual code
+        if len(extracted_code) > 20 and ('import ' in extracted_code or 'def ' in extracted_code):
+            return extracted_code
+        
+        return ""
+    
     async def _should_search_web(self, user_input: str) -> bool:
-        """Determine if web search would help with this coding request"""
+        """Improved web search decision logic to avoid unnecessary searches"""
         
         # Keywords that suggest web search would be helpful
         search_indicators = [
-            'latest', 'newest', 'current', 'recent', 'updated',
-            'best practices', 'how to', 'tutorial', 'example',
-            'documentation', 'api', 'library', 'framework',
-            'error', 'fix', 'solve', 'troubleshoot'
+            'latest', 'newest', 'current', 'recent', 'updated', 'new version',
+            'best practices', 'tutorial', 'documentation', 'api reference',
+            'how to integrate', 'connect to', 'authenticate with'
         ]
         
-        # Check for specific technologies that might need current info
+        # Technologies that might need current info
         tech_keywords = [
-            'react', 'vue', 'angular', 'nextjs', 'svelte',
-            'tensorflow', 'pytorch', 'scikit', 'pandas',
-            'fastapi', 'django', 'flask', 'express',
-            'docker', 'kubernetes', 'aws', 'azure'
+            'api', 'sdk', 'framework', 'library', 'package',
+            'authentication', 'oauth', 'database connection',
+            'deployment', 'cloud', 'aws', 'azure', 'docker'
+        ]
+        
+        # GUI/Desktop app requests typically DON'T need web search
+        gui_keywords = [
+            'gui', 'window', 'button', 'tkinter', 'pyqt', 'kivy',
+            'desktop app', 'interface', 'form', 'dialog',
+            'colorful', 'widget', 'layout', 'menu'
         ]
         
         user_lower = user_input.lower()
+        
+        # Skip search for basic GUI requests
+        if any(gui_word in user_lower for gui_word in gui_keywords):
+            if not any(search_word in user_lower for search_word in search_indicators):
+                print("🔄 Skipping web search for basic GUI request")
+                return False
+        
+        # Skip search for simple, common programming tasks
+        simple_tasks = [
+            'create a', 'make a', 'write a', 'generate a',
+            'simple', 'basic', 'hello world', 'calculator',
+            'file reader', 'text editor', 'game'
+        ]
+        
+        if any(simple in user_lower for simple in simple_tasks):
+            if not any(search_word in user_lower for search_word in search_indicators):
+                print("🔄 Skipping web search for simple coding task")
+                return False
+        
+        # Only search if explicitly needed
         has_search_indicator = any(indicator in user_lower for indicator in search_indicators)
         has_tech_keyword = any(tech in user_lower for tech in tech_keywords)
-        
-        # Use LLM for intelligent decision if not obvious
-        if not (has_search_indicator or has_tech_keyword):
-            try:
-                decision_prompt = f"""
-                Analyze this coding request and determine if web search would be helpful:
-                
-                Request: {user_input}
-                
-                Web search would be helpful if the request involves:
-                - Current best practices or recent changes
-                - Specific library/framework documentation
-                - Error troubleshooting
-                - Comparing different approaches
-                - Latest API usage examples
-                
-                Respond with only "YES" or "NO"
-                """
-                
-                decision = await llm_manager.generate_for_node("router", decision_prompt)
-                return "YES" in decision.upper()
-                
-            except Exception as e:
-                print(f"❌ Search decision error: {e}")
-                return False
         
         return has_search_indicator or has_tech_keyword
     
@@ -405,16 +427,22 @@ Keep explanations concise since this may be spoken aloud.
         
         try:
             query_prompt = f"""
-            Create an optimized web search query for this coding request:
+            Create a focused web search query for this coding request:
             
             Request: {user_input}
             
-            Create a search query that would find:
-            - Documentation and examples
-            - Best practices and tutorials
-            - Recent solutions and approaches
+            Guidelines:
+            - Focus on technical implementation details
+            - Include specific technology names (tkinter, PyQt, etc.)
+            - Look for documentation, tutorials, or examples
+            - Avoid generic terms like "optimization" or "best practices" unless specifically requested
             
-            Return only the search query, optimized for finding coding information.
+            Examples:
+            - "GUI with buttons" → "tkinter button click event python tutorial"
+            - "connect to database" → "python database connection tutorial"
+            - "web scraping" → "python web scraping requests beautifulsoup"
+            
+            Return only the search query, no explanation.
             """
             
             query = await llm_manager.generate_for_node("router", query_prompt)
@@ -422,5 +450,15 @@ Keep explanations concise since this may be spoken aloud.
             
         except Exception as e:
             print(f"❌ Query creation error: {e}")
-            # Fallback to original request with coding keywords
-            return f"{user_input} programming tutorial example"
+            # Fallback to extracting key terms from user input
+            key_terms = []
+            user_lower = user_input.lower()
+            
+            if 'gui' in user_lower or 'button' in user_lower:
+                key_terms.append('tkinter python gui')
+            if 'web' in user_lower and 'browser' in user_lower:
+                key_terms.append('python webbrowser module')
+            if 'database' in user_lower:
+                key_terms.append('python database connection')
+                
+            return ' '.join(key_terms) if key_terms else f"{user_input} python tutorial"

@@ -55,6 +55,12 @@ class MorteyConfig:
     tavily_api_key: Optional[str] = None
     picovoice_access_key: Optional[str] = None
     audio_device_index: Optional[int] = None
+
+    # Langsmith info
+    langsmith_api_key: Optional[str] = None
+    langsmith_project: str = "mortey-assistant"
+    langsmith_endpoint: str = "https://api.smith.langchain.com"
+    langsmith_tracing: bool = True 
     
     @classmethod
     def from_environment(cls) -> 'MorteyConfig':
@@ -97,7 +103,11 @@ class MorteyConfig:
             log_requests=global_settings.get("log_requests", True),
             tavily_api_key=os.getenv("TAVILY_API_KEY"),
             picovoice_access_key=os.getenv("PICOVOICE_ACCESS_KEY"),
-            audio_device_index=cls._get_audio_device_index()
+            audio_device_index=cls._get_audio_device_index(),
+            langsmith_api_key=os.getenv("LANGSMITH_API_KEY"),
+            langsmith_project=os.getenv("LANGSMITH_PROJECT", "mortey-assistant"),
+            langsmith_endpoint=os.getenv("LANGSMITH_ENDPOINT", "https://api.smith.langchain.com"),
+            langsmith_tracing=os.getenv("LANGSMITH_TRACING", "true").lower() == "true"
         )
     
     @classmethod
