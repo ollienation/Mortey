@@ -37,4 +37,6 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+venv/user_data/
+user_data/
 venv/

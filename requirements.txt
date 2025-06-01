@@ -1,56 +1,55 @@
-# Core LangGraph
-langgraph>=0.3.27
-langgraph-sdk>=0.1.66
-langgraph-cli
+# Modern LangGraph Assistant Requirements
+# June 2025 - Production Ready
 
-# LangChain
-langchain-core>=0.2.38
-langchain-anthropic
-langchain-community
+# Core LangGraph and LangChain dependencies
+langgraph>=0.4.7
+langchain>=0.3.25
+langchain-core>=0.3.63
+langchain-anthropic>=0.3.14
+langchain-openai>=0.3.18
 
-# Langsmith tracing
+# Modern LangGraph supervisor pattern
+langgraph-supervisor>=0.0.27
+
+# Database persistence
+langgraph-checkpoint-sqlite>=0.1.0
+langgraph-checkpoint-postgres>=0.1.0
+
+# Memory and store management
+langmem>=0.0.27
+
+# Tracing and monitoring
 langsmith>=0.1.0
 
-# Speech Processing
-SpeechRecognition
-pyttsx3
-pyaudio
-openai-whisper
-pvporcupine
-soundfile
+# Web search capabilities
+tavily-python>=0.1.0
 
-# Local LLM
-ollama
+# Environment management
+python-dotenv>=1.0.0
 
-# Vector Database
-chromadb
-sentence-transformers
+# Configuration and serialization
+pyyaml>=6.0
 
-# Web Capabilities
-tavily-python
-selenium
-beautifulsoup4
-requests
+# Audio processing (for voice features)
+sounddevice>=0.4.6
+pvporcupine>=3.0.0
 
-# Vision and Screen
-pillow
-opencv-python
-pyautogui
-mss
+# GUI framework
+Pillow>=10.0.0
 
-# Image Generation
-diffusers
-transformers
-torch
-torchvision
+# Data processing
+pandas>=1.5.0
 
-# GUI
-customtkinter
-matplotlib
+# Async support
+aiofiles>=23.0.0
+aiosqlite>=0.19.0
 
-# Utilities
-python-dotenv
-asyncio
-aiohttp
-structlog
-tenacity
+# HTTP client for web features
+httpx>=0.24.0
+
+# Optional: Database driver for production
+psycopg2-binary>=2.9.5  # For PostgreSQL
+
+# Development and testing
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
