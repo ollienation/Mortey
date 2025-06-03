@@ -1,33 +1,27 @@
-# Fixed Agents using Modern LangGraph 0.4.8 Patterns
+# Individual Agents using Modern LangGraph Patterns
 # June 2025 - Production Ready
 
 import os
 import asyncio
 from typing import Dict, Any, List, Optional
 from asyncio import Semaphore
-
-# ✅ FIXED: Modern patterns for LangGraph 0.4.8
-from langgraph.prebuilt import create_react_agent, ToolNode
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
+from langgraph.prebuilt import create_react_agent
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, trim_messages
 from langchain_core.tools import tool
 from langchain.chat_models import init_chat_model
-
 from config.llm_manager import llm_manager
 from config.settings import config
 from tools.file_tools import FileSystemTools
 from core.state import AssistantState, AgentType, ThinkingState
 
-import logging
-logger = logging.getLogger("agents")
-
 class AgentFactory:
     """
-    Factory for creating agents using modern LangGraph 0.4.8 patterns.
+    Factory for creating agents using modern LangGraph patterns.
     
     Key improvements for June 2025:
     - Uses string-based model references with init_chat_model
     - Implements semaphore-based concurrency control
-    - Compatible with latest LangGraph 0.4.8 patterns
+    - Built-in memory management with trim_messages
     - Production-ready error handling and recovery
     - Proper interrupt patterns for human-in-the-loop
     """
@@ -55,7 +49,7 @@ class AgentFactory:
         if not node_config:
             # Fallback to chat config
             node_config = config.get_node_config("chat")
-            
+        
         if node_config:
             provider_config = config.get_provider_config(node_config.provider)
             model_config = config.get_model_config(node_config.provider, node_config.model)
@@ -78,6 +72,7 @@ class AgentFactory:
                     # Cache the model
                     self._model_cache[node_name] = model
                     return model
+                    
                 except Exception as e:
                     logger.warning(f"Failed to initialize model {model_string}: {e}")
         
@@ -95,11 +90,8 @@ class AgentFactory:
             raise ValueError(f"No available LLM provider configured: {e}")
 
     def create_chat_agent(self):
-        """
-        Create chat agent with file browsing capabilities
+        """Create chat agent with file browsing capabilities and memory management"""
         
-        ✅ FIXED: Modern LangGraph 0.4.8 patterns with react agent
-        """
         # Define chat-specific tools with concurrency control
         @tool
         async def list_workspace_files() -> str:
@@ -130,10 +122,10 @@ class AgentFactory:
                     file_path = config.workspace_dir / filename
                     if not file_path.exists():
                         return f"File '{filename}' not found in workspace."
-                        
+                    
                     with open(file_path, 'r', encoding='utf-8') as f:
                         content = f.read()
-                        
+                    
                     if len(content) > 2000:
                         return f"Content of {filename} (truncated):\n{content[:2000]}\n\n... (file truncated for display)"
                     else:
@@ -156,7 +148,7 @@ class AgentFactory:
                 return f"Error managing memory: {str(e)}"
 
         chat_tools = [list_workspace_files, read_workspace_file, manage_conversation_memory]
-        
+
         # Create the chat agent with modern patterns
         model = self._get_model("chat")
         
@@ -164,7 +156,7 @@ class AgentFactory:
 
 Your role:
 - Engage in friendly, helpful conversations with users
-- Help users browse and read files in their workspace
+- Help users browse and read files in their workspace  
 - Provide concise responses suitable for voice output
 - Stay focused on chat and file browsing tasks
 - Manage conversation memory to stay within context limits
@@ -172,28 +164,24 @@ Your role:
 When users ask about files, use your tools to help them. Keep responses conversational and helpful.
 If conversations get long, use memory management tools to maintain context."""
 
-        # ✅ FIXED: Modern create_react_agent pattern for LangGraph 0.4.8
         chat_agent = create_react_agent(
             model=model,
             tools=chat_tools,
             name="chat",
             prompt=system_prompt,
-            # ✅ New in 0.4.8: Use interrupt patterns for control
+            version="v2",
             interrupt_before=["tools"],  # Allow interruption before tool calls
-            interrupt_after=["agent"]    # Allow review after agent responses
+            interrupt_after=["agent"]   # Allow review after agent responses
         )
-        
+
         return chat_agent
 
     def create_coder_agent(self):
-        """
-        Create coding agent with file creation capabilities
+        """Create coding agent with file creation capabilities and memory management"""
         
-        ✅ FIXED: Modern LangGraph 0.4.8 patterns with react agent
-        """
         # Get LangChain file tools
         langchain_tools = self.file_tools.get_tools()
-        
+
         # Define coder-specific tools with concurrency control
         @tool
         async def create_python_file(filename: str, content: str) -> str:
@@ -207,11 +195,11 @@ If conversations get long, use memory management tools to maintain context."""
                 try:
                     if not filename.endswith('.py'):
                         filename += '.py'
-                        
+                    
                     file_path = config.workspace_dir / filename
                     with open(file_path, 'w', encoding='utf-8') as f:
                         f.write(content)
-                        
+                    
                     return f"✅ Successfully created Python file: {filename}"
                 except Exception as e:
                     return f"❌ Error creating file '{filename}': {str(e)}"
@@ -228,10 +216,10 @@ If conversations get long, use memory management tools to maintain context."""
                     file_path = config.workspace_dir / filename
                     if not file_path.exists():
                         return f"File '{filename}' not found."
-                        
+                    
                     with open(file_path, 'r', encoding='utf-8') as f:
                         content = f.read()
-                        
+                    
                     lines = content.split('\n')
                     total_lines = len(lines)
                     non_empty_lines = len([line for line in lines if line.strip()])
@@ -240,7 +228,6 @@ If conversations get long, use memory management tools to maintain context."""
                     imports = [line.strip() for line in lines if line.strip().startswith(('import ', 'from '))]
                     
                     analysis = f"""Code Analysis for {filename}:
-
 📊 File Statistics:
 - Total lines: {total_lines}
 - Non-empty lines: {non_empty_lines}
@@ -248,7 +235,7 @@ If conversations get long, use memory management tools to maintain context."""
 - Classes: {classes}
 
 📦 Imports ({len(imports)}):
-{chr(10).join(f" - {imp}" for imp in imports[:5])}
+{chr(10).join(f"  - {imp}" for imp in imports[:5])}
 {' - ... and more' if len(imports) > 5 else ''}
 
 📝 Structure: {'Well-organized' if functions > 0 or classes > 0 else 'Script-style'}
@@ -269,7 +256,7 @@ If conversations get long, use memory management tools to maintain context."""
                 return f"Error optimizing memory: {str(e)}"
 
         coder_tools = langchain_tools + [create_python_file, analyze_code_file, optimize_code_memory]
-        
+
         # Create the coder agent with modern patterns
         model = self._get_model("coder")
         
@@ -292,25 +279,21 @@ Guidelines:
 When creating files, use the create_python_file tool. When analyzing code, use the analyze_code_file tool.
 Use memory optimization tools for extended coding sessions."""
 
-        # ✅ FIXED: Modern create_react_agent pattern for LangGraph 0.4.8
         coder_agent = create_react_agent(
             model=model,
             tools=coder_tools,
             name="coder",
             prompt=system_prompt,
-            # ✅ New in 0.4.8: Use interrupt patterns for control
+            version="v2",
             interrupt_before=["tools"],  # Allow review before file operations
-            interrupt_after=["agent"]    # Allow review after code generation
+            interrupt_after=["agent"]   # Allow review after code generation
         )
-        
+
         return coder_agent
 
     def create_web_agent(self):
-        """
-        Create web search agent with Tavily integration
+        """Create web search agent with Tavily integration and memory management"""
         
-        ✅ FIXED: Modern LangGraph 0.4.8 patterns with react agent
-        """
         # Define web search tools with concurrency control
         @tool
         async def search_web(query: str, max_results: int = 5) -> str:
@@ -327,8 +310,9 @@ Use memory optimization tools for extended coding sessions."""
                     tavily_api_key = os.getenv("TAVILY_API_KEY")
                     if not tavily_api_key:
                         return "❌ Tavily API key not configured. Cannot perform web search."
-                        
+                    
                     client = TavilyClient(api_key=tavily_api_key)
+                    
                     search_response = client.search(
                         query=query,
                         search_depth="advanced",
@@ -350,9 +334,10 @@ Use memory optimization tools for extended coding sessions."""
                             title = result.get('title', 'Unknown Title')
                             url = result.get('url', '')
                             content = result.get('content', '')[:200] + "..." if result.get('content') else 'No description'
-                            results.append(f"{i}. **{title}**\n {content}\n 🔗 {url}\n")
+                            results.append(f"{i}. **{title}**\n   {content}\n   🔗 {url}\n")
                     
                     return "\n".join(results) if results else "No search results found."
+                    
                 except Exception as e:
                     return f"❌ Web search error: {str(e)}"
 
@@ -371,8 +356,9 @@ Use memory optimization tools for extended coding sessions."""
                     tavily_api_key = os.getenv("TAVILY_API_KEY")
                     if not tavily_api_key:
                         return "❌ Tavily API key not configured. Cannot get news."
-                        
+                    
                     client = TavilyClient(api_key=tavily_api_key)
+                    
                     query = f"latest news {topic}" if topic else "latest news today"
                     
                     news_response = client.search(
@@ -390,9 +376,10 @@ Use memory optimization tools for extended coding sessions."""
                             title = item.get('title', 'Unknown')
                             content = item.get('content', '')[:150] + "..." if item.get('content') else 'No details'
                             url = item.get('url', '')
-                            news_items.append(f"{i}. **{title}**\n {content}\n 🔗 {url}\n")
+                            news_items.append(f"{i}. **{title}**\n   {content}\n   🔗 {url}\n")
                     
                     return "\n".join(news_items) if news_items else "No recent news found."
+                    
                 except Exception as e:
                     return f"❌ News search error: {str(e)}"
 
@@ -410,7 +397,7 @@ Use memory optimization tools for extended coding sessions."""
                 return f"Error managing search memory: {str(e)}"
 
         web_tools = [search_web, get_current_news, manage_search_memory]
-        
+
         # Create the web agent with modern patterns
         model = self._get_model("web")
         
@@ -433,17 +420,16 @@ Guidelines:
 
 Always search for information before providing answers about current events, recent developments, or time-sensitive topics."""
 
-        # ✅ FIXED: Modern create_react_agent pattern for LangGraph 0.4.8
         web_agent = create_react_agent(
             model=model,
             tools=web_tools,
             name="web",
             prompt=system_prompt,
-            # ✅ New in 0.4.8: Use interrupt patterns for control
+            version="v2",
             interrupt_before=["tools"],  # Allow review before web searches
-            interrupt_after=["agent"]    # Allow review after research
+            interrupt_after=["agent"]   # Allow review after research
         )
-        
+
         return web_agent
 
 # Global factory instance

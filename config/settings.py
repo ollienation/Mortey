@@ -217,5 +217,15 @@ class MorteyConfig:
                 return None
         return None
 
+    def validate_workspace(self):
+        """Ensure workspace directory is writable"""
+        try:
+            test_file = self.workspace_dir / "permission_test"
+            test_file.touch()
+            test_file.unlink()
+        except PermissionError:
+            logger.critical("❌ Workspace directory not writable: %s", self.workspace_dir)
+            raise
+
 # Global config instance
 config = MorteyConfig.from_environment()

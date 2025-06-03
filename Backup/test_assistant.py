@@ -21,7 +21,7 @@ async def test_basic_functionality():
     """Test basic assistant functionality with modern patterns"""
     try:
         # Import the assistant
-        from Core.assistant_core import assistant
+        from core.assistant_core import assistant
 
         print("🧪 Testing Modern LangGraph Assistant")
         print("=" * 50)
@@ -72,10 +72,10 @@ async def test_basic_functionality():
         import traceback
         traceback.print_exc()
 
-async def test_modern_checkpointer():
+async def test_checkpointer():
     """Test modern checkpointer functionality"""
     try:
-        from Core.checkpointer import get_checkpointer_info, create_production_checkpointer
+        from core.checkpointer import get_checkpointer_info, create_production_checkpointer
 
         print("\n🔍 Testing Modern Checkpointer Configuration")
         print("=" * 40)
@@ -94,7 +94,7 @@ async def test_modern_checkpointer():
     except Exception as e:
         print(f"❌ Checkpointer test failed: {e}")
 
-async def test_modern_agents():
+async def test_agents():
     """Test modern agent creation with string-based models"""
     try:
         from agents.agents import agent_factory
@@ -124,11 +124,11 @@ async def test_modern_agents():
         import traceback
         traceback.print_exc()
 
-async def test_modern_security_controller():
+async def test_security_controller():
     """Test modern security controller with interrupt patterns"""
     try:
-        from Core.controller import controller
-        from Core.state import AssistantState
+        from core.controller import controller
+        from core.state import AssistantState
 
         print("\n🛡️ Testing Modern Security Controller")
         print("=" * 35)
@@ -163,14 +163,14 @@ async def test_modern_security_controller():
         print(f"❌ Security controller test failed: {e}")
 
 async def test_concurrency_control():
-    """Test concurrency control features"""
+    """Test concurrency control features - FIXED"""
     try:
-        from Core.assistant_core import assistant
+        from core.assistant_core import assistant
         from config.llm_manager import llm_manager
-
+        
         print("\n⚡ Testing Concurrency Control")
         print("=" * 30)
-
+        
         # Test concurrent message processing
         print("Testing concurrent session management...")
         
@@ -187,31 +187,37 @@ async def test_concurrency_control():
             if isinstance(result, Exception):
                 print(f"  Session {i+1}: Error - {result}")
             else:
-                print(f"  Session {i+1}: Success - {result[:50]}...")
-
+                # FIXED: Handle dictionary response properly
+                if isinstance(result, dict) and 'response' in result:
+                    response_text = result['response']
+                    print(f"  Session {i+1}: Success - {response_text[:50]}...")
+                else:
+                    print(f"  Session {i+1}: Success - {str(result)[:50]}...")
+        
         # Test LLM manager health check
         print("\nTesting LLM health check...")
         health_status = await llm_manager.health_check()
         for provider, status in health_status.items():
             print(f"  {provider}: {status}")
-
+        
         # Test usage stats
         print("\nUsage statistics:")
         stats = llm_manager.get_usage_stats()
         for key, value in stats.items():
             print(f"  {key}: {value}")
-
+        
         print("\n✅ Concurrency control tests completed!")
-
+        
     except Exception as e:
         print(f"❌ Concurrency test failed: {e}")
         import traceback
         traceback.print_exc()
 
+
 async def test_memory_management():
     """Test memory management features"""
     try:
-        from Core.state import AssistantState, trim_message_history
+        from core.state import AssistantState, trim_message_history
         from langchain_core.messages import HumanMessage, AIMessage
 
         print("\n🧠 Testing Memory Management")
@@ -245,18 +251,20 @@ async def test_memory_management():
     except Exception as e:
         print(f"❌ Memory management test failed: {e}")
 
-def check_modern_environment():
-    """Check modern environment setup"""
-    print("🔧 Modern Environment Check")
-    print("=" * 28)
-
-    required_env_vars = [
-        "ANTHROPIC_API_KEY",
-        "OPENAI_API_KEY", 
-        "TAVILY_API_KEY",
-        "LANGSMITH_API_KEY"
-    ]
-
+def check_environment():
+    """Check modern environment setup - Load .env FIRST"""
+    from pathlib import Path
+    from dotenv import load_dotenv, find_dotenv
+    
+    # Priority fix: Load .env before any checks
+    env_path = find_dotenv(usecwd=True)
+    if env_path:
+        load_dotenv(env_path, override=True)
+        print(f"✅ Loaded .env from: {env_path}")
+    
+    # Now check environment variables
+    required_env_vars = ["ANTHROPIC_API_KEY", "OPENAI_API_KEY", "TAVILY_API_KEY", "LANGSMITH_API_KEY"]
+    
     for var in required_env_vars:
         value = os.getenv(var)
         status = "✅" if value else "❌"
@@ -269,14 +277,14 @@ def check_modern_environment():
     print(f"  {'✅' if workspace_exists else '❌'} Workspace dir: {config.workspace_dir}")
 
     # Check modern packages
-    modern_packages = [
+    packages = [
         "langgraph_supervisor",
-        "langgraph_checkpoint_sqlite", 
-        "langgraph_checkpoint_postgres"
+        "langgraph.checkpoint.sqlite", 
+        "langgraph.checkpoint.postgres"
     ]
 
     print("\nModern Package Availability:")
-    for package in modern_packages:
+    for package in packages:
         try:
             __import__(package)
             print(f"  ✅ {package}: Available")
@@ -292,12 +300,12 @@ async def main():
     print("=" * 60)
 
     # Environment check
-    check_modern_environment()
+    check_environment()
 
     # Run tests
-    await test_modern_checkpointer()
-    await test_modern_agents()
-    await test_modern_security_controller()
+    await test_checkpointer()
+    await test_agents()
+    await test_security_controller()
     await test_concurrency_control()
     await test_memory_management()
     await test_basic_functionality()

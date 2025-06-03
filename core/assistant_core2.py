@@ -1,5 +1,4 @@
-# FIXED LangGraph Assistant Core - LangGraph 0.4.8 (June 2025)
-# CRITICAL FIXES: Proper tool call response handling and supervisor patterns
+# Fixed LangGraph Assistant Core - June 2025 LangGraph 0.4.8 Patterns
 
 import asyncio
 import os
@@ -9,14 +8,14 @@ from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 import logging
 
-# ✅ FIXED: Modern LangGraph imports for 0.4.8
+# Modern LangGraph imports for June 2025 (0.4.8)
 from langgraph.graph import StateGraph
 from langgraph.graph.message import MessagesState
 from langgraph.prebuilt import create_react_agent
-from langchain_core.messages import HumanMessage, AIMessage, BaseMessage, ToolMessage
+from langchain_core.messages import HumanMessage, AIMessage, trim_messages, BaseMessage
 from langsmith import traceable
 
-# ✅ FIXED: Modern supervisor import (separate package)
+# ✅ FIXED: Modern supervisor import
 from langgraph_supervisor import create_supervisor
 
 # Core components
@@ -39,15 +38,15 @@ class AssistantSession:
 
 class AssistantCore:
     """
-    ✅ FIXED LangGraph assistant using 2025 best practices for LangGraph 0.4.8.
-
-    CRITICAL IMPROVEMENTS:
-    - Uses separate langgraph-supervisor package (required for 0.4.8)
-    - Proper state_schema specification (required for StateGraph in 0.4.8)
-    - Fixed response extraction for tool call messages
+    Modern LangGraph assistant using 2025 best practices for LangGraph 0.4.8.
+    
+    KEY IMPROVEMENTS:
+    - Uses modern langgraph-supervisor package
     - Robust message validation preventing empty content errors
-    - Modern checkpointer patterns with fallback handling
-    - Comprehensive error handling with graceful degradation
+    - Proper MessagesState usage with built-in reducers
+    - Modern checkpointer patterns with separate packages
+    - Comprehensive error handling with fallbacks
+    - StateGraph with required state_schema for 0.4.8
     """
 
     def __init__(self):
@@ -55,7 +54,7 @@ class AssistantCore:
         self.checkpointer = None
         self.current_session: Optional[AssistantSession] = None
         self.gui_callback = None
-
+        
         # Concurrency control
         self.MAX_CONCURRENT_SESSIONS = 10
         self._session_semaphore = asyncio.Semaphore(self.MAX_CONCURRENT_SESSIONS)
@@ -64,63 +63,52 @@ class AssistantCore:
     async def initialize(self):
         """Initialize all components with proper error handling"""
         try:
-            logger.info("🚀 Initializing Modern LangGraph Assistant Core (0.4.8)")
-
             # Initialize in correct order
             await self._initialize_checkpointer()
             await self._initialize_agents()
             await self._initialize_supervisor()
             self._setup_langsmith()
-
+            
             self._setup_complete = True
-            logger.info("✅ Modern Assistant Core initialized successfully")
-
+            logger.info("🤖 Modern Assistant Core initialized successfully")
         except Exception as e:
             logger.error(f"❌ Assistant initialization failed: {e}")
             raise
 
     async def _initialize_checkpointer(self):
-        """Initialize modern checkpointer with fallback handling"""
+        """Initialize modern checkpointer"""
         try:
             self.checkpointer = create_checkpointer()
             logger.info("✅ Modern checkpointer initialized")
         except Exception as e:
             logger.error(f"❌ Checkpointer initialization failed: {e}")
-            # Create fallback memory checkpointer
-            from langgraph.checkpoint.memory import MemorySaver
-            self.checkpointer = MemorySaver()
-            logger.warning("⚠️ Using fallback MemorySaver - no persistence")
+            raise
 
     async def _initialize_agents(self):
         """Initialize agents using modern create_react_agent patterns"""
         try:
             self.agent_factory = AgentFactory()
-
-            # ✅ FIXED: create_react_agent returns CompiledStateGraph directly
+            
+            # ✅ FIXED: create_react_agent returns CompiledStateGraph (synchronous)
             self.chat_agent = self.agent_factory.create_chat_agent()
             self.coder_agent = self.agent_factory.create_coder_agent()
             self.web_agent = self.agent_factory.create_web_agent()
-
-            logger.info("✅ Modern agents initialized successfully")
-
+            
+            logger.info("✅ Modern agents initialized")
         except Exception as e:
             logger.error(f"❌ Agent initialization failed: {e}")
             raise
 
     async def _initialize_supervisor(self):
         """
-        ✅ FIXED: Initialize supervisor using separate langgraph-supervisor package
-
-        CRITICAL FIXES:
-        - Uses langgraph-supervisor package (required for 0.4.8)
-        - Properly specifies state_schema (required for StateGraph in 0.4.8)
-        - Modern supervisor patterns with proper configuration
+        ✅ FIXED: Initialize supervisor using modern langgraph-supervisor package
+        Compatible with LangGraph 0.4.8 and latest supervisor patterns
         """
         try:
             # Get supervisor model using modern pattern
             supervisor_model = llm_manager._get_model("router")
 
-            # ✅ FIXED: Use separate langgraph-supervisor package
+            # ✅ FIXED: Use modern langgraph-supervisor package correctly
             self.supervisor_graph = create_supervisor(
                 agents=[self.chat_agent, self.coder_agent, self.web_agent],
                 model=supervisor_model,
@@ -132,24 +120,16 @@ class AssistantCore:
                     "**web_agent**: Handles web searches, current information, and research\n"
                     "\n"
                     "Route user requests to the most appropriate agent based on their primary intent.\n"
-                    "Always choose exactly one agent for each request.\n"
-                    "Be decisive and route quickly to avoid delays.\n"
+                    "Always choose exactly one agent.\n"
                 ),
-                # ✅ CRITICAL: Required state_schema for LangGraph 0.4.8
-                state_schema=AssistantState,
-                # ✅ FIXED: Modern supervisor configuration
+                state_schema=AssistantState,  # ✅ Required for LangGraph 0.4.8
                 output_mode="last_message",
-                add_handoff_messages=False,  # Prevents empty handoff messages
-                parallel_tool_calls=False,  # Ensures sequential agent calls
+                add_handoff_messages=False,  # ✅ Prevents empty handoff messages
+                parallel_tool_calls=False,
                 supervisor_name="supervisor"
             )
-
+            
             logger.info("✅ Modern supervisor initialized with langgraph-supervisor")
-
-        except ImportError as e:
-            logger.error(f"❌ langgraph-supervisor package not installed: {e}")
-            logger.info("Install with: pip install langgraph-supervisor")
-            raise
         except Exception as e:
             logger.error(f"❌ Supervisor initialization failed: {e}")
             raise
@@ -173,14 +153,11 @@ class AssistantCore:
         user_id: str = "default_user"
     ) -> Dict[str, Any]:
         """
-        ✅ FIXED: Process user message with comprehensive error handling
-
-        CRITICAL FIXES:
-        - Robust message validation preventing empty content errors
-        - Proper state initialization with required state_schema
-        - Modern supervisor usage with error handling
-        - Fixed response extraction for tool call messages
-        - Graceful fallback responses for all error conditions
+        Process user message with robust error handling and modern patterns.
+        
+        ✅ FIXED: Comprehensive message validation
+        ✅ FIXED: Proper error handling and fallbacks
+        ✅ FIXED: Modern supervisor usage with LangGraph 0.4.8
         """
         if not self._setup_complete:
             await self.initialize()
@@ -202,8 +179,7 @@ class AssistantCore:
                 if not message or not message.strip():
                     return {
                         "response": "I received an empty message. Please try again with your question.",
-                        "error": "empty_message_content",
-                        "session_id": self.current_session.session_id
+                        "error": "empty_message_content"
                     }
 
                 # Create initial state with validated messages
@@ -227,7 +203,7 @@ class AssistantCore:
 
                 logger.info(f"🎯 Processing message with thread_id: {self.current_session.session_id}")
 
-                # ✅ FIXED: Modern supervisor compilation with checkpointer
+                # ✅ FIXED: Use modern supervisor with proper compilation for LangGraph 0.4.8
                 compiled_supervisor = self.supervisor_graph.compile(
                     checkpointer=self.checkpointer
                 )
@@ -239,7 +215,7 @@ class AssistantCore:
                     config_dict
                 )
 
-                # ✅ FIXED: Robust response extraction with tool call handling
+                # ✅ FIXED: Robust response extraction with validation
                 response_content = self._extract_and_validate_response(result)
 
                 # Update GUI if callback exists
@@ -261,87 +237,44 @@ class AssistantCore:
 
     def _extract_and_validate_response(self, result: Dict[str, Any]) -> str:
         """
-        ✅ FIXED: Extract and validate response from supervisor result
-
-        CRITICAL IMPROVEMENTS:
-        - Properly handles tool call messages (empty content is normal)
-        - Extracts meaningful responses from different message types
-        - Robust error handling for malformed results
-        - Provides meaningful fallbacks for all scenarios
+        Extract and validate response from supervisor result.
+        ✅ FIXED: Robust response extraction with fallbacks for LangGraph 0.4.8
         """
         try:
             if result and 'messages' in result and result['messages']:
                 # Get the last message
                 last_message = result['messages'][-1]
-
+                
                 if hasattr(last_message, 'content'):
                     content = last_message.content
-                    has_tool_calls = hasattr(last_message, 'tool_calls') and last_message.tool_calls
-
-                    # ✅ CRITICAL FIX: Handle tool call messages properly
-                    if has_tool_calls:
-                        # This is a tool call message - extract the tool call information
-                        tool_descriptions = []
-                        for tool_call in last_message.tool_calls:
-                            if hasattr(tool_call, 'name'):
-                                tool_name = tool_call.name
-                                tool_args = getattr(tool_call, 'args', {})
-                                tool_descriptions.append(f"Using {tool_name} with parameters: {tool_args}")
-
-                        if tool_descriptions:
-                            return f"I'm processing your request using: {', '.join(tool_descriptions)}"
-
-                    # ✅ Handle string content
+                    
+                    # Handle string content
                     if isinstance(content, str) and content.strip():
                         return content.strip()
-
-                    # ✅ Handle list content (tool calls, multimodal, etc.)
+                    
+                    # Handle list content (tool calls, etc.)
                     elif isinstance(content, list):
                         text_parts = []
                         for item in content:
-                            if isinstance(item, dict):
-                                if item.get('text'):
-                                    text_parts.append(item['text'])
-                                elif item.get('type') == 'text' and item.get('content'):
-                                    text_parts.append(item['content'])
-                            elif isinstance(item, str) and item.strip():
+                            if isinstance(item, dict) and item.get('text'):
+                                text_parts.append(item['text'])
+                            elif isinstance(item, str):
                                 text_parts.append(item)
-
                         if text_parts:
                             return " ".join(text_parts).strip()
-
-                    # ✅ Handle other content types
-                    elif content:
-                        content_str = str(content).strip()
-                        # Filter out raw message metadata
-                        if not any(keyword in content_str.lower() for keyword in 
-                                  ['content=[]', 'additional_kwargs', 'response_metadata', 'tool_calls=[]']):
-                            return content_str
-
-                # ✅ Fallback: Look for previous messages with actual content
-                for msg in reversed(result['messages'][:-1]):
-                    if hasattr(msg, 'content') and isinstance(msg.content, str) and msg.content.strip():
-                        # Don't return user messages as assistant responses
-                        if not isinstance(msg, HumanMessage):
-                            return msg.content.strip()
-
-                # ✅ Fallback: Generic success message
-                return "I've processed your request successfully."
-
-            return "I processed your request, but didn't generate a response."
-
+                    
+                    # Fallback: convert to string
+                    return str(last_message).strip() or "I processed your request successfully."
+                
+                return "I processed your request, but didn't generate a response."
         except Exception as e:
             logger.error(f"❌ Response extraction error: {e}")
-            return "I encountered an issue while processing your request, but I'm ready to help with your next question."
+            return "I encountered an issue while processing your request."
 
     async def _handle_processing_error(self, original_message: str, error: str) -> Dict[str, Any]:
         """
-        ✅ FIXED: Handle processing errors with graceful recovery
-
-        IMPROVEMENTS:
-        - Specific error handling for common issues
-        - Intelligent fallback responses
-        - Error categorization for debugging
+        Handle processing errors with graceful recovery.
+        ✅ FIXED: Specific error handling for common issues
         """
         try:
             # Handle specific error types
@@ -351,48 +284,40 @@ class AssistantCore:
                     "error": "empty_content",
                     "fallback_used": True
                 }
-
             elif "rate limit" in error.lower():
                 return {
                     "response": "I'm currently experiencing high demand. Please try again in a moment.",
                     "error": "rate_limit",
                     "fallback_used": True
                 }
-
-            elif "connection" in error.lower():
+            elif "400" in error and "anthropic" in error.lower():
                 return {
-                    "response": "I'm having trouble connecting to my services. Please try again.",
-                    "error": "connection_error",
+                    "response": "I encountered an API issue. Let me try a different approach.",
+                    "error": "api_error",
                     "fallback_used": True
                 }
-
-            elif "langgraph-supervisor" in error.lower():
-                return {
-                    "response": "I'm experiencing a configuration issue. Please contact support.",
-                    "error": "supervisor_error",
-                    "fallback_used": True
-                }
-
+            
             # Generate fallback response using LLM manager
             fallback_prompt = f"""
             The user sent: "{original_message}"
             There was a system error: {error}
+            
             Please provide a helpful response acknowledging the issue and offering to help differently.
             Keep it brief and friendly.
             """
-
+            
             response = await llm_manager.generate_for_node(
                 "chat",
                 fallback_prompt,
                 override_max_tokens=150
             )
-
+            
             return {
                 "response": response,
                 "error": "system_error",
                 "fallback_used": True
             }
-
+            
         except Exception as e:
             logger.error(f"❌ Fallback response generation failed: {e}")
             return {
@@ -423,9 +348,7 @@ class AssistantCore:
                         'timestamp': getattr(msg, 'timestamp', time.time())
                     })
                 return history
-
             return []
-
         except Exception as e:
             logger.error(f"❌ Error retrieving conversation history: {e}")
             return []
@@ -457,7 +380,7 @@ class AssistantCore:
             "agents_available": ["chat_agent", "coder_agent", "web_agent"],
             "session_active": self.current_session is not None,
             "langsmith_enabled": config.langsmith_tracing and config.langsmith_api_key,
-            "modern_patterns": "LangGraph 0.4.8 + langgraph-supervisor",
+            "modern_patterns": "LangGraph 0.4.8",
             "timestamp": time.time()
         }
 
