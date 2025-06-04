@@ -42,3 +42,7 @@ wheels/
 venv/user_data/
 user_data/
 venv/
+assistant.db
+.gitignore
+assistant.db-wal
+assistant.db-shm

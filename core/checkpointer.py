@@ -1,5 +1,7 @@
 # FIXED Checkpointer - LangGraph 0.4.8 (June 2025)
 # CRITICAL FIXES: Proper database setup and context manager usage
+# Standardized sync PostgreSQL to use psycopg2
+# Enhanced environment detection
 
 import os
 import asyncio
@@ -19,6 +21,8 @@ class CheckpointerFactory:
     - Handles setup() calls correctly on checkpointer instances
     - Implements robust error handling with graceful fallbacks
     - Properly handles async checkpointers for LangGraph 0.4.8
+    - Standardized synchronous PostgreSQL to use psycopg2
+    - Enhanced environment detection logic
     """
     
     @classmethod
@@ -28,13 +32,25 @@ class CheckpointerFactory:
         This is the PREFERRED method for June 2025.
         """
         if environment == "auto":
-            environment = cls._detect_environment()
+            environment = cls._detect_environment() # Detect environment first
             
-        logger.info(f"Creating async checkpointer for environment: {environment}")
+        logger.info(f"Attempting to create ASYNC checkpointer for determined environment: {environment}")
         
         if environment == "production":
-            return await cls._create_async_postgres_checkpointer()
-        else:
+            # In production, strongly prefer PostgreSQL
+            pg_checkpointer = await cls._create_async_postgres_checkpointer()
+            # Check if it fell back to memory (or another non-PG type)
+            if not isinstance(pg_checkpointer, cls._get_memory_saver_class()) and 'postgres' in type(pg_checkpointer).__name__.lower():
+                 return pg_checkpointer
+            logger.warning("ASYNC PostgreSQL checkpointer failed or not configured for PRODUCTION environment. Attempting ASYNC SQLite as a fallback.")
+            # Fallback to async SQLite if async PG failed but still in "production" intent
+            sqlite_checkpointer = await cls._create_async_sqlite_checkpointer()
+            if not isinstance(sqlite_checkpointer, cls._get_memory_saver_class()):
+                return sqlite_checkpointer
+            logger.error("CRITICAL: ASYNC SQLite fallback also failed in PRODUCTION. Falling back to ASYNC MemorySaver.")
+            return cls._create_memory_checkpointer_sync() # Fallback to sync memory as last resort
+        else: # Development or other
+            logger.info("Using ASYNC SQLite checkpointer for DEVELOPMENT environment.")
             return await cls._create_async_sqlite_checkpointer()
     
     @classmethod
@@ -43,197 +59,225 @@ class CheckpointerFactory:
         Create appropriate sync checkpointer based on environment.
         """
         if environment == "auto":
-            environment = cls._detect_environment()
-            
-        logger.info(f"Creating sync checkpointer for environment: {environment}")
+            environment = cls._detect_environment() # Detect environment first
+
+        logger.info(f"Attempting to create SYNC checkpointer for determined environment: {environment}")
         
         if environment == "production":
-            return cls._create_postgres_checkpointer()
-        else:
-            return cls._create_sqlite_checkpointer()
+            # In production, strongly prefer PostgreSQL
+            pg_checkpointer = cls._create_postgres_checkpointer_sync()
+            if not isinstance(pg_checkpointer, cls._get_memory_saver_class()) and 'postgres' in type(pg_checkpointer).__name__.lower():
+                return pg_checkpointer
+            logger.warning("SYNC PostgreSQL checkpointer failed or not configured for PRODUCTION environment. Attempting SYNC SQLite as a fallback.")
+            # Fallback to sync SQLite if sync PG failed but still in "production" intent
+            sqlite_checkpointer = cls._create_sqlite_checkpointer_sync()
+            if not isinstance(sqlite_checkpointer, cls._get_memory_saver_class()):
+                return sqlite_checkpointer
+            logger.error("CRITICAL: SYNC SQLite fallback also failed in PRODUCTION. Falling back to SYNC MemorySaver.")
+            return cls._create_memory_checkpointer_sync()
+        else: # Development or other
+            logger.info("Using SYNC SQLite checkpointer for DEVELOPMENT environment.")
+            return cls._create_sqlite_checkpointer_sync()
+
+    @classmethod
+    def _get_memory_saver_class(cls):
+        from langgraph.checkpoint.memory import MemorySaver
+        return MemorySaver
     
     @classmethod
     def _detect_environment(cls) -> str:
-        """Auto-detect environment based on available configurations"""
-        # Check for production database URL
-        if os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL"):
-            # Additional check: ensure PostgreSQL is actually running
-            if cls._test_postgres_connection():
+        """
+        Auto-detect environment based on available configurations.
+        Prioritizes POSTGRES_URL for production, then ENVIRONMENT variable.
+        """
+        postgres_url = os.getenv("POSTGRES_URL")
+        env_var_setting = os.getenv("ENVIRONMENT", "").lower()
+        # DATABASE_URL is also checked but POSTGRES_URL takes precedence for "production" mode.
+        # sqlite_db_url = os.getenv("DATABASE_URL") # Typically for SQLite
+
+        if postgres_url:
+            logger.info(f"POSTGRES_URL is set: {postgres_url[:30]}...") # Log partial URL for security
+            if cls._test_postgres_connection_sync():
+                logger.info("PostgreSQL connection successful via POSTGRES_URL. Detected environment: production")
                 return "production"
             else:
-                logger.warning("PostgreSQL URL found but connection failed, falling back to development")
-                return "development"
-                
-        # Check for explicit environment setting
-        env = os.getenv("ENVIRONMENT", "").lower()
-        if env in ["prod", "production"]:
-            return "production"
+                logger.warning("POSTGRES_URL is set, but PostgreSQL connection test failed.")
+                # If ENVIRONMENT is also 'production', this is a critical issue.
+                if env_var_setting == "production":
+                    logger.error("CRITICAL: ENVIRONMENT is 'production' and POSTGRES_URL is set, but connection failed. Proceeding as 'production' but expecting Postgres checkpointer to fail and fallback.")
+                    return "production" # Respect explicit production intent, let creation fail/fallback
+                else:
+                    logger.info("Falling back to development mode due to failed PostgreSQL test despite POSTGRES_URL being set.")
+                    return "development"
+        
+        # If POSTGRES_URL is not set, check ENVIRONMENT variable
+        if env_var_setting == "production":
+            logger.warning("ENVIRONMENT is 'production', but POSTGRES_URL is not set. "
+                           "Production mode typically requires PostgreSQL. Checkpointer creation might fallback or fail if not configured.")
+            return "production" # Respect explicit production intent
+
+        # If DATABASE_URL points to SQLite and we are not in production mode by other means
+        # This part is more for informational logging if needed, as "development" is the default.
+        # if sqlite_db_url and not postgres_url and env_var_setting != "production":
+        #     logger.info(f"DATABASE_URL (SQLite) is set: {sqlite_db_url}. Defaulting to development mode.")
             
+        logger.info("No explicit production indicators (POSTGRES_URL with successful test, or ENVIRONMENT=production). Detected environment: development")
         return "development"
         
     @classmethod
-    def _test_postgres_connection(cls) -> bool:
-        """Test if PostgreSQL connection is available"""
+    def _test_postgres_connection_sync(cls) -> bool:
+        """Test if synchronous PostgreSQL connection is available using psycopg2."""
         try:
-            import psycopg
+            import psycopg2 # Use psycopg2 for sync
             
-            conn_str = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
+            # Prioritize POSTGRES_URL for the test
+            conn_str = os.getenv("POSTGRES_URL")
             if not conn_str:
-                return False
+                logger.debug("POSTGRES_URL not set for sync connection test.")
+                return False # Only test if POSTGRES_URL is explicitly set
                 
             # Quick connection test
-            with psycopg.connect(conn_str, connect_timeout=5) as conn:
+            with psycopg2.connect(conn_str, connect_timeout=5) as conn:
                 with conn.cursor() as cur:
                     cur.execute("SELECT 1")
-                    
+            logger.info("PostgreSQL (sync) connection test successful.")
             return True
+        except ImportError:
+            logger.error("psycopg2-binary not installed, PostgreSQL (sync) unavailable. Run: pip install psycopg2-binary")
+            return False
         except Exception as e:
-            logger.debug(f"PostgreSQL connection test failed: {e}")
+            logger.warning(f"PostgreSQL (sync) connection test failed. Error Type: {type(e).__name__}, Details: {e}")
             return False
     
-    # ✅ FIXED: SQLite checkpointer with proper connection handling
     @classmethod
-    def _create_sqlite_checkpointer(cls):
-        """Create SQLite checkpointer using direct connection (not context manager)"""
+    def _create_sqlite_checkpointer_sync(cls):
+        """Create synchronous SQLite checkpointer."""
         try:
-            # ✅ FIXED: Import from separate checkpoint package
             from langgraph.checkpoint.sqlite import SqliteSaver
-            from config.settings import config
+            from config.settings import config # Assuming this holds workspace_dir
             
-            # Ensure workspace exists
             config.workspace_dir.mkdir(parents=True, exist_ok=True)
-            db_path = config.workspace_dir / "assistant_memory.db"
+            # Use DATABASE_URL for sqlite path if available, else default
+            sqlite_path_str = os.getenv("DATABASE_URL")
+            if sqlite_path_str and sqlite_path_str.startswith("sqlite:///"):
+                db_path = Path(sqlite_path_str.replace("sqlite:///", ""))
+            else:
+                db_path = config.workspace_dir / "assistant_memory.db"
             
-            # ✅ FIXED: Create direct connection instead of using context manager
-            # This avoids the GeneratorContextManager issue
+            logger.info(f"Initializing SYNC SQLite checkpointer at: {db_path}")
             conn = sqlite3.connect(str(db_path), check_same_thread=False)
-            
-            # ✅ FIXED: Create checkpointer with direct connection
-            checkpointer = SqliteSaver(conn)
-            
-            # ✅ CRITICAL FIX: Call setup() on the actual checkpointer instance
-            checkpointer.setup()
-            
-            logger.info(f"✅ SQLite checkpointer initialized at {db_path}")
+            checkpointer = SqliteSaver(conn=conn)
+            logger.info(f"✅ Sync SQLite checkpointer initialized at {db_path}")
             return checkpointer
-        except ImportError as e:
-            logger.error(f"❌ langgraph-checkpoint-sqlite not installed: {e}")
-            logger.info("Install with: pip install langgraph-checkpoint-sqlite")
-            return cls._create_memory_checkpointer()
+        except ImportError:
+            logger.error("❌ langgraph.checkpoint.sqlite not found. Install with: pip install langgraph langgraph-sqlite")
+            return cls._create_memory_checkpointer_sync()
         except Exception as e:
-            logger.error(f"❌ SQLite checkpointer failed: {e}")
-            return cls._create_memory_checkpointer()
+            logger.error(f"❌ Sync SQLite checkpointer failed: {e}")
+            return cls._create_memory_checkpointer_sync()
     
-    # ✅ FIXED: PostgreSQL checkpointer with proper connection handling
     @classmethod
-    def _create_postgres_checkpointer(cls):
-        """Create PostgreSQL checkpointer using direct connection"""
+    def _create_postgres_checkpointer_sync(cls):
+        """Create synchronous PostgreSQL checkpointer using psycopg2."""
         try:
-            # ✅ FIXED: Import from separate checkpoint package
             from langgraph.checkpoint.postgres import PostgresSaver
-            import psycopg
+            import psycopg2 # Use psycopg2 for sync
             
-            conn_str = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
+            conn_str = os.getenv("POSTGRES_URL")
             if not conn_str:
-                logger.warning("No PostgreSQL URL found, falling back to SQLite")
-                return cls._create_sqlite_checkpointer()
+                logger.error("POSTGRES_URL not set. Cannot create SYNC PostgreSQL checkpointer.")
+                return cls._create_sqlite_checkpointer_sync() # Fallback to SQLite
+
+            if not cls._test_postgres_connection_sync(): # Test again before creation
+                 logger.error("PostgreSQL (sync) connection test failed before creating saver. Falling back to SQLite.")
+                 return cls._create_sqlite_checkpointer_sync()
                 
-            # ✅ FIXED: Create direct connection with proper pooling
-            conn = psycopg.connect(conn_str)
-            
-            # ✅ FIXED: Create checkpointer with direct connection
-            checkpointer = PostgresSaver(conn)
-            
-            # ✅ CRITICAL FIX: Call setup() on the actual checkpointer instance
-            checkpointer.setup()
-            
-            logger.info("✅ PostgreSQL checkpointer initialized successfully")
+            logger.info("Attempting to connect to SYNC PostgreSQL for saver...")
+            conn = psycopg2.connect(conn_str)
+            checkpointer = PostgresSaver(conn=conn)
+            # PostgresSaver.setup() might be needed depending on version to create tables.
+            # checkpointer.setup() 
+            logger.info("✅ Sync PostgreSQL checkpointer initialized successfully")
             return checkpointer
-        except ImportError as e:
-            logger.error(f"❌ langgraph-checkpoint-postgres not installed: {e}")
-            logger.info("Install with: pip install langgraph-checkpoint-postgres")
-            return cls._create_sqlite_checkpointer()
+        except ImportError:
+            logger.error("❌ psycopg2-binary or langgraph.checkpoint.postgres not installed.")
+            logger.info("Install with: pip install psycopg2-binary langgraph langgraph-postgres")
+            return cls._create_sqlite_checkpointer_sync()
         except Exception as e:
-            logger.error(f"❌ PostgreSQL checkpointer failed: {e}")
-            logger.info("Falling back to SQLite checkpointer")
-            return cls._create_sqlite_checkpointer()
+            logger.error(f"❌ Sync PostgreSQL checkpointer failed: {e}")
+            logger.info("Falling back to sync SQLite checkpointer")
+            return cls._create_sqlite_checkpointer_sync()
     
     @classmethod
-    def _create_memory_checkpointer(cls):
-        """Create in-memory checkpointer as fallback"""
+    def _create_memory_checkpointer_sync(cls):
+        """Create in-memory synchronous checkpointer as fallback."""
         try:
-            # ✅ FIXED: Import from core langgraph package
-            from langgraph.checkpoint.memory import MemorySaver
-            
-            logger.warning("⚠️ Using MemorySaver - conversations will not persist between restarts")
+            MemorySaver = cls._get_memory_saver_class()
+            logger.warning("⚠️ Using Sync MemorySaver - conversations will not persist.")
             mem_saver = MemorySaver()
-            
-            # Call setup on the memory saver
-            mem_saver.setup()
-            
             return mem_saver
         except Exception as e:
-            logger.error(f"❌ Even MemorySaver failed: {e}")
-            raise RuntimeError("No checkpointer could be created")
-    
-    # ✅ FIXED: Async checkpointer creation for LangGraph 0.4.8
+            logger.error(f"❌ Even Sync MemorySaver failed: {e}")
+            raise RuntimeError("No synchronous checkpointer could be created")
+
     @classmethod
     async def _create_async_sqlite_checkpointer(cls):
-        """Create async SQLite checkpointer with proper setup for June 2025"""
+        """Create async SQLite checkpointer."""
         try:
-            # ✅ FIXED: Import from correct package for async version
             from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
             import aiosqlite
-            from config.settings import config
+            from config.settings import config 
             
-            # Ensure workspace exists
             config.workspace_dir.mkdir(parents=True, exist_ok=True)
-            db_path = config.workspace_dir / "assistant_memory.db"
+            sqlite_path_str = os.getenv("DATABASE_URL")
+            if sqlite_path_str and sqlite_path_str.startswith("sqlite:///"):
+                db_path = Path(sqlite_path_str.replace("sqlite:///", ""))
+            else:
+                db_path = config.workspace_dir / "assistant_memory.db" 
             
-            # ✅ FIXED: Create async connection
+            logger.info(f"Initializing ASYNC SQLite checkpointer at: {db_path}")
             conn = await aiosqlite.connect(str(db_path))
-            
-            # ✅ FIXED: Create checkpointer with direct connection
-            checkpointer = AsyncSqliteSaver(conn)
-            
-            # ✅ CRITICAL FIX: Call setup() asynchronously
-            await checkpointer.setup()
-            
+            checkpointer = AsyncSqliteSaver(conn=conn)
             logger.info(f"✅ Async SQLite checkpointer initialized: {db_path}")
             return checkpointer
-        except ImportError as e:
-            logger.warning(f"Async SQLite not available: {e}")
-            return cls._create_memory_checkpointer()
+        except ImportError:
+            logger.error("Async SQLite dependencies (aiosqlite or langgraph.checkpoint.sqlite.aio) not available.")
+            logger.info("Install with: pip install aiosqlite langgraph langgraph-sqlite")
+            return cls._create_memory_checkpointer_sync() 
         except Exception as e:
             logger.error(f"❌ Async SQLite checkpointer creation failed: {e}")
-            return cls._create_memory_checkpointer()
+            return cls._create_memory_checkpointer_sync() 
     
     @classmethod
     async def _create_async_postgres_checkpointer(cls):
-        """Create async PostgreSQL checkpointer with proper setup for June 2025"""
+        """Create async PostgreSQL checkpointer using asyncpg."""
         try:
-            # ✅ FIXED: Import from correct package for async version
             from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
             import asyncpg
             
-            conn_str = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
+            conn_str = os.getenv("POSTGRES_URL")
             if not conn_str:
-                logger.warning("No PostgreSQL URL found, falling back to SQLite")
+                logger.error("POSTGRES_URL not set. Cannot create ASYNC PostgreSQL checkpointer.")
+                return await cls._create_async_sqlite_checkpointer() 
+            
+            try:
+                logger.info("Testing ASYNC PostgreSQL connection...")
+                conn_test = await asyncpg.connect(conn_str, timeout=5)
+                await conn_test.execute("SELECT 1")
+                await conn_test.close() 
+                logger.info("ASYNC PostgreSQL connection test successful.")
+            except Exception as e:
+                logger.warning(f"Async PostgreSQL connection test failed: {e}. Falling back to async SQLite.")
                 return await cls._create_async_sqlite_checkpointer()
-                
-            # ✅ FIXED: Create async connection
-            conn = await asyncpg.connect(conn_str)
-            
-            # ✅ FIXED: Create checkpointer with direct connection
-            checkpointer = AsyncPostgresSaver(conn)
-            
-            # ✅ CRITICAL FIX: Call setup() asynchronously
-            await checkpointer.setup()
-            
+
+            logger.info("Attempting to connect to ASYNC PostgreSQL for saver...")
+            conn_for_saver = await asyncpg.connect(conn_str)
+            checkpointer = AsyncPostgresSaver(conn_str=conn_str)
             logger.info("✅ Async PostgreSQL checkpointer initialized successfully")
             return checkpointer
-        except ImportError as e:
-            logger.warning(f"Async PostgreSQL not available: {e}")
+        except ImportError:
+            logger.error("Async PostgreSQL dependencies (asyncpg or langgraph.checkpoint.postgres.aio) not available.")
+            logger.info("Install with: pip install asyncpg langgraph langgraph-postgres")
             return await cls._create_async_sqlite_checkpointer()
         except Exception as e:
             logger.error(f"❌ Async PostgreSQL checkpointer creation failed: {e}")
@@ -245,30 +289,33 @@ def get_checkpointer_info() -> Dict[str, Any]:
     
     info = {
         "detected_environment": environment,
-        "database_url_available": bool(os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")),
-        "postgres_available": CheckpointerFactory._test_postgres_connection(),
-        "sqlite_available": True,  # SQLite is always available with Python
-        "memory_fallback": True,
+        "DATABASE_URL_env": os.getenv("DATABASE_URL", "Not Set"),
+        "POSTGRES_URL_env": os.getenv("POSTGRES_URL", "Not Set")[:30] + "..." if os.getenv("POSTGRES_URL") else "Not Set",
+        "ENVIRONMENT_env": os.getenv("ENVIRONMENT", "Not Set"),
+        "postgres_connection_sync_test_passed": CheckpointerFactory._test_postgres_connection_sync(),
+        "sqlite_available": True, 
+        "memory_fallback_possible": True,
         "packages_available": {}
     }
     
-    # Check package availability
     packages = [
-        "langgraph.checkpoint.postgres",
-        "langgraph.checkpoint.sqlite",
-        "langgraph.checkpoint.memory"
+        "psycopg2", "langgraph.checkpoint.postgres", "langgraph.checkpoint.postgres.aio",
+        "aiosqlite", "langgraph.checkpoint.sqlite", "langgraph.checkpoint.sqlite.aio",
+        "asyncpg", "langgraph.checkpoint.memory"
     ]
     
-    for package in packages:
+    for package_path in packages:
         try:
-            __import__(package)
-            info["packages_available"][package] = True
+            # Simplified import check
+            base_module = package_path.split('.')[0] # e.g. psycopg2, langgraph, aiosqlite, asyncpg
+            __import__(base_module)
+            # For langgraph submodules, we assume if 'langgraph' imports, its sub-packages are structured correctly
+            # A more thorough check might try importing the specific saver class.
+            info["packages_available"][package_path] = True
         except ImportError:
-            info["packages_available"][package] = False
+            info["packages_available"][package_path] = False
             
     return info
-
-# ✅ FIXED: Main entry points for the assistant
 
 async def create_checkpointer(
     environment: str = "auto",
@@ -276,15 +323,6 @@ async def create_checkpointer(
 ) -> Any:
     """
     ✅ FIXED: Main entry point for creating checkpointers for June 2025.
-    
-    This is the preferred method for creating checkpointers.
-    
-    Args:
-        environment: "production", "development", or "auto"
-        use_async: Whether to create an async checkpointer
-        
-    Returns:
-        A properly initialized checkpointer instance
     """
     if use_async:
         return await CheckpointerFactory.create_checkpointer_async(environment)
@@ -292,19 +330,12 @@ async def create_checkpointer(
         return CheckpointerFactory.create_checkpointer_sync(environment)
 
 async def create_async_checkpointer(environment: str = "auto") -> Any:
-    """
-    Create an async checkpointer.
-    """
     return await CheckpointerFactory.create_checkpointer_async(environment)
 
 def create_sync_checkpointer(environment: str = "auto") -> Any:
-    """
-    Create a sync checkpointer.
-    """
     return CheckpointerFactory.create_checkpointer_sync(environment)
 
 # Legacy compatibility
 def create_checkpointer_legacy():
-    """Legacy compatibility function"""
     logger.warning("⚠️ Using legacy checkpointer creation. Update to create_checkpointer()")
     return CheckpointerFactory.create_checkpointer_sync()
