@@ -8,7 +8,8 @@ workspace/
 logs/
 config/*.json
 config/*.yaml
-backup/
+Backup/
+backup_before_fix/
 
 # Audio cache
 *.wav
