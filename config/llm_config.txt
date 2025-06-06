@@ -1,0 +1,80 @@
+# LLM Configuration for Mortey Assistant
+# June 2025 - Production Ready
+
+global:
+  default_provider: "anthropic"
+  fallback_provider: "openai"
+  retry_attempts: 3
+  timeout_seconds: 30
+  enable_caching: true
+  log_requests: true
+
+providers:
+  anthropic:
+    api_key_env: "ANTHROPIC_API_KEY"
+    models:
+      claude-3-haiku:
+        model_id: "claude-3-haiku-20240307"
+        max_tokens: 1000
+        temperature: 0.1
+        cost_per_1m_tokens: 0.25
+      claude-3-5-haiku:
+        model_id: "claude-3-5-haiku-latest"
+        max_tokens: 4000
+        temperature: 0.7
+        cost_per_1m_tokens: 0.8
+      claude-4-sonnet:
+        model_id: "claude-sonnet-4-20250514"
+        max_tokens: 8000
+        temperature: 0.7
+        cost_per_1m_tokens: 3.0
+
+  openai:
+    api_key_env: "OPENAI_API_KEY"
+    models:
+      gpt-4o:
+        model_id: "gpt-4o"
+        max_tokens: 4000
+        temperature: 0.7
+        cost_per_1m_tokens: 5.0
+      gpt-4o-mini:
+        model_id: "gpt-4o-mini"
+        max_tokens: 1000
+        temperature: 0.3
+        cost_per_1m_tokens: 0.15
+
+nodes:
+  router:
+    provider: "anthropic"
+    model: "claude-3-haiku"
+    max_tokens: 5
+    temperature: 0.1
+    description: "Fast routing decisions"
+
+  chat:
+    provider: "anthropic"
+    model: "claude-3-haiku"
+    max_tokens: 1000
+    temperature: 0.5
+    description: "General conversation and file browsing"
+
+  coder:
+    provider: "anthropic"
+    model: "claude-4-sonnet"
+    max_tokens: 8000
+    temperature: 0.3
+    description: "Code generation and programming tasks"
+
+  web:
+    provider: "anthropic"
+    model: "claude-3-5-haiku"
+    max_tokens: 3000
+    temperature: 0.5
+    description: "Web search and research"
+
+  controller:
+    provider: "anthropic"
+    model: "claude-4-sonnet"
+    max_tokens: 500
+    temperature: 0.1
+    description: "Security and content verification"
