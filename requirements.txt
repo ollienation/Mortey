@@ -2,7 +2,7 @@
 # June 2025 - Production Ready for LangGraph 0.4.8
 
 # Core LangGraph and LangChain dependencies
-langgraph>=0.4.8                   # Required for modern patterns with state_schema
+langgraph>=0.4.8
 langchain>=0.3.25
 langchain-core>=0.3.63
 langchain-anthropic>=0.3.14
@@ -28,38 +28,14 @@ python-dotenv>=1.0.0
 # Configuration and serialization
 pyyaml>=6.0
 
-# Audio processing (for voice features)
-sounddevice>=0.4.6
-pvporcupine>=3.0.0
-
-# GUI framework
-Pillow>=10.0.0
-
 # Data processing
 pandas>=1.5.0
 
 # Async support
 aiofiles>=23.0.0
 aiosqlite>=0.19.0
-asyncpg>=0.29.0               # For async PostgreSQL support
-
-# HTTP client for web features
-httpx>=0.24.0
-
-# Async and concurrency
-asyncio-mqtt>=0.16.0  # If using MQTT
-aiofiles>=24.1.0
+asyncpg>=0.29.0
 aiohttp>=3.11.11
-
-# Web framework and API
-fastapi>=0.115.6
-uvicorn[standard]>=0.32.1
-pydantic>=2.10.4
-pydantic-settings>=2.7.0
-requests>=2.32.0
-
-# Database driver for production
-psycopg[binary,pool]>=3.2.3  # PostgreSQL driver
 
 # Development and testing
 pytest>=7.0.0
@@ -70,4 +46,21 @@ pytest-mock>=3.14.0
 black>=24.10.0
 isort>=5.13.2
 mypy>=1.13.0
-flake8>=7.1.1
+
+# HTTP client for web features
+httpx>=0.24.0
+
+# Audio processing (for voice features)
+# sounddevice>=0.4.6
+# pvporcupine>=3.0.0
+
+# GUI framework
+# Pillow>=10.0.0
+
+# Web framework and API
+fastapi>=0.115.6
+uvicorn[standard]>=0.32.1
+sse-starlette>=1.8.0
+pydantic>=2.10.4
+pydantic-settings>=2.7.0
+# requests>=2.32.0
