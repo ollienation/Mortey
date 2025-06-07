@@ -9,9 +9,6 @@ langchain-anthropic>=0.3.14
 langchain-openai>=0.3.18
 langchain-community>=0.3.24
 
-# Modern LangGraph supervisor pattern
-langgraph-supervisor>=0.0.27       # Required for hierarchical multi-agent systems
-
 # Database persistence
 langgraph-checkpoint-sqlite>=0.1.0 # Required for SQLite checkpointing
 langgraph-checkpoint-postgres>=0.1.0 # Required for PostgreSQL checkpointing

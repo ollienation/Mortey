@@ -29,6 +29,20 @@ def copy_py_to_txt(source_dirs, dest_dir='./txt/'):
                     copied_files += 1
                 except Exception as e:
                     print(f"Error copying {source_file}: {e}")
+        
+        for filename in os.listdir(source_dir):
+            if filename.endswith('.yaml'):
+                source_file = os.path.join(source_dir, filename)
+                # Change extension from .py to .txt
+                dest_filename = filename[:-5] + '.txt'
+                dest_file = os.path.join(dest_dir, dest_filename)
+                
+                try:
+                    shutil.copy2(source_file, dest_file)
+                    print(f"Copied: {source_file} -> {dest_file}")
+                    copied_files += 1
+                except Exception as e:
+                    print(f"Error copying {source_file}: {e}")
     
     print(f"\nTotal files copied: {copied_files}")
 
@@ -39,6 +53,7 @@ if __name__ == "__main__":
         './core',
         './config',
         './tools',
+        './test',
         # Add more directories here as needed
     ]
     

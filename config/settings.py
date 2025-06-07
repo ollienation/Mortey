@@ -1,10 +1,23 @@
+# ✅ STANDARD LIBRARY IMPORTS
 import os
 import pathlib
-import yaml
+import logging
 from dataclasses import dataclass, field
 from typing import Dict, Optional, List
+
+# ✅ THIRD-PARTY IMPORTS
 from dotenv import load_dotenv
 
+# ✅ OPTIONAL IMPORTS WITH ERROR HANDLING
+try:
+    import yaml
+    YAML_AVAILABLE = True
+except ImportError:
+    YAML_AVAILABLE = False
+    logger = logging.getLogger("settings")
+    logger.error("❌ PyYAML not available. Please install: pip install pyyaml")
+    raise ImportError("PyYAML is required for configuration loading")
+    
 @dataclass
 class ModelConfig:
     """Configuration for a specific model"""

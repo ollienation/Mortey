@@ -6,10 +6,9 @@
 # Mortey-specific
 workspace/
 logs/
-config/*.json
-config/*.yaml
-Backup/
-backup_before_fix/
+.Backup/
+api/
+.sesskey
 
 # Audio cache
 *.wav
@@ -42,7 +41,4 @@ wheels/
 venv/user_data/
 user_data/
 venv/
-assistant.db
-.gitignore
-assistant.db-wal
-assistant.db-shm
+
