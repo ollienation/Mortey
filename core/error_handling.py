@@ -1,4 +1,3 @@
-# core/error_handling.py - ✅ ENHANCED ERROR CLASSIFICATION WITH SOPHISTICATED PATTERNS
 from typing import Dict, Any, Optional, Union, Callable, Awaitable, Type, Set, List
 from dataclasses import dataclass, field
 from enum import Enum
@@ -92,7 +91,7 @@ class AssistantError:
     recovery_suggestions: List[str] = field(default_factory=list)
 
 class ErrorClassifier:
-    """✅ ENHANCED: Sophisticated error classification using exception types and patterns"""
+    """Error classification using exception types and patterns"""
     
     def __init__(self):
         self.error_patterns = self._initialize_error_patterns()
@@ -189,7 +188,7 @@ class ErrorClassifier:
     
     def classify_error(self, error: Exception, context: str = "") -> ErrorType:
         """
-        ✅ ENHANCED: Classify errors using multiple strategies
+        Classify errors using multiple strategies
         """
         error_str = str(error).lower()
         error_type = type(error)
@@ -285,7 +284,7 @@ class ErrorClassifier:
         }
 
 class CircuitBreakerManager:
-    """✅ NEW: Circuit breaker manager for external API calls"""
+    """Circuit breaker manager for external API calls"""
     
     def __init__(self):
         self.circuit_breakers: Dict[str, CircuitBreakerState] = {}
@@ -323,7 +322,7 @@ class CircuitBreakerManager:
 
 class ErrorHandler:
     """
-    ✅ ENHANCED: Sophisticated error handling with intelligent classification and circuit breakers
+    Error handling with intelligent classification and circuit breakers
     """
     
     _classifier = ErrorClassifier()
@@ -332,7 +331,7 @@ class ErrorHandler:
     @staticmethod
     def handle_error(error: Exception, context: str = "") -> Dict[str, Any]:
         """
-        ✅ ENHANCED: Handle errors with intelligent classification and context awareness
+        Handle errors with intelligent classification and context awareness
         """
         # Classify the error using sophisticated patterns
         error_type = ErrorHandler._classifier.classify_error(error, context)
@@ -432,7 +431,7 @@ class ErrorHandler:
         **kwargs
     ) -> Any:
         """
-        ✅ ENHANCED: Execute function with comprehensive error handling and retry logic
+        Execute function with comprehensive error handling and retry logic
         """
         max_retries = 3
         base_delay = 1.0
@@ -477,7 +476,7 @@ class ErrorHandler:
     @staticmethod
     def generate_fallback_response(error_type: ErrorType, context: str = "") -> str:
         """
-        ✅ ENHANCED: Generate contextual fallback responses
+        Generate contextual fallback responses
         """
         context_responses = {
             "message_processing": "I'm ready to help with your next question.",
@@ -514,7 +513,7 @@ class ErrorHandler:
     @staticmethod
     def is_retryable_error(error: Exception) -> bool:
         """
-        ✅ ENHANCED: Determine if an error is retryable using intelligent classification
+        Determine if an error is retryable using intelligent classification
         """
         error_type = ErrorHandler._classifier.classify_error(error)
         
@@ -537,7 +536,7 @@ class ErrorHandler:
         **kwargs
     ) -> Any:
         """
-        ✅ NEW: Execute function with circuit breaker protection
+        Execute function with circuit breaker protection
         """
         try:
             return await ErrorHandler._circuit_breaker_manager.call_with_circuit_breaker(
@@ -574,7 +573,7 @@ class ErrorHandler:
         **kwargs
     ) -> Any:
         """
-        ✅ ENHANCED: Execute with intelligent fallback and circuit breaker protection
+        Execute with intelligent fallback and circuit breaker protection
         """
         try:
             return await ErrorHandler.with_error_handling(

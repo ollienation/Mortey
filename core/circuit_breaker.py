@@ -1,6 +1,4 @@
 """
-Advanced Circuit Breaker Implementation for LangGraph 0.4.8 Assistant
-
 This module provides sophisticated circuit breaker patterns specifically designed
 for protecting external API calls in AI assistant applications.
 """
@@ -131,14 +129,7 @@ class CircuitBreakerState:
 
 class AdvancedCircuitBreaker:
     """
-    ✅ PRODUCTION-GRADE: Advanced circuit breaker with adaptive behavior
-    
-    Features:
-    - Multiple circuit breaker states per service
-    - Rolling window metrics and statistics
-    - Adaptive thresholds based on service behavior
-    - Health check integration
-    - Detailed monitoring and alerting
+    Circuit breaker with adaptive behavior
     """
     
     def __init__(self):

@@ -1,23 +1,11 @@
-# ✅ STANDARD LIBRARY IMPORTS
 import os
 import pathlib
 import logging
 from dataclasses import dataclass, field
 from typing import Dict, Optional, List
 
-# ✅ THIRD-PARTY IMPORTS
 from dotenv import load_dotenv
 
-# ✅ OPTIONAL IMPORTS WITH ERROR HANDLING
-try:
-    import yaml
-    YAML_AVAILABLE = True
-except ImportError:
-    YAML_AVAILABLE = False
-    logger = logging.getLogger("settings")
-    logger.error("❌ PyYAML not available. Please install: pip install pyyaml")
-    raise ImportError("PyYAML is required for configuration loading")
-    
 @dataclass
 class ModelConfig:
     """Configuration for a specific model"""
@@ -64,7 +52,7 @@ class MorteyConfig:
     enable_caching: bool = True
     log_requests: bool = True
     
-    # Other API keys (still from env)
+    # Other API keys
     tavily_api_key: Optional[str] = None
     picovoice_access_key: Optional[str] = None
     audio_device_index: Optional[int] = None

@@ -1,6 +1,3 @@
-# config/llm_manager.py - ✅ FIXED MODEL CACHING WITH STANDARDIZED IMPORTS
-
-# ✅ STANDARD LIBRARY IMPORTS
 import asyncio
 import logging
 import os
@@ -9,16 +6,12 @@ from functools import wraps
 from typing import Optional, Dict, Any, List
 from asyncio import Semaphore
 
-# ✅ THIRD-PARTY IMPORTS
 from langchain.chat_models import init_chat_model
 
-# ✅ LOCAL IMPORTS (absolute paths)
 from config.settings import config
 
-# API circuit breaker
 from core.circuit_breaker import global_circuit_breaker, with_circuit_breaker
 
-# ✅ OPTIONAL IMPORTS WITH ERROR HANDLING
 try:
     from langsmith import traceable
     LANGSMITH_AVAILABLE = True
@@ -34,12 +27,7 @@ logger = logging.getLogger("llm_manager")
 
 class LLMManager:
     """
-    ✅ FIXED: Universal LLM client manager with proper model caching.
-    
-    Key improvements:
-    - Proper model caching that actually works
-    - Cache-aware model retrieval
-    - Performance optimization through model reuse
+    Universal LLM client manager with model caching.
     """
 
     def __init__(self):
@@ -91,7 +79,7 @@ class LLMManager:
         }
 
     def _get_cache_key(self, node_name: str, override_max_tokens: Optional[int] = None) -> str:
-        """✅ FIXED: Generate cache key that includes all configuration parameters"""
+        """Generate cache key that includes all configuration parameters"""
         node_config = config.get_node_config(node_name)
         model_config = config.get_model_config(node_config.provider, node_config.model)
         
@@ -102,7 +90,7 @@ class LLMManager:
         return cache_key
 
     def _get_model(self, node_name: str, override_max_tokens: Optional[int] = None):
-        """✅ FIXED: Get cached model or create new one if not exists"""
+        """Get cached model or create new one if not exists"""
         cache_key = self._get_cache_key(node_name, override_max_tokens)
         
         # Return cached model if exists
@@ -154,9 +142,7 @@ class LLMManager:
                                override_max_tokens: Optional[int] = None,
                                metadata: Optional[dict] = None) -> str:
         """
-        ✅ FIXED: Generate response using cached models with concurrency control.
-        
-        This now properly uses the cached models instead of creating new ones.
+        Generate response using cached models with concurrency control.
         """
         
         # Get node configuration for logging and semaphore selection

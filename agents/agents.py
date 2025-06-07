@@ -1,21 +1,15 @@
-# agents/agents.py - ✅ ENHANCED WITH DEPENDENCY INJECTION PATTERNS
-
-# ✅ STANDARD LIBRARY IMPORTS
 import os
 import logging
 from typing import List, Optional, Dict, Any, Protocol, runtime_checkable
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-# ✅ THIRD-PARTY IMPORTS
 from langchain_core.tools import tool, BaseTool
 from langgraph.prebuilt import create_react_agent
 
-# ✅ LOCAL IMPORTS (absolute paths)
 from config.llm_manager import llm_manager
 from tools.file_tools import FileSystemTools
 
-# ✅ OPTIONAL THIRD-PARTY IMPORTS WITH ERROR HANDLING
 try:
     from tavily import TavilyClient
     TAVILY_AVAILABLE = True
@@ -49,7 +43,7 @@ class AgentConfig:
     enabled: bool = True
 
 class ToolRegistry:
-    """✅ ENHANCED: Central registry for tool providers with dependency injection"""
+    """Central registry for tool providers with dependency injection"""
     
     def __init__(self):
         self._providers: Dict[str, ToolProvider] = {}
@@ -147,7 +141,7 @@ class ToolRegistry:
         logger.info("🧹 Tool registry cache cleared")
 
 class ChatToolProvider:
-    """✅ ENHANCED: Tool provider for chat agent with dependency injection"""
+    """Tool provider for chat agent with dependency injection"""
     
     def __init__(self, file_tools: FileSystemTools):
         self.file_tools = file_tools
@@ -205,7 +199,7 @@ class ChatToolProvider:
         }
 
 class CoderToolProvider:
-    """✅ ENHANCED: Tool provider for coder agent"""
+    """Tool provider for coder agent"""
     
     def __init__(self, file_tools: FileSystemTools):
         self.file_tools = file_tools
@@ -291,7 +285,7 @@ class CoderToolProvider:
         }
 
 class WebToolProvider:
-    """✅ ENHANCED: Tool provider for web agent"""
+    """Tool provider for web agent"""
     
     def __init__(self):
         pass
@@ -386,7 +380,7 @@ class WebToolProvider:
 
 class AgentFactory:
     """
-    ✅ ENHANCED: Agent factory with dependency injection and configuration-driven creation
+    Agent factory with dependency injection and configuration-driven creation
     """
     
     def __init__(self, file_tools: Optional[FileSystemTools] = None):
@@ -451,7 +445,7 @@ class AgentFactory:
             raise
     
     def create_agent(self, agent_name: str, config: Optional[AgentConfig] = None) -> Any:
-        """✅ ENHANCED: Create agent using dependency injection and configuration"""
+        """Create agent using dependency injection and configuration"""
         try:
             # Use provided config or get default
             agent_config = config or self.agent_configs.get(agent_name)
@@ -499,7 +493,7 @@ class AgentFactory:
         return self.create_agent("web")
     
     def get_all_tools(self) -> List[BaseTool]:
-        """✅ ENHANCED: Collect all tools from all providers"""
+        """Collect all tools from all providers"""
         try:
             all_provider_names = self.tool_registry.list_providers()
             return self.tool_registry.get_tools(all_provider_names)

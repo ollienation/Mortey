@@ -1,12 +1,3 @@
-# core/simplified_supervisor.py - ✅ ENHANCED MODULAR VERSION
-"""
-Simplified Supervisor for LangGraph 0.4.8 Assistant
-
-This supervisor implements a clean, modular architecture that respects
-the existing AgentFactory design patterns. It provides intelligent
-routing between agents while maintaining clean separation of concerns.
-"""
-
 import logging
 from typing import Dict, Any, Literal, Optional, List, Union
 from dataclasses import dataclass
@@ -15,7 +6,6 @@ from langgraph.graph import StateGraph, START
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import AIMessage, HumanMessage, BaseMessage
 
-# ✅ STANDARDIZED: Absolute imports throughout
 from core.state import AssistantState
 from core.error_handling import ErrorHandler
 
@@ -23,9 +13,10 @@ logger = logging.getLogger("supervisor")
 
 @dataclass
 class SupervisorConfig:
-    """
-    ✅ MODULAR: Configuration class for supervisor behavior.
     
+    """
+    Configuration class for supervisor behavior.
+
     This allows for easy customization without modifying core logic.
     """
     max_replays: int = 5  # Prevent infinite agent-tool loops
@@ -54,16 +45,9 @@ class SupervisorError(Exception):
     """Custom exception for supervisor-specific errors"""
     pass
 
-class SimplifiedSupervisor:
+class Supervisor:
     """
-    ✅ MODULAR: A robust supervisor with intelligent routing and clean architecture.
-    
-    This supervisor maintains the existing modular design while providing:
-    - Intelligent agent routing based on content analysis
-    - Configurable behavior through SupervisorConfig
-    - Clean separation of concerns
-    - Comprehensive error handling
-    - Proper state management
+    A supervisor with intelligent routing
     """
     
     def __init__(self, config: Optional[SupervisorConfig] = None):
@@ -84,10 +68,7 @@ class SimplifiedSupervisor:
         checkpointer=None
     ) -> None:
         """
-        ✅ MODULAR: Initialize supervisor with agents and tools.
-        
-        This method respects the existing AgentFactory architecture
-        and uses the clean get_all_tools() approach.
+        Initialize supervisor with agents and tools.
         
         Args:
             agents: Dictionary of agent instances from AgentFactory
@@ -104,7 +85,7 @@ class SimplifiedSupervisor:
             # Create the workflow graph
             workflow = StateGraph(AssistantState)
 
-            # ✅ MODULAR: Use the clean tool approach from AgentFactory
+            # Use the clean tool approach from AgentFactory
             tool_node = ToolNode(all_tools)
             workflow.add_node("call_tool", tool_node)
             
@@ -112,17 +93,17 @@ class SimplifiedSupervisor:
             for agent_name, agent in agents.items():
                 workflow.add_node(agent_name, self._create_agent_node(agent, agent_name))
 
-            # ✅ ENHANCED: Set entry point to START node
+            # Set entry point to START node
             workflow.set_entry_point(START)
 
-            # ✅ MODULAR: Configurable routing with fallback
+            # Configurable routing with fallback
             workflow.add_conditional_edges(
                 START,
                 self._route_to_agent,
                 {agent_name: agent_name for agent_name in agents.keys()}
             )
 
-            # ✅ STANDARD: Tool continuation logic
+            # Tool continuation logic
             def should_continue(state: AssistantState) -> Literal["call_tool", "__end__"]:
                 """Determine if the agent should call tools or end"""
                 messages = state.get("messages", [])
@@ -144,7 +125,7 @@ class SimplifiedSupervisor:
                 {agent_name: agent_name for agent_name in agents.keys()}
             )
 
-            # ✅ MODULAR: Compile with provided checkpointer
+            # Compile with provided checkpointer
             self.supervisor_graph = workflow.compile(checkpointer=checkpointer)
             
             # Initialize routing statistics
@@ -185,10 +166,7 @@ class SimplifiedSupervisor:
     
     def _create_agent_node(self, agent: Any, agent_name: str):
         """
-        ✅ MODULAR: Creates a graph-compatible node wrapper for agents.
-        
-        This wrapper maintains state consistency and provides proper
-        error handling while preserving the agent's original interface.
+        Creates a graph-compatible node wrapper for agents.
         """
         async def agent_node(state: AssistantState) -> Dict[str, Any]:
             try:
@@ -224,10 +202,7 @@ class SimplifiedSupervisor:
 
     def _route_to_agent(self, state: AssistantState) -> str:
         """
-        ✅ MODULAR: Enhanced intelligent routing with configurable keywords.
-        
-        This method provides smart routing based on content analysis
-        while maintaining flexibility through configuration.
+        Enhanced intelligent routing with configurable keywords.
         """
         try:
             messages = state.get("messages", [])
@@ -252,7 +227,7 @@ class SimplifiedSupervisor:
                     logger.info(f"🎯 Empty content, routing to default: {self.config.default_agent}")
                 return self.config.default_agent
             
-            # ✅ MODULAR: Use configurable keyword matching
+            # Use configurable keyword matching
             for agent_name, keywords in self.config.routing_keywords.items():
                 if agent_name in self.agents:  # Only route to available agents
                     if any(keyword in content for keyword in keywords):
@@ -276,10 +251,7 @@ class SimplifiedSupervisor:
     
     async def process(self, state: AssistantState, config_dict: Dict[str, Any]) -> AssistantState:
         """
-        ✅ MODULAR: Process a request through the supervisor graph.
-        
-        This method provides comprehensive error handling and state management
-        while maintaining the clean interface.
+        Process a request through the supervisor graph.
         """
         try:
             if not self.supervisor_graph:
@@ -335,7 +307,7 @@ class SimplifiedSupervisor:
     
     def update_routing_keywords(self, agent_name: str, keywords: List[str]) -> None:
         """
-        ✅ MODULAR: Update routing keywords for a specific agent.
+        Update routing keywords for a specific agent.
         
         This allows dynamic configuration of routing behavior.
         """
@@ -352,7 +324,7 @@ class SimplifiedSupervisor:
     
     def set_configuration(self, new_config: SupervisorConfig) -> None:
         """
-        ✅ MODULAR: Update supervisor configuration.
+        Update supervisor configuration.
         
         Note: This requires reinitialization to take full effect.
         """

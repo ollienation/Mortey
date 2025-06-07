@@ -1,7 +1,3 @@
-# FIXED Checkpointer - LangGraph 0.4.8 (June 2025)
-# CRITICAL FIXES: Proper database setup without context manager issues
-# Based on official LangGraph documentation patterns
-
 import os
 import asyncio
 import sqlite3
@@ -14,16 +10,15 @@ logger = logging.getLogger("checkpointer")
 
 class CheckpointerFactory:
     """
-    ✅ FIXED Factory for creating modern checkpointers using LangGraph 0.4.8.
+    Factory for creating modern checkpointers using LangGraph 0.4.8.
     """
     @classmethod
     async def _create_async_postgres_checkpointer(cls):
         """
-        ✅ FINAL, DEFINITIVE FIX: Creates the checkpointer using the correct
+        Creates the checkpointer using
         `psycopg_pool` library that LangGraph's saver expects.
         """
         try:
-            # ✅ CRITICAL: Import from psycopg_pool, NOT asyncpg
             from psycopg_pool import AsyncConnectionPool
             from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 
@@ -34,15 +29,9 @@ class CheckpointerFactory:
 
             pool = None
             try:
-                # ✅ CRITICAL: Create the pool using AsyncConnectionPool from psycopg_pool
                 pool = AsyncConnectionPool(conninfo=conn_str)
-                
-                # The saver expects the pool object to be passed via the 'conn' argument
                 checkpointer = AsyncPostgresSaver(conn=pool)
-
-                # Directly await the setup coroutine to create tables
                 await checkpointer.setup()
-                
                 logger.info("✅ Async PostgreSQL checkpointer (psycopg_pool) instance created.")
                 return checkpointer 
                 
@@ -76,6 +65,24 @@ class CheckpointerFactory:
         else:
             logger.info("Using SYNC SQLite checkpointer for DEVELOPMENT environment.")
             return cls._create_sqlite_checkpointer_sync()
+
+    @classmethod
+    def create_checkpointer_async(cls, environment: str = "auto"):
+        """Create appropriate async checkpointer based on environment."""
+        if environment == "auto":
+            environment = cls._detect_environment()
+
+        logger.info(f"Attempting to create ASYNC checkpointer for determined environment: {environment}")
+        
+        if environment == "production":
+            pg_checkpointer = cls._create_postgres_checkpointer_async()
+            if pg_checkpointer and 'postgres' in type(pg_checkpointer).__name__.lower():
+                return pg_checkpointer
+            logger.warning("ASYNC PostgreSQL checkpointer failed. Using SQLite fallback.")
+            return cls._create_sqlite_checkpointer_async()
+        else:
+            logger.info("Using ASYNC SQLite checkpointer for DEVELOPMENT environment.")
+            return cls._create_sqlite_checkpointer_async()
 
     @classmethod
     def _detect_environment(cls) -> str:
@@ -252,7 +259,7 @@ async def create_checkpointer(
     environment: str = "auto",
     use_async: bool = True
 ) -> Any:
-    """Main entry point for creating checkpointers for June 2025."""
+    """Main entry point for creating checkpointers"""
     if use_async:   
         return await CheckpointerFactory.create_checkpointer_async(environment)
     else:

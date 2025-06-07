@@ -1,7 +1,3 @@
-# Enhanced FileSystemTools - LangGraph 0.4.8 Assistant
-# June 2025 - Production Ready WITH STANDARDIZED IMPORTS
-
-# ✅ STANDARD LIBRARY IMPORTS
 import os
 import json
 import shutil
@@ -12,42 +8,16 @@ import logging
 from typing import Dict, Any, List, Optional
 from pathlib import Path
 
-# ✅ THIRD-PARTY IMPORTS
 from langchain_core.tools import tool
 from langchain_community.agent_toolkits import FileManagementToolkit
 
-# ✅ LOCAL IMPORTS (absolute paths)
 from config.settings import config
-
-# ✅ OPTIONAL IMPORTS WITH ERROR HANDLING
-try:
-    import yaml
-    YAML_AVAILABLE = True
-except ImportError:
-    YAML_AVAILABLE = False
-    yaml = None
-
-try:
-    import csv
-    CSV_AVAILABLE = True
-except ImportError:
-    CSV_AVAILABLE = False
-    csv = None
 
 logger = logging.getLogger("file_tools")
 
 class FileSystemTools:
     """
-    Enhanced file system tools for LangGraph 0.4.8 Assistant
-    
-    Key improvements:
-    - Comprehensive file management capabilities
-    - Document search and summarization
-    - File format conversion
-    - Project structure creation
-    - Workspace organization
-    - Robust error handling
-    - Standardized imports
+    File system tools, duh
     """
     
     def __init__(self, workspace_dir: str = None):

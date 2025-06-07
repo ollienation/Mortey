@@ -28,10 +28,7 @@ class StateValidationError(Exception):
 
 class StateValidator:
     """
-    ✅ NEW: Comprehensive state validation and sanitization utilities.
-    
-    This class provides robust validation, sanitization, and migration
-    capabilities for AssistantState objects.
+    State validation and sanitization utilities.
     """
     
     @staticmethod
@@ -136,8 +133,6 @@ class StateValidator:
     def sanitize_state(state: Dict[str, Any]) -> AssistantState:
         """
         Sanitize and normalize a state dictionary to ensure it's valid.
-        
-        This method attempts to fix common issues with state objects.
         """
         try:
             # Create a clean state dictionary
@@ -215,7 +210,7 @@ def create_optimized_state(
     validate: bool = True
 ) -> AssistantState:
     """
-    ✅ ENHANCED: Creates a state dictionary that conforms to the AssistantState TypedDict.
+    Creates a state dictionary that conforms to the AssistantState TypedDict.
     
     Args:
         session_id: Session identifier
@@ -235,7 +230,7 @@ def create_optimized_state(
     # Apply initial context
     if initial_context:
         if "messages" in initial_context:
-            validated_messages = validate_and_filter_messages_v3(initial_context["messages"])
+            validated_messages = validate_and_filter_messages(initial_context["messages"])
             state_data["messages"] = validated_messages
         if "current_agent" in initial_context:
             state_data["current_agent"] = str(initial_context["current_agent"])
@@ -251,11 +246,9 @@ def create_optimized_state(
     
     return state_data
 
-def validate_and_filter_messages_v3(messages: List[BaseMessage]) -> List[BaseMessage]:
+def validate_and_filter_messages(messages: List[BaseMessage]) -> List[BaseMessage]:
     """
-    ✅ ENHANCED: Validates messages with comprehensive error checking.
-    
-    This version provides more robust validation and better error recovery.
+    Validates messages with comprehensive error checking.
     """
     if not messages:
         return []
@@ -264,10 +257,7 @@ def validate_and_filter_messages_v3(messages: List[BaseMessage]) -> List[BaseMes
 
 def safe_state_access(state: AssistantState, key: str, default: Any = None) -> Any:
     """
-    ✅ NEW: Safely access state fields with fallback values.
-    
-    This utility function provides safe access to state fields with
-    proper error handling and logging.
+    Safely access state fields with fallback values.
     """
     try:
         if not isinstance(state, dict):
@@ -294,9 +284,7 @@ def safe_state_access(state: AssistantState, key: str, default: Any = None) -> A
 
 def migrate_legacy_state(old_state: Dict[str, Any]) -> AssistantState:
     """
-    ✅ NEW: Migrate legacy state formats to current TypedDict format.
-    
-    This function handles backward compatibility with older state formats.
+    Migrate legacy state formats to current TypedDict format.
     """
     try:
         # Handle different legacy formats
@@ -312,7 +300,7 @@ def migrate_legacy_state(old_state: Dict[str, Any]) -> AssistantState:
         
         # Messages migration
         messages = old_state.get("messages", [])
-        migrated_state["messages"] = validate_and_filter_messages_v3(messages)
+        migrated_state["messages"] = validate_and_filter_messages(messages)
         
         # Remove any legacy fields that might cause issues
         legacy_fields = ["thread_id", "remaining_steps", "context", "metadata"]
@@ -327,7 +315,7 @@ def migrate_legacy_state(old_state: Dict[str, Any]) -> AssistantState:
 
 def get_state_summary(state: AssistantState) -> Dict[str, Any]:
     """
-    ✅ NEW: Get a summary of the current state for debugging and monitoring.
+    Get a summary of the current state for debugging and monitoring.
     """
     try:
         messages = safe_state_access(state, "messages", [])
@@ -352,17 +340,13 @@ def get_state_summary(state: AssistantState) -> Dict[str, Any]:
 
 # Aliases for backward compatibility
 create_assistant_state = create_optimized_state
-smart_trim_messages_v2 = lambda state, max_messages=15, **kwargs: {
-    "messages": safe_state_access(state, "messages", [])[-max_messages:]
-}
 
-# ✅ NEW: State performance optimization utilities
 def optimize_state_for_processing(state: AssistantState, max_messages: int = 20) -> AssistantState:
     """
     Optimize state for processing by limiting message history and cleaning up data.
     """
     try:
-        optimized_state = dict(state)  # Create a copy
+        optimized_state = dict(state) 
         
         # Limit message history to prevent context overflow
         messages = safe_state_access(state, "messages", [])

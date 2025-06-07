@@ -1,4 +1,3 @@
-# core/assistant_core.py - ✅ ENHANCED WITH DATABASE PERSISTENCE
 import asyncio
 import os
 import time
@@ -11,16 +10,13 @@ from datetime import datetime, timedelta
 
 import logging
 
-# ✅ UPDATED: Modern LangGraph imports for 0.4.8
 from langgraph.graph import StateGraph
 from langgraph.graph.message import MessagesState
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langsmith import traceable
 
-# ✅ UPDATED: Import the simplified supervisor class
-from core.simplified_supervisor import SimplifiedSupervisor
+from core.supervisor import Supervisor
 
-# Core components with corrected imports
 from core.state import (
     AssistantState,
     create_optimized_state,
@@ -38,7 +34,7 @@ logger = logging.getLogger("assistant")
 
 @dataclass
 class AssistantSession:
-    """Enhanced session management for assistant conversations with persistence"""
+    """Session management for assistant conversations with persistence"""
     session_id: str
     user_id: str
     start_time: float
@@ -61,7 +57,7 @@ class AssistantSession:
             self.last_interaction = self.start_time
     
     def update_metrics(self, token_count: int = 0, agent_used: str = "", topic: str = ""):
-        """Update session metrics with enhanced tracking"""
+        """Update session metrics with tracking"""
         self.message_count += 1
         self.last_interaction = time.time()
         self.total_tokens_used += token_count
@@ -111,7 +107,7 @@ class AssistantSession:
         }
 
 class SessionPersistenceManager:
-    """✅ NEW: Manages session persistence using database storage"""
+    """Manages session persistence using database storage"""
     
     def __init__(self, checkpointer):
         self.checkpointer = checkpointer
@@ -360,7 +356,7 @@ class SessionPersistenceManager:
 
 class AssistantCore:
     """
-    ✅ ENHANCED: Complete assistant core implementation with persistent session management
+    Assistant core implementation with persistent session management
     """
     
     def __init__(self):
@@ -377,7 +373,7 @@ class AssistantCore:
         # Concurrency control
         self._session_semaphore = asyncio.Semaphore(3)
         
-        # ✅ ENHANCED: Session management with persistence
+        # Session management with persistence
         self._sessions: Dict[str, AssistantSession] = {}
         self._session_persistence: Optional[SessionPersistenceManager] = None
         self._session_cleanup_interval = 3600  # 1 hour
@@ -385,7 +381,7 @@ class AssistantCore:
         self._session_expiry_hours = 24  # Sessions expire after 24 hours
         
     async def initialize(self):
-        """Initialize assistant core components with enhanced session management"""
+        """Initialize assistant core components with session management"""
         try:
             logger.info("🚀 Initializing Assistant Core...")
             
@@ -393,7 +389,7 @@ class AssistantCore:
             self.checkpointer = await create_checkpointer(use_async=True)
             logger.info("✅ Checkpointer initialized")
             
-            # ✅ NEW: Initialize session persistence
+            # Initialize session persistence
             self._session_persistence = SessionPersistenceManager(self.checkpointer)
             await self._initialize_session_storage()
             
@@ -417,7 +413,7 @@ class AssistantCore:
             raise
     
     async def _initialize_session_storage(self):
-        """✅ NEW: Initialize session storage table if using database"""
+        """Initialize session storage table if using database"""
         try:
             if hasattr(self.checkpointer, 'conn') and hasattr(self.checkpointer, '_execute_query'):
                 # Create sessions table if it doesn't exist
@@ -440,7 +436,7 @@ class AssistantCore:
             logger.warning(f"⚠️ Could not initialize session storage table: {e}")
     
     async def _get_or_create_session(self, thread_id: str, user_id: str) -> AssistantSession:
-        """✅ ENHANCED: Session management with database persistence and recovery"""
+        """Session management with database persistence and recovery"""
         session_id = thread_id or str(uuid.uuid4())
         
         # Check if session exists in memory
@@ -486,7 +482,7 @@ class AssistantCore:
         return session
     
     async def _cleanup_expired_sessions(self):
-        """✅ ENHANCED: Clean up expired sessions from both memory and storage"""
+        """Clean up expired sessions from both memory and storage"""
         try:
             current_time = time.time()
             
@@ -520,7 +516,7 @@ class AssistantCore:
             logger.error(f"Error during session cleanup: {e}")
     
     def _extract_response_comprehensively(self, result: Dict[str, Any], session: AssistantSession) -> Dict[str, Any]:
-        """✅ ENHANCED: Comprehensive response extraction with session persistence"""
+        """Comprehensive response extraction with session persistence"""
         try:
             response_content = ""
             agent_used = safe_state_access(result, 'current_agent', 'unknown')
@@ -568,7 +564,7 @@ class AssistantCore:
             except:
                 tokens_used = 0
             
-            # ✅ ENHANCED: Update session with agent usage and save to storage
+            # Update session with agent usage and save to storage
             if session:
                 # Determine topic from response content (simple keyword extraction) 
                 topic = self._extract_topic_from_response(response_content)
@@ -602,7 +598,7 @@ class AssistantCore:
             }
     
     def _extract_topic_from_response(self, response: str) -> str:
-        """✅ NEW: Simple topic extraction from response content"""
+        """Simple topic extraction from response content"""
         response_lower = response.lower()
         
         # Simple keyword-based topic detection
@@ -621,7 +617,7 @@ class AssistantCore:
         return "general"
     
     async def get_user_session_history(self, user_id: str, limit: int = 10) -> List[Dict[str, Any]]:
-        """✅ NEW: Get session history for a user"""
+        """Get session history for a user"""
         if not self._session_persistence:
             return []
         
@@ -632,7 +628,7 @@ class AssistantCore:
             return []
     
     async def restore_session(self, session_id: str) -> Optional[Dict[str, Any]]:
-        """✅ NEW: Restore a previous session"""
+        """Restore a previous session"""
         if not self._session_persistence:
             return None
         
@@ -649,7 +645,7 @@ class AssistantCore:
             return None
     
     def get_session_info(self) -> Dict[str, Any]:
-        """✅ ENHANCED: Get comprehensive session information with persistence data"""
+        """Get comprehensive session information with persistence data"""
         base_info = {
             "status": "no_active_session",
             "total_active_sessions": len(self._sessions),
@@ -671,7 +667,7 @@ class AssistantCore:
         return session_info
     
     async def graceful_shutdown(self):
-        """✅ ENHANCED: Graceful shutdown with session persistence"""
+        """Graceful shutdown with session persistence"""
         try:
             logger.info("🔄 Initiating graceful shutdown...")
             
@@ -700,6 +696,3 @@ class AssistantCore:
             
         except Exception as e:
             logger.error(f"Error during graceful shutdown: {e}")
-
-    # [Previous methods like _attempt_fallback_initialization, _initialize_supervisor, 
-    #  process_message, _sanitize_user_input, etc. remain the same as in your uploaded file]

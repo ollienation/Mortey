@@ -339,13 +339,13 @@
 - Error handling and graceful degradation
 - Performance with concurrent sessions and message processing
 
-## **File 8: `simplified_supervisor.py`**
+## **File 8: `supervisor.py`**
 
 ### **What Should Be Tested:**
 
 **Main Classes:**
 
-- `SimplifiedSupervisor` class - The core supervisor with intelligent routing
+- `Supervisor` class - The core supervisor with intelligent routing
 - `SupervisorConfig` dataclass - Configuration management for supervisor behavior
 - `SupervisorError` custom exception class
 

@@ -1,6 +1,3 @@
-# LLM Configuration for Mortey Assistant
-# June 2025 - Production Ready
-
 global:
   default_provider: "anthropic"
   fallback_provider: "openai"
