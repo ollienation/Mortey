@@ -295,7 +295,7 @@ class Supervisor:
         # Fallback to default agent
         return self.config.default_agent
     
-    async def process(self, state: AssistantState, config_dict: dict[str, Any]) -> AssistantState:
+    async def process(self, state: AssistantState) -> AssistantState:
         """
         Process a request through the supervisor graph with enhanced error handling.
         """
@@ -310,7 +310,7 @@ class Supervisor:
             # Process through the graph with timeout protection
             import asyncio
             result = await asyncio.wait_for(
-                self.supervisor_graph.ainvoke(state, config_dict),
+                self.supervisor_graph.ainvoke(state),  # Remove config parameter
                 timeout=300.0  # 5 minute timeout
             )
             
