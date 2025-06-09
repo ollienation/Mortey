@@ -19,6 +19,7 @@ from langchain_community.agent_toolkits import FileManagementToolkit
 
 from config.settings import config
 from core.error_handling import ErrorHandler
+from core.circuit_breaker import global_circuit_breaker
 
 logger = logging.getLogger("file_tools")
 

@@ -1,0 +1,30 @@
+# CENTRAL PROVIDER REGISTRY
+version: "1.0"
+active_providers:
+  - openai
+  - anthropic
+
+default_provider: "openai"
+fallback_provider: "anthropic"
+
+# Global settings applied to all providers
+global:
+  retry_attempts: 3
+  request_timeout: 30
+  enable_caching: true
+  max_concurrent_requests: 10
+
+# Provider loading order (for fallback chains)
+provider_priority:
+  - openai
+  - anthropic
+  - google
+  - azure
+  - aws
+
+# Feature flags
+features:
+  function_calling: true
+  streaming: true
+  embeddings: true
+  vision: false

@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from asyncio import TaskGroup  # Python 3.13.4 TaskGroup
 
-from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import Runnable, RunnableLambda
 from langchain.agents import create_tool_calling_agent, AgentExecutor
@@ -263,48 +263,33 @@ You prioritize data safety and organization efficiency.""",
             logger.error(f"Web tools initialization failed: {e}")
             return []
     
-    async def _create_agent_async(self, name: str, agent_config: AgentConfig) -> Any:  # Python 3.13.4 syntax
-        """Create individual agent asynchronously with enhanced error handling"""
+    async def _create_agent_async(self, name: str, agent_config: AgentConfig) -> Any:
+        """Create individual agent with 2025 unified approach"""
         try:
-            # Get LLM for this agent
-            llm = await self._get_agent_llm(agent_config.llm_node)
+            # ✅ 2025: Use LLM manager for ALL providers (no special cases)
+            llm = await self._get_agent_llm_unified(agent_config.llm_node)
             
-            # Create prompt template with enhanced structure
+            # Create prompt template
             prompt = await self._create_agent_prompt(agent_config)
             
             # Get tools for this agent
             agent_tools = self._get_agent_tools(agent_config)
             
             if agent_config.tools_enabled and agent_tools:
-                # Check if LLM supports tool calling by trying to bind tools
-                try:
-                    # Test tool binding - Anthropic models should support this
-                    test_llm = llm.bind_tools(agent_tools[:1])  # Test with one tool
-                    
-                    # Create tool-calling agent
-                    agent = create_tool_calling_agent(llm, agent_tools, prompt)
-                    
-                    # Wrap in AgentExecutor with enhanced configuration
-                    agent_executor = AgentExecutor(
-                        agent=agent,
-                        tools=agent_tools,
-                        max_iterations=agent_config.max_iterations,
-                        early_stopping_method=agent_config.early_stopping_method,
-                        handle_parsing_errors=agent_config.handle_parsing_errors,
-                        verbose=agent_config.verbose,
-                        return_intermediate_steps=True
-                    )
-                    
-                    logger.info(f"✅ Tool-calling agent created for {name} with {len(agent_tools)} tools")
-                    return self._wrap_agent_with_protection(agent_executor, name)
-                    
-                except Exception as tool_error:
-                    logger.warning(f"⚠️ Tool binding failed for {name}: {tool_error}")
-                    # Fallback to simple conversational agent
-                    chain = prompt | llm
-                    return self._wrap_agent_with_protection(chain, name)
+                # ✅ 2025: Unified tool agent creation for ALL providers
+                agent = create_tool_calling_agent(llm, agent_tools, prompt)
+                
+                executor = AgentExecutor(
+                    agent=agent,
+                    tools=agent_tools,
+                    max_iterations=agent_config.max_iterations,
+                    verbose=agent_config.verbose,
+                    return_intermediate_steps=True
+                )
+                
+                return self._wrap_agent_with_protection(executor, name)
             else:
-                # Create simple conversational agent
+                # Simple conversational agent
                 chain = prompt | llm
                 return self._wrap_agent_with_protection(chain, name)
                 
@@ -312,17 +297,16 @@ You prioritize data safety and organization efficiency.""",
             logger.error(f"Error creating agent {name}: {e}")
             raise
 
-    
-    async def _get_agent_llm(self, llm_node: str) -> Any:  # Python 3.13.4 syntax
-        """Get LLM instance for agent with circuit breaker protection"""
+    async def _get_agent_llm_unified(self, llm_node: str) -> Any:
+        """Get LLM instance using unified 2025 approach"""
         try:
-            # Test the LLM node to ensure it's working
-            test_response = await llm_manager.generate_for_node(llm_node, "test", override_max_tokens=1)
-            
-            # Get the actual model instance for tool binding
+            # ✅ 2025: Use LLM manager for ALL providers (OpenAI, Anthropic, etc.)
             model = await llm_manager._get_model(llm_node)
             
-            # Return the model directly for tool calling agents
+            # Test the model
+            test_response = await llm_manager.generate_for_node(llm_node, "test")
+            logger.debug(f"✅ LLM model {llm_node} working")
+            
             return model
             
         except Exception as e:
@@ -330,8 +314,72 @@ You prioritize data safety and organization efficiency.""",
             raise
 
 
+    async def _create_openai_tool_agent(self, llm, agent_tools, prompt, agent_config):
+        """Create OpenAI-optimized tool agent with MODERN format"""
+        try:
+            # ✅ USE MODERN TOOL CALLING (works with current OpenAI API)
+            agent = create_tool_calling_agent(llm, agent_tools, prompt)
+            
+            return AgentExecutor(
+                agent=agent,
+                tools=agent_tools,
+                max_iterations=agent_config.max_iterations,
+                verbose=agent_config.verbose,
+                return_intermediate_steps=True
+            )
+        except ImportError:
+            # Fallback to generic tool agent
+            return await self._create_generic_tool_agent(llm, agent_tools, prompt, agent_config)
+
+    async def _create_generic_tool_agent(self, llm, agent_tools, prompt, agent_config):
+        """Create generic tool agent (works with all providers)"""
+        try:
+            # Test tool binding
+            test_llm = llm.bind_tools(agent_tools[:1])
+            
+            # Create tool-calling agent
+            agent = create_tool_calling_agent(llm, agent_tools, prompt)
+            
+            return AgentExecutor(
+                agent=agent,
+                tools=agent_tools,
+                max_iterations=agent_config.max_iterations,
+                early_stopping_method=agent_config.early_stopping_method,
+                handle_parsing_errors=agent_config.handle_parsing_errors,
+                verbose=agent_config.verbose,
+                return_intermediate_steps=True
+            )
+            
+        except Exception as tool_error:
+            logger.warning(f"⚠️ Tool binding failed: {tool_error}")
+            # Fallback to simple conversational chain
+            chain = prompt | llm
+            return chain
+
+    async def _get_agent_llm(self, llm_node: str) -> Any:
+        """Get LLM instance for agent with provider awareness"""
+        try:
+            # Get node configuration to determine provider
+            node_config = config.llm_config['nodes'].get(llm_node, {})
+            provider = node_config.get('provider', 'anthropic')
+            
+            # 🔥 MODULAR: Handle different providers
+            if provider == 'openai':
+                # Use OpenAI directly for better function calling
+                return await self._get_openai_model(llm_node, node_config)
+            elif provider == 'anthropic':
+                # Use Anthropic through LLM manager
+                return await self._get_anthropic_model(llm_node)
+            else:
+                # Fallback to LLM manager for other providers
+                return await llm_manager._get_model(llm_node)
+                
+        except Exception as e:
+            logger.error(f"Failed to get LLM for node {llm_node}: {e}")
+            raise
+
     async def _create_agent_prompt(self, agent_config: AgentConfig) -> ChatPromptTemplate:
-        """Create enhanced prompt template for agent"""
+        """Create 2025-compatible prompt template for agent"""
         try:
             # Base system message
             system_message = agent_config.system_prompt
@@ -340,31 +388,30 @@ You prioritize data safety and organization efficiency.""",
             if agent_config.custom_instructions:
                 system_message += f"\n\nAdditional Instructions:\n{agent_config.custom_instructions}"
             
-            # Create appropriate prompt template based on tools availability
+            # ✅ 2025 MODERN PROMPT FORMAT for tool-calling agents
             if agent_config.tools_enabled and agent_config.tool_names:
-                # Check if we can actually use tools
                 tool_info = self._generate_tool_info(agent_config.tool_names)
                 if tool_info != "No tools available":
                     system_message += f"\n\nAvailable Tools:\n{tool_info}"
                     
-                    # Tool-calling agent prompt
+                    # Modern tool-calling agent prompt (2025)
                     prompt = ChatPromptTemplate.from_messages([
                         ("system", system_message),
-                        MessagesPlaceholder(variable_name="chat_history", optional=True),
+                        ("placeholder", "{chat_history}"),
                         ("human", "{input}"),
-                        MessagesPlaceholder(variable_name="agent_scratchpad")
+                        ("placeholder", "{agent_scratchpad}")
                     ])
                 else:
                     # Simple conversational agent prompt
                     prompt = ChatPromptTemplate.from_messages([
                         ("system", system_message),
-                        MessagesPlaceholder(variable_name="messages")
+                        ("placeholder", "{messages}")
                     ])
             else:
                 # Simple conversational agent prompt
                 prompt = ChatPromptTemplate.from_messages([
                     ("system", system_message),
-                    MessagesPlaceholder(variable_name="messages")
+                    ("placeholder", "{messages}")
                 ])
             
             return prompt
@@ -372,7 +419,6 @@ You prioritize data safety and organization efficiency.""",
         except Exception as e:
             logger.error(f"Error creating prompt for {agent_config.name}: {e}")
             raise
-
     
     def _generate_tool_info(self, tool_names: list[str]) -> str:  # Python 3.13.4 syntax
         """Generate tool information for prompt"""
@@ -402,34 +448,74 @@ You prioritize data safety and organization efficiency.""",
         
         return agent_tools
     
-    def _wrap_agent_with_protection(self, agent: Any, name: str) -> Any:  # Python 3.13.4 syntax
-        """Wrap agent with error handling and circuit breaker protection"""
-        async def protected_agent(state: AssistantState) -> dict[str, Any]:  # Python 3.13.4 syntax
-            try:
-                # Enhanced state processing using match-case (Python 3.13.4)
-                match name:
-                    case "chat":
-                        return await self._process_chat_agent(agent, state)
-                    case "coder":
-                        return await self._process_tool_agent(agent, state, "coding")
-                    case "web":
-                        return await self._process_tool_agent(agent, state, "web_search")
-                    case "file_manager":
-                        return await self._process_tool_agent(agent, state, "file_management")
-                    case _:
-                        return await self._process_generic_agent(agent, state)
+    def _wrap_agent_with_protection(self, agent: Any, name: str) -> Any:
+        """Wrap agent with protection while preserving ainvoke method"""
+        
+        # Get agent config to determine if it's a tool agent
+        agent_config = self._agent_configs.get(name)
+        
+        class ProtectedAgent:
+            def __init__(self, agent, name, agent_config):
+                self.agent = agent
+                self.name = name
+                self.agent_config = agent_config
+            
+            async def ainvoke(self, state, config=None):
+                """Preserve ainvoke method with proper state conversion"""
+                try:
+                    # 🔥 CRITICAL FIX: Convert state format based on agent type
+                    if self.agent_config and self.agent_config.tools_enabled:
+                        # Tool agents need input format
+                        converted_state = self._convert_state_for_tool_agent(state)
+                    else:
+                        # Chat agents use messages directly
+                        converted_state = state
+                    
+                    result = await self.agent.ainvoke(converted_state, config)
+                    
+                    # Ensure result is always a dict with messages
+                    if isinstance(result, dict):
+                        return result
+                    elif hasattr(result, 'content'):
+                        return {"messages": [result]}
+                    else:
+                        from langchain_core.messages import AIMessage
+                        return {"messages": [AIMessage(content=str(result))]}
                         
-            except Exception as e:
-                logger.error(f"Agent {name} execution failed: {e}")
-                error_response = await ErrorHandler.handle_error(e, f"agent_{name}")
+                except Exception as e:
+                    logger.error(f"❌ Agent {self.name} execution failed: {e}")
+                    from langchain_core.messages import AIMessage
+                    return {
+                        "messages": [AIMessage(content="I encountered an issue. Please try rephrasing your request.")]
+                    }
+            
+            def _convert_state_for_tool_agent(self, state):
+                """Convert AssistantState to tool agent input format"""
+                messages = state.get("messages", [])
+                
+                # Extract last human message for input
+                last_human_input = "Hello"
+                chat_history = []
+                
+                for msg in messages:
+                    if hasattr(msg, 'content') and hasattr(msg, 'type'):
+                        if getattr(msg, 'type', '') == 'human':
+                            last_human_input = msg.content
+                        else:
+                            chat_history.append(msg)
                 
                 return {
-                    "messages": [AIMessage(content=error_response.get("response", "I encountered an issue. Please try again."))],
-                    "current_agent": name
+                    "input": last_human_input,
+                    "chat_history": chat_history[:-1] if len(chat_history) > 1 else [],
                 }
+            
+            def __getattr__(self, attr_name):
+                """Delegate other methods to the wrapped agent"""
+                return getattr(self.agent, attr_name)
         
-        return protected_agent
-    
+        return ProtectedAgent(agent, name, agent_config)
+
+
     async def _process_chat_agent(self, agent: Any, state: AssistantState) -> dict[str, Any]:  # Python 3.13.4 syntax
         """Process chat agent with simple conversation flow"""
         messages = state.get("messages", [])
@@ -446,7 +532,7 @@ You prioritize data safety and organization efficiency.""",
         else:
             return {"messages": [AIMessage(content=str(result))]}
 
-    async def _process_tool_agent(self, agent: Any, state: AssistantState, context: str) -> dict[str, Any]:  # Python 3.13.4 syntax
+    async def _process_tool_agent(self, agent: Any, state: AssistantState, context: str) -> dict[str, Any]:
         """Process tool-enabled agent with enhanced error handling"""
         messages = state.get("messages", [])
         
@@ -462,24 +548,31 @@ You prioritize data safety and organization efficiency.""",
                 "messages": [AIMessage(content="I need a message to respond to.")]
             }
         
-        # Prepare input for agent executor - FIX: Remove intermediate_steps from input
         agent_input = {
-            "input": last_human_message.content  # Only pass the input, let AgentExecutor handle intermediate_steps
+            "input": last_human_message.content,
+            "chat_history": messages[:-1] if len(messages) > 1 else []  # All except last message
         }
         
-        # Use circuit breaker protection
-        result = await global_circuit_breaker.call_with_circuit_breaker(
-            f"{context}_agent",
-            agent.ainvoke,
-            agent_input
-        )
-        
-        # Extract output
-        if isinstance(result, dict):
-            output = result.get("output", str(result))
-            return {"messages": [AIMessage(content=output)]}
-        else:
-            return {"messages": [AIMessage(content=str(result))]}
+        try:
+            # Use circuit breaker protection
+            result = await global_circuit_breaker.call_with_circuit_breaker(
+                f"{context}_agent",
+                agent.ainvoke,
+                agent_input
+            )
+            
+            # Extract output properly
+            if isinstance(result, dict) and "output" in result:
+                output = result["output"]
+                return {"messages": [AIMessage(content=output)]}
+            else:
+                return {"messages": [AIMessage(content=str(result))]}
+                
+        except Exception as e:
+            logger.error(f"Tool agent {context} execution failed: {e}")
+            return {
+                "messages": [AIMessage(content=f"I encountered an issue while processing your request. Error: {str(e)}")]
+            }
     
     async def _process_generic_agent(self, agent: Any, state: AssistantState) -> dict[str, Any]:  # Python 3.13.4 syntax
         """Process generic agent with fallback handling"""
@@ -547,23 +640,52 @@ You prioritize data safety and organization efficiency.""",
             name: self.get_agent_info(name)
             for name in self._agent_configs.keys()
         }
-    
-    async def health_check_agents(self) -> dict[str, bool]:  # Python 3.13.4 syntax
-        """Perform health check on all agents using TaskGroup"""
+
+    async def health_check_agents(self) -> dict[str, bool]:
+        """Perform health check on all agents using TaskGroup - FIXED"""
+        results = {}
+        
         try:
-            async with TaskGroup() as tg:
-                tasks = {
-                    name: tg.create_task(self._health_check_agent(name))
-                    for name in self.agents.keys()
-                }
+            tasks_and_names = []
             
-            return {
-                name: task.result()
-                for name, task in tasks.items()
-            }
+            async with asyncio.TaskGroup() as tg:
+                for agent_name in self.agents.keys():
+                    try:
+                        task = tg.create_task(self._safe_health_check_agent(agent_name))
+                        tasks_and_names.append((agent_name, task))
+                    except Exception as e:
+                        logger.warning(f"⚠️ Failed to create health check task for agent {agent_name}: {e}")
+                        results[agent_name] = False
+            
+            # Collect results
+            for agent_name, task in tasks_and_names:
+                try:
+                    results[agent_name] = task.result()
+                except Exception as e:
+                    logger.warning(f"⚠️ Agent health check failed for {agent_name}: {e}")
+                    results[agent_name] = False
+            
+            return results
+            
+        except* Exception as eg:  # 🔥 FIX: Handle exception group without return
+            logger.error(f"❌ Agent health check TaskGroup failed with {len(eg.exceptions)} exceptions")
+            for exc in eg.exceptions:
+                logger.error(f"  Agent health check exception: {exc}")
+            
+            # Set all agents as unhealthy and fall through to return
+            for agent_name in self.agents.keys():
+                if agent_name not in results:
+                    results[agent_name] = False
+        
+        return results
+
+    async def _safe_health_check_agent(self, agent_name: str) -> bool:
+        """Safe wrapper for agent health check that never raises exceptions"""
+        try:
+            return await self._health_check_agent(agent_name)
         except Exception as e:
-            logger.error(f"Agent health check failed: {e}")
-            return {name: False for name in self.agents.keys()}
+            logger.debug(f"Agent health check failed for {agent_name}: {e}")
+            return False
     
     async def _health_check_agent(self, agent_name: str) -> bool:
         """Health check for individual agent"""
@@ -581,7 +703,7 @@ You prioritize data safety and organization efficiency.""",
             
             # Test agent with timeout
             result = await asyncio.wait_for(
-                self.agents[agent_name](test_state),
+                self.agents[agent_name].ainvoke(test_state),
                 timeout=10.0
             )
             

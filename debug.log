@@ -1,0 +1,660 @@
+2025-06-09 01:02:43,955 - asyncio - DEBUG - Using selector: EpollSelector
+2025-06-09 01:02:43,956 - debug - INFO - 
+🔍 Testing: Environment Setup
+2025-06-09 01:02:43,956 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:02:43,965 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 01:02:43,965 - settings - DEBUG - ✅ Directory ensured: /home/user/morteydev/workspace
+2025-06-09 01:02:43,965 - settings - DEBUG - ✅ Directory ensured: /home/user/morteydev/config
+2025-06-09 01:02:43,966 - settings - DEBUG - ✅ Directory ensured: /home/user/morteydev/logs
+2025-06-09 01:02:43,968 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 01:02:43,968 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 01:02:43,970 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 01:02:43,973 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 01:02:43,976 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 01:02:43,979 - settings - DEBUG - ✅ Node chat configured with model gpt-4.1-mini
+2025-06-09 01:02:43,982 - settings - DEBUG - ✅ Node coder configured with model o3
+2025-06-09 01:02:43,984 - settings - DEBUG - ✅ Node web configured with model gpt-4.1-mini
+2025-06-09 01:02:43,987 - settings - DEBUG - ✅ Node file_manager configured with model gpt-4.1
+2025-06-09 01:02:43,987 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 01:02:43,996 - settings - DEBUG - ✅ Provider registry initialized and validated
+2025-06-09 01:02:43,996 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 01:02:43,996 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 01:02:43,996 - debug - INFO - ✅ Environment Setup: Environment OK - Python 3.13, all vars and dirs present
+2025-06-09 01:02:43,996 - debug - DEBUG - ⏸️ Pausing 0.5s after lightweight test...
+2025-06-09 01:02:44,497 - debug - INFO - 
+🔍 Testing: Configuration Loading
+2025-06-09 01:02:44,498 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:02:44,498 - debug - DEBUG - Testing configuration loading...
+2025-06-09 01:02:44,599 - debug - INFO - ✅ Configuration Loading: Config loaded successfully - 2 providers, 4 nodes
+2025-06-09 01:02:44,599 - debug - DEBUG - ⏸️ Pausing 0.5s after lightweight test...
+2025-06-09 01:02:45,100 - debug - INFO - 
+🔍 Testing: Checkpointer Initialization
+2025-06-09 01:02:45,100 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:02:45,270 - debug - DEBUG - Testing checkpointer factory...
+2025-06-09 01:02:45,270 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 01:02:45,270 - checkpointer - DEBUG - 🔍 Environment detected from ENVIRONMENT var: production
+2025-06-09 01:02:45,270 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 01:02:45,285 - checkpointer - INFO - ✅ LangGraph 0.4.8 async PostgreSQL checkpointer created
+2025-06-09 01:02:45,285 - checkpointer - INFO - ✅ Production async PostgreSQL checkpointer created
+2025-06-09 01:02:45,287 - debug - INFO - ✅ Checkpointer Initialization: Checkpointer factory working - Type: AsyncPostgresSaver
+2025-06-09 01:02:45,287 - debug - DEBUG - ⏸️ Pausing 1.0s after medium test...
+2025-06-09 01:02:46,288 - debug - INFO - 
+🔍 Testing: LLM Manager
+2025-06-09 01:02:46,289 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:02:46,862 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 01:02:46,862 - debug - DEBUG - Testing LLM manager...
+2025-06-09 01:02:46,862 - llm_manager - DEBUG - 🔍 Starting LLM Manager health check...
+2025-06-09 01:02:46,865 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.smith.langchain.com:443
+2025-06-09 01:02:46,866 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.smith.langchain.com:443
+2025-06-09 01:02:46,993 - llm_manager - INFO - ✅ Cached new model: anthropic:claude-sonnet-4-20250514:0.0:5
+2025-06-09 01:02:47,150 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "GET /info HTTP/1.1" 200 748
+2025-06-09 01:02:47,216 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1:0.0:5
+2025-06-09 01:02:47,231 - langsmith.client - DEBUG - Sending multipart request with context: trace=fbc8b5ea-6936-427b-a54f-56e26981d35c,id=fbc8b5ea-6936-427b-a54f-56e26981d35c
+2025-06-09 01:02:47,232 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.smith.langchain.com:443
+2025-06-09 01:02:47,728 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=fbc8b5ea-6936-427b-a54f-56e26981d35c,id=9f66759c-7b8d-4fcd-9a72-c984851a34c6
+2025-06-09 01:02:47,731 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (2): api.smith.langchain.com:443
+2025-06-09 01:02:50,115 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "GET /info HTTP/1.1" 200 748
+2025-06-09 01:02:50,168 - langsmith.client - DEBUG - Sending multipart request with context: trace=c80104b8-d49a-492c-9947-f6b6bde60725,id=c80104b8-d49a-492c-9947-f6b6bde60725; trace=c80104b8-d49a-492c-9947-f6b6bde60725,id=c0e86405-a1c0-465b-9597-c8dc618e13fb
+2025-06-09 01:02:50,169 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.smith.langchain.com:443
+2025-06-09 01:02:50,341 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:02:52,573 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:02:56,875 - llm_manager - DEBUG - ✅ LLM Manager health check completed - Status: degraded
+2025-06-09 01:02:56,879 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:02:57,380 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=c80104b8-d49a-492c-9947-f6b6bde60725,id=c80104b8-d49a-492c-9947-f6b6bde60725
+2025-06-09 01:02:57,590 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:02:57,758 - urllib3.util.retry - DEBUG - Incremented Retry for (url='/runs/multipart'): LangSmithRetry(total=2, connect=None, read=None, redirect=None, status=None)
+2025-06-09 01:02:57,759 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (3): api.smith.langchain.com:443
+2025-06-09 01:02:58,025 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:02:58,531 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=fbc8b5ea-6936-427b-a54f-56e26981d35c,id=9f66759c-7b8d-4fcd-9a72-c984851a34c6; trace=fbc8b5ea-6936-427b-a54f-56e26981d35c,id=fbc8b5ea-6936-427b-a54f-56e26981d35c; trace=14f8e987-c952-475b-a8a9-40d98b183122,id=14f8e987-c952-475b-a8a9-40d98b183122; trace=14f8e987-c952-475b-a8a9-40d98b183122,id=8633ea33-7996-411b-b1db-4d3d36379258
+2025-06-09 01:02:58,716 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:15,112 - debug - INFO - ✅ LLM Manager: LLM Manager working - Generated 66 chars
+2025-06-09 01:03:15,112 - debug - DEBUG - ⏸️ Pausing 2.0s after heavy test...
+2025-06-09 01:03:15,617 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=14f8e987-c952-475b-a8a9-40d98b183122,id=8633ea33-7996-411b-b1db-4d3d36379258; trace=14f8e987-c952-475b-a8a9-40d98b183122,id=14f8e987-c952-475b-a8a9-40d98b183122
+2025-06-09 01:03:15,817 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:17,175 - debug - INFO - 
+🔍 Testing: Agent Factory
+2025-06-09 01:03:17,176 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:03:17,202 - langsmith.client - DEBUG - Client refs count indicates we're the only remaining reference to the client, stopping compression thread
+2025-06-09 01:03:17,203 - langsmith.client - DEBUG - Compressed traces control thread is shutting down
+2025-06-09 01:03:17,411 - langsmith.client - DEBUG - Client refs count indicates we're the only remaining reference to the client, stopping tracing thread
+2025-06-09 01:03:17,412 - langsmith.client - DEBUG - Tracing control thread is shutting down
+2025-06-09 01:03:17,538 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 01:03:17,538 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 01:03:17,562 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 01:03:17,562 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 01:03:17,562 - debug - DEBUG - Testing agent factory...
+2025-06-09 01:03:17,575 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 01:03:17,576 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 01:03:17,581 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 01:03:17,582 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:17,582 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 01:03:17,582 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:17,583 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:17,585 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:17,586 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:17,590 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:17,590 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:18,098 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=1332ad1e-ad6c-49f2-aa7f-7d633177732a,id=1332ad1e-ad6c-49f2-aa7f-7d633177732a; trace=c064e43e-d396-467b-86dd-d823eae3a531,id=c064e43e-d396-467b-86dd-d823eae3a531; trace=1332ad1e-ad6c-49f2-aa7f-7d633177732a,id=0feb2e33-b7e5-4f66-aa2d-35dd3f12f64d; trace=032fe48f-a0bd-4ec1-bb67-0b0bbdf21d4e,id=032fe48f-a0bd-4ec1-bb67-0b0bbdf21d4e; trace=4502abac-483d-4b42-8406-1845b8c4faa4,id=4502abac-483d-4b42-8406-1845b8c4faa4; trace=c064e43e-d396-467b-86dd-d823eae3a531,id=4ebedbed-b680-4785-8acd-0d9338b53feb; trace=032fe48f-a0bd-4ec1-bb67-0b0bbdf21d4e,id=22a0a25e-2238-4a4d-8819-782ef98f8aa4; trace=4502abac-483d-4b42-8406-1845b8c4faa4,id=663b27ba-5342-497d-b383-d4994128b6df
+2025-06-09 01:03:18,268 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:18,695 - agents - DEBUG - ✅ LLM model web working
+2025-06-09 01:03:18,725 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:19,007 - agents - DEBUG - ✅ LLM model coder working
+2025-06-09 01:03:19,040 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:19,041 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 01:03:19,041 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 01:03:19,041 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 01:03:19,041 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 01:03:19,041 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 01:03:19,639 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=4502abac-483d-4b42-8406-1845b8c4faa4,id=663b27ba-5342-497d-b383-d4994128b6df; trace=4502abac-483d-4b42-8406-1845b8c4faa4,id=4502abac-483d-4b42-8406-1845b8c4faa4; trace=032fe48f-a0bd-4ec1-bb67-0b0bbdf21d4e,id=22a0a25e-2238-4a4d-8819-782ef98f8aa4; trace=032fe48f-a0bd-4ec1-bb67-0b0bbdf21d4e,id=032fe48f-a0bd-4ec1-bb67-0b0bbdf21d4e; trace=c064e43e-d396-467b-86dd-d823eae3a531,id=4ebedbed-b680-4785-8acd-0d9338b53feb; trace=1332ad1e-ad6c-49f2-aa7f-7d633177732a,id=0feb2e33-b7e5-4f66-aa2d-35dd3f12f64d; trace=1332ad1e-ad6c-49f2-aa7f-7d633177732a,id=1332ad1e-ad6c-49f2-aa7f-7d633177732a; trace=c064e43e-d396-467b-86dd-d823eae3a531,id=c064e43e-d396-467b-86dd-d823eae3a531; trace=13f7e55d-fd41-4e56-be8a-551b76cfb2cc,id=13f7e55d-fd41-4e56-be8a-551b76cfb2cc; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=7e01bf08-60bb-4a27-816c-608c892c1103; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=0b6f70ba-814d-467d-91fa-ad9530cd006a; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=351f0a94-415d-4f20-9cc2-025919197b2e; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=ca116107-866a-480c-8f4c-ff29bf864493; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=7570d9dc-ecaa-41d9-bba8-f56133db6a22; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=48357e72-2e39-4bf9-b2a6-beed161f03ad; trace=13f7e55d-fd41-4e56-be8a-551b76cfb2cc,id=694adc7c-5cf9-48e7-a786-f5ba1f6fbaab; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=e642da42-9a8f-472e-ae1b-42dde8368461; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=09e3681f-242e-451c-9c82-855672e2ea0d; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=e9d5b729-6d43-4ea3-8abf-34eb4766f387; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=f005e8b0-4695-477d-b93a-0565ac8c15e9; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=4c260d38-2d7f-4a95-8af0-6fe3a7bdabe1; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=ebd40ab3-5813-4c9b-aba4-d043a84d137e; trace=13f7e55d-fd41-4e56-be8a-551b76cfb2cc,id=694adc7c-5cf9-48e7-a786-f5ba1f6fbaab; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=eded9b2c-fbd6-4fba-b532-c9756713682c; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=4b9bf690-e3d5-47b6-af0b-908d239d5b70; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=fc3cb7d1-6d8c-454b-99df-5f46bbfa4104; trace=13f7e55d-fd41-4e56-be8a-551b76cfb2cc,id=4e104a2e-7288-4d05-aeb3-982141e8a88a; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=eded9b2c-fbd6-4fba-b532-c9756713682c; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=4b9bf690-e3d5-47b6-af0b-908d239d5b70; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=fc3cb7d1-6d8c-454b-99df-5f46bbfa4104; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=f005e8b0-4695-477d-b93a-0565ac8c15e9; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=4c260d38-2d7f-4a95-8af0-6fe3a7bdabe1; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=ebd40ab3-5813-4c9b-aba4-d043a84d137e; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=e642da42-9a8f-472e-ae1b-42dde8368461; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=09e3681f-242e-451c-9c82-855672e2ea0d; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=e9d5b729-6d43-4ea3-8abf-34eb4766f387; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=1ec90d85-4f94-4c94-9e9f-810e1744490e; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=f85b2462-ec71-48e5-acad-12a73bc3043e; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=02702529-b2a3-4f0b-8ae9-449c45196c6f; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=1ec90d85-4f94-4c94-9e9f-810e1744490e; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=f85b2462-ec71-48e5-acad-12a73bc3043e; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=02702529-b2a3-4f0b-8ae9-449c45196c6f; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=a92b1fec-b786-4a6a-9426-7f7e84e78324; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=be67cf1b-3c79-430c-b7fa-8c8afb4cdf79; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=2b8b7ecb-56ec-4900-9da6-d3ea27974179
+2025-06-09 01:03:19,916 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:20,560 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=2b8b7ecb-56ec-4900-9da6-d3ea27974179; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=d025d560-5d4b-43ff-ade7-7dff2ff10804; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=d025d560-5d4b-43ff-ade7-7dff2ff10804; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=48357e72-2e39-4bf9-b2a6-beed161f03ad; trace=7570d9dc-ecaa-41d9-bba8-f56133db6a22,id=7570d9dc-ecaa-41d9-bba8-f56133db6a22
+2025-06-09 01:03:20,715 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:21,230 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=a92b1fec-b786-4a6a-9426-7f7e84e78324; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=9be00547-e36d-479a-a474-d9a226328bb8; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=9be00547-e36d-479a-a474-d9a226328bb8; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=0b6f70ba-814d-467d-91fa-ad9530cd006a; trace=7e01bf08-60bb-4a27-816c-608c892c1103,id=7e01bf08-60bb-4a27-816c-608c892c1103; trace=13f7e55d-fd41-4e56-be8a-551b76cfb2cc,id=4e104a2e-7288-4d05-aeb3-982141e8a88a; trace=13f7e55d-fd41-4e56-be8a-551b76cfb2cc,id=13f7e55d-fd41-4e56-be8a-551b76cfb2cc
+2025-06-09 01:03:21,390 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:21,479 - debug - INFO - ✅ Agent Factory: Agent factory working - 4 agents, 13 tools
+2025-06-09 01:03:21,480 - debug - DEBUG - ⏸️ Pausing 2.0s after heavy test...
+2025-06-09 01:03:21,985 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=be67cf1b-3c79-430c-b7fa-8c8afb4cdf79; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=c60d042e-9a04-4c22-9214-4a46ede307f4; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=c60d042e-9a04-4c22-9214-4a46ede307f4; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=ca116107-866a-480c-8f4c-ff29bf864493; trace=351f0a94-415d-4f20-9cc2-025919197b2e,id=351f0a94-415d-4f20-9cc2-025919197b2e
+2025-06-09 01:03:22,166 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:23,483 - debug - INFO - 
+🔍 Testing: Supervisor Initialization
+2025-06-09 01:03:23,483 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:03:23,493 - debug - DEBUG - Testing supervisor initialization...
+2025-06-09 01:03:23,505 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 01:03:23,505 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 01:03:23,505 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 01:03:23,505 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:23,505 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:23,505 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:23,506 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:23,507 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:23,510 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:23,511 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:23,511 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:24,020 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=876a0ccd-5eb8-4bd5-91b6-bdda2f44ddb3,id=876a0ccd-5eb8-4bd5-91b6-bdda2f44ddb3; trace=92c73689-2a51-4177-884b-5a876c50819a,id=92c73689-2a51-4177-884b-5a876c50819a; trace=0633496a-19f8-4ba7-84bb-879f8645f40a,id=0633496a-19f8-4ba7-84bb-879f8645f40a; trace=b9b68f88-adff-4dee-9e77-0ede95dc2ab5,id=b9b68f88-adff-4dee-9e77-0ede95dc2ab5; trace=876a0ccd-5eb8-4bd5-91b6-bdda2f44ddb3,id=989fa3a7-ad79-4be8-aa9d-e5396c40dd06; trace=92c73689-2a51-4177-884b-5a876c50819a,id=4b93ba62-2daa-4a00-bc77-7b20793d47ee; trace=0633496a-19f8-4ba7-84bb-879f8645f40a,id=0c22020c-02c0-4f76-aed8-78fbd8a118bf; trace=b9b68f88-adff-4dee-9e77-0ede95dc2ab5,id=ca658405-5e3b-4fd4-988d-c0f1ef07883b
+2025-06-09 01:03:24,145 - agents - DEBUG - ✅ LLM model web working
+2025-06-09 01:03:24,149 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:24,191 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:24,425 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:24,840 - agents - DEBUG - ✅ LLM model coder working
+2025-06-09 01:03:24,872 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 01:03:24,872 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 01:03:24,872 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 01:03:24,873 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 01:03:24,873 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 01:03:24,873 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 01:03:24,873 - checkpointer - DEBUG - 🔍 Environment detected from ENVIRONMENT var: production
+2025-06-09 01:03:24,873 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 01:03:24,887 - checkpointer - INFO - ✅ LangGraph 0.4.8 async PostgreSQL checkpointer created
+2025-06-09 01:03:24,887 - checkpointer - INFO - ✅ Production async PostgreSQL checkpointer created
+2025-06-09 01:03:24,898 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 01:03:24,898 - debug - INFO - ✅ Supervisor Initialization: Supervisor initialized successfully - Graph ready with 4 agents
+2025-06-09 01:03:24,898 - debug - DEBUG - ⏸️ Pausing 1.0s after medium test...
+2025-06-09 01:03:25,344 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=876a0ccd-5eb8-4bd5-91b6-bdda2f44ddb3,id=989fa3a7-ad79-4be8-aa9d-e5396c40dd06; trace=0633496a-19f8-4ba7-84bb-879f8645f40a,id=0c22020c-02c0-4f76-aed8-78fbd8a118bf; trace=0633496a-19f8-4ba7-84bb-879f8645f40a,id=0633496a-19f8-4ba7-84bb-879f8645f40a; trace=876a0ccd-5eb8-4bd5-91b6-bdda2f44ddb3,id=876a0ccd-5eb8-4bd5-91b6-bdda2f44ddb3; trace=b9b68f88-adff-4dee-9e77-0ede95dc2ab5,id=ca658405-5e3b-4fd4-988d-c0f1ef07883b; trace=b9b68f88-adff-4dee-9e77-0ede95dc2ab5,id=b9b68f88-adff-4dee-9e77-0ede95dc2ab5; trace=92c73689-2a51-4177-884b-5a876c50819a,id=4b93ba62-2daa-4a00-bc77-7b20793d47ee; trace=92c73689-2a51-4177-884b-5a876c50819a,id=92c73689-2a51-4177-884b-5a876c50819a
+2025-06-09 01:03:25,548 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:25,899 - debug - INFO - 
+🔍 Testing: Assistant Core
+2025-06-09 01:03:25,900 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:03:26,054 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 01:03:26,055 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 01:03:26,055 - assistant_core - DEBUG - 🛣️ Setting up FastAPI routes...
+2025-06-09 01:03:26,057 - assistant_core - DEBUG - ✅ FastAPI routes configured
+2025-06-09 01:03:26,057 - assistant_core - DEBUG - ✅ AssistantCore instance created
+2025-06-09 01:03:26,057 - debug - DEBUG - Testing assistant core...
+2025-06-09 01:03:26,057 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 01:03:26,057 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 01:03:26,058 - assistant_core - DEBUG - 🛣️ Setting up FastAPI routes...
+2025-06-09 01:03:26,059 - assistant_core - DEBUG - ✅ FastAPI routes configured
+2025-06-09 01:03:26,059 - assistant_core - DEBUG - ✅ AssistantCore instance created
+2025-06-09 01:03:26,059 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 01:03:26,059 - assistant_core - DEBUG - 🔧 Configuration check:
+2025-06-09 01:03:26,059 - assistant_core - DEBUG -   - Config object: True
+2025-06-09 01:03:26,059 - assistant_core - DEBUG -   - Workspace dir: /home/user/morteydev/workspace
+2025-06-09 01:03:26,059 - assistant_core - DEBUG -   - LLM config loaded: True
+2025-06-09 01:03:26,059 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 01:03:26,059 - checkpointer - DEBUG - 🔍 Environment detected from ENVIRONMENT var: production
+2025-06-09 01:03:26,059 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 01:03:26,075 - checkpointer - INFO - ✅ LangGraph 0.4.8 async PostgreSQL checkpointer created
+2025-06-09 01:03:26,075 - checkpointer - INFO - ✅ Production async PostgreSQL checkpointer created
+2025-06-09 01:03:26,075 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncPostgresSaver
+2025-06-09 01:03:26,075 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 01:03:26,090 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 01:03:26,091 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 01:03:26,091 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 01:03:26,091 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:26,091 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:26,091 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:26,092 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:26,093 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:26,094 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:26,097 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:26,098 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:26,604 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=3d99db75-4713-4dfc-ba94-cf11435bb4a6,id=3d99db75-4713-4dfc-ba94-cf11435bb4a6; trace=3316570d-1aeb-4d6b-9bac-f5edae62be2f,id=3316570d-1aeb-4d6b-9bac-f5edae62be2f; trace=9eb202fa-9e0f-4410-b3e9-fa11d2bfcbf1,id=9eb202fa-9e0f-4410-b3e9-fa11d2bfcbf1; trace=84566d15-9935-4b31-81b5-046c7d4cf12f,id=84566d15-9935-4b31-81b5-046c7d4cf12f; trace=3d99db75-4713-4dfc-ba94-cf11435bb4a6,id=b953f64e-8b44-429b-bd76-b0bf2d716de3; trace=3316570d-1aeb-4d6b-9bac-f5edae62be2f,id=f83957b7-ef8d-4799-8129-b54e21908cea; trace=9eb202fa-9e0f-4410-b3e9-fa11d2bfcbf1,id=ac3a7462-8316-463e-a7c9-bdc8d8dae23c; trace=84566d15-9935-4b31-81b5-046c7d4cf12f,id=d4840650-b31d-4be0-9962-745444259baf
+2025-06-09 01:03:26,877 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:26,885 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:26,907 - agents - DEBUG - ✅ LLM model web working
+2025-06-09 01:03:27,106 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:27,610 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=84566d15-9935-4b31-81b5-046c7d4cf12f,id=d4840650-b31d-4be0-9962-745444259baf; trace=84566d15-9935-4b31-81b5-046c7d4cf12f,id=84566d15-9935-4b31-81b5-046c7d4cf12f; trace=3316570d-1aeb-4d6b-9bac-f5edae62be2f,id=f83957b7-ef8d-4799-8129-b54e21908cea; trace=3316570d-1aeb-4d6b-9bac-f5edae62be2f,id=3316570d-1aeb-4d6b-9bac-f5edae62be2f; trace=3d99db75-4713-4dfc-ba94-cf11435bb4a6,id=b953f64e-8b44-429b-bd76-b0bf2d716de3; trace=3d99db75-4713-4dfc-ba94-cf11435bb4a6,id=3d99db75-4713-4dfc-ba94-cf11435bb4a6
+2025-06-09 01:03:27,798 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:27,855 - agents - DEBUG - ✅ LLM model coder working
+2025-06-09 01:03:27,875 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 01:03:27,876 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 01:03:27,876 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 01:03:27,876 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 01:03:27,876 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 01:03:27,876 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 01:03:27,876 - assistant_core - DEBUG - 📊 Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 01:03:27,876 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 01:03:27,876 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 01:03:27,876 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 01:03:27,876 - assistant_core - DEBUG - 🔧 Supervisor initialization inputs:
+2025-06-09 01:03:27,876 - assistant_core - DEBUG -   - Agents count: 4
+2025-06-09 01:03:27,877 - assistant_core - DEBUG -   - Tools count: 13
+2025-06-09 01:03:27,877 - assistant_core - DEBUG -   - Checkpointer: True
+2025-06-09 01:03:27,887 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 01:03:27,887 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 01:03:27,887 - assistant_core - DEBUG - ✅ Supervisor graph verified as ready
+2025-06-09 01:03:27,887 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 01:03:27,887 - assistant_core - DEBUG - ✅ Background tasks started
+2025-06-09 01:03:27,887 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 01:03:27,887 - assistant_core - DEBUG - 📊 Gathering system status...
+2025-06-09 01:03:27,888 - assistant_core - DEBUG - 🧹 Starting session cleanup task...
+2025-06-09 01:03:27,888 - assistant_core - DEBUG - 🔍 Checking for expired sessions...
+2025-06-09 01:03:27,888 - assistant_core - DEBUG - ❤️ Starting health monitoring task...
+2025-06-09 01:03:27,888 - assistant_core - DEBUG - 🔍 Performing health check...
+2025-06-09 01:03:27,888 - assistant_core - DEBUG - 📊 Gathering system status...
+2025-06-09 01:03:27,888 - llm_manager - DEBUG - 🔍 Starting LLM Manager health check...
+2025-06-09 01:03:27,888 - llm_manager - DEBUG - 🔍 Starting LLM Manager health check...
+2025-06-09 01:03:27,908 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1
+2025-06-09 01:03:27,909 - llm_manager - DEBUG - ✅ Using cached model: anthropic:claude-sonnet-4-20250514:0.0:5
+2025-06-09 01:03:27,910 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1:0.0:5
+2025-06-09 01:03:27,912 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1:0.0:5
+2025-06-09 01:03:27,929 - circuit_breaker - DEBUG - OpenAI health check failed: Node openai_chat not configured
+2025-06-09 01:03:29,012 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=9eb202fa-9e0f-4410-b3e9-fa11d2bfcbf1,id=ac3a7462-8316-463e-a7c9-bdc8d8dae23c; trace=9eb202fa-9e0f-4410-b3e9-fa11d2bfcbf1,id=9eb202fa-9e0f-4410-b3e9-fa11d2bfcbf1; trace=20fbe124-664d-4f89-8bbf-fb806b1b4e41,id=20fbe124-664d-4f89-8bbf-fb806b1b4e41; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=e13fd483-b4df-494c-892c-7940ce25a81d; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=bc67c0af-8d05-453c-a9fb-2634e19b11f2; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=eed55e6c-d78f-4ca9-8178-94744cfd9b25; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=6e5b9c20-949f-4046-a653-344fe643005a; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=c07e1758-ce39-4afa-8e41-3dc5b0d62f16; trace=eb0c10ca-ec0b-492f-b470-b00d7a1c9c74,id=eb0c10ca-ec0b-492f-b470-b00d7a1c9c74; trace=c37f4511-cc25-4315-81b7-9491aabbcaec,id=c37f4511-cc25-4315-81b7-9491aabbcaec; trace=370627d6-2f5e-4c2c-b722-201cb85f7cfd,id=370627d6-2f5e-4c2c-b722-201cb85f7cfd; trace=f908506b-dd7e-4793-9ce7-0e8ccb1f5bc1,id=f908506b-dd7e-4793-9ce7-0e8ccb1f5bc1; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=aece4ca1-1a22-461a-809e-6ea962a8f5d1; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=19a541c8-6e66-41f2-a656-1d6c180de86a; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=9d655bb0-2d1d-489b-a530-7c5dccfa37c0; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=89901631-67af-4860-9bfd-ba5a3114da94; trace=a1ab4f65-0ee6-4af2-ae08-033d2f7d1906,id=a1ab4f65-0ee6-4af2-ae08-033d2f7d1906; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=e89b0e46-e235-45ac-bd90-09ffffbfb361; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=48ee6dea-e1b8-4450-8839-a210621e265f; trace=20fbe124-664d-4f89-8bbf-fb806b1b4e41,id=ca9adf9f-a062-4699-a7fa-1f7641bcbdf6; trace=da066138-9dd4-4fdb-9401-9f6acecd953c,id=da066138-9dd4-4fdb-9401-9f6acecd953c; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=0d0a5584-702e-44d2-acee-ecb856266076; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=c43cf7e6-31da-4f08-bf2c-1eeba85c6623; trace=90792890-d2c4-4889-a045-dab9be069835,id=90792890-d2c4-4889-a045-dab9be069835; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=cda4f391-4d2e-4e75-97da-533c92150c34; trace=f908506b-dd7e-4793-9ce7-0e8ccb1f5bc1,id=d190cb20-1523-4610-80da-df60136376ba; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=f07bea6b-4451-4732-a1f0-ebe9c719da85; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=a691c91d-fbb7-40a7-83ed-20427fad945c; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=39cf3ef1-5f7e-44b6-9c2b-bd90acbaf002; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=e2f08b9e-41fa-4d20-a053-2d4d144d02be; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=9fc76081-42b7-4972-a7b8-f303f4af6e1b; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=8fe08f35-4aab-433c-a923-b4f9e818cc68; trace=eb0c10ca-ec0b-492f-b470-b00d7a1c9c74,id=a19552e9-fe07-4cf2-9507-ec60db80728e; trace=c37f4511-cc25-4315-81b7-9491aabbcaec,id=1c4dd07a-7a80-45c2-afb7-eb43afba9e24; trace=370627d6-2f5e-4c2c-b722-201cb85f7cfd,id=5d70c726-6d97-4f1e-907e-9dea4e0cb5b4; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=a6e22e94-d46c-4519-94d0-e721227e43b9; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=83c42662-af21-4522-bd0a-27608bd83a1f; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=e5f72eec-ea49-4709-893a-6d16dba50683; trace=20fbe124-664d-4f89-8bbf-fb806b1b4e41,id=ca9adf9f-a062-4699-a7fa-1f7641bcbdf6; trace=da066138-9dd4-4fdb-9401-9f6acecd953c,id=45e3a0e6-911b-40ea-bc86-b2627ab0c5ad; trace=f908506b-dd7e-4793-9ce7-0e8ccb1f5bc1,id=d190cb20-1523-4610-80da-df60136376ba; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=ec06c30a-90f0-4228-a554-25b5100e1b84; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=549ee1f6-9a91-4de0-a87f-d930caa71a50; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=6a6d9c93-14a7-4fc1-9f67-a39a0245a133; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=715421ba-cc2e-4a14-816a-3dc1c08bf8f0; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=c57b7382-ef8d-4111-88c2-e9fb7767f49b; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=af21126c-c9ae-4edf-b12e-b93185330581; trace=a1ab4f65-0ee6-4af2-ae08-033d2f7d1906,id=a1ab4f65-0ee6-4af2-ae08-033d2f7d1906; trace=20fbe124-664d-4f89-8bbf-fb806b1b4e41,id=45303359-5384-48ea-943f-9cfaf2356cce; trace=f908506b-dd7e-4793-9ce7-0e8ccb1f5bc1,id=e7dffd09-27a3-4842-987c-5a70251e51db; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=6a6d9c93-14a7-4fc1-9f67-a39a0245a133; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=ec06c30a-90f0-4228-a554-25b5100e1b84; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=549ee1f6-9a91-4de0-a87f-d930caa71a50; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=c57b7382-ef8d-4111-88c2-e9fb7767f49b; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=715421ba-cc2e-4a14-816a-3dc1c08bf8f0; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=af21126c-c9ae-4edf-b12e-b93185330581; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=8fe08f35-4aab-433c-a923-b4f9e818cc68; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=e2f08b9e-41fa-4d20-a053-2d4d144d02be; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=9fc76081-42b7-4972-a7b8-f303f4af6e1b; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=83c42662-af21-4522-bd0a-27608bd83a1f; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=a6e22e94-d46c-4519-94d0-e721227e43b9; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=e5f72eec-ea49-4709-893a-6d16dba50683; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=cda4f391-4d2e-4e75-97da-533c92150c34; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=0d0a5584-702e-44d2-acee-ecb856266076; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=c43cf7e6-31da-4f08-bf2c-1eeba85c6623; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=a691c91d-fbb7-40a7-83ed-20427fad945c; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=f07bea6b-4451-4732-a1f0-ebe9c719da85; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=39cf3ef1-5f7e-44b6-9c2b-bd90acbaf002; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=969ca530-9470-41ef-844b-9233a74b4498; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=e1824a9c-48f2-4b8c-b010-c7a629e4d956; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=06053f2f-eb29-4184-afc4-c055ca9f69fc; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=0bd36df1-5c0e-4372-a692-facfbf959ef0; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=6ed944a5-6760-4c4f-a1d4-4758f823ea2b; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=a2fb2612-8aaf-4882-8df8-847c3df2eca1; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=969ca530-9470-41ef-844b-9233a74b4498; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=e1824a9c-48f2-4b8c-b010-c7a629e4d956; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=06053f2f-eb29-4184-afc4-c055ca9f69fc; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=0bd36df1-5c0e-4372-a692-facfbf959ef0; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=6ed944a5-6760-4c4f-a1d4-4758f823ea2b; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=a2fb2612-8aaf-4882-8df8-847c3df2eca1; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=b0be58ad-704c-4ba9-8cad-c2260cbbb651; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=2ace513a-341d-4414-936b-f38e0ea7cc61; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=53e78ef6-6d46-41d7-ae60-ae680a019909; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=dc611029-7b06-4d3c-a88a-66b346aba501; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=45f0ae24-c2a1-422c-ae2b-01ef27820401; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=919d1665-3d88-4afd-b06f-a1c3b186bb6b; trace=da066138-9dd4-4fdb-9401-9f6acecd953c,id=45e3a0e6-911b-40ea-bc86-b2627ab0c5ad; trace=da066138-9dd4-4fdb-9401-9f6acecd953c,id=da066138-9dd4-4fdb-9401-9f6acecd953c; trace=eb0c10ca-ec0b-492f-b470-b00d7a1c9c74,id=a19552e9-fe07-4cf2-9507-ec60db80728e; trace=eb0c10ca-ec0b-492f-b470-b00d7a1c9c74,id=eb0c10ca-ec0b-492f-b470-b00d7a1c9c74; trace=370627d6-2f5e-4c2c-b722-201cb85f7cfd,id=5d70c726-6d97-4f1e-907e-9dea4e0cb5b4; trace=370627d6-2f5e-4c2c-b722-201cb85f7cfd,id=370627d6-2f5e-4c2c-b722-201cb85f7cfd
+2025-06-09 01:03:29,360 - llm_manager - DEBUG - ✅ Using cached model: anthropic:claude-sonnet-4-20250514:0.0:5
+2025-06-09 01:03:29,363 - llm_manager - DEBUG - ✅ LLM Manager health check completed - Status: healthy
+2025-06-09 01:03:29,529 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:30,465 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=b0be58ad-704c-4ba9-8cad-c2260cbbb651; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=aa51812c-3874-480c-95fd-027e9b751773; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=aa51812c-3874-480c-95fd-027e9b751773; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=c07e1758-ce39-4afa-8e41-3dc5b0d62f16; trace=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba,id=bfbe069b-4cad-4bc8-8f25-a8c8bdf260ba; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=919d1665-3d88-4afd-b06f-a1c3b186bb6b; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=cfa488f7-3e98-446c-9ee8-32a9b6f81766; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=cfa488f7-3e98-446c-9ee8-32a9b6f81766; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=48ee6dea-e1b8-4450-8839-a210621e265f; trace=e89b0e46-e235-45ac-bd90-09ffffbfb361,id=e89b0e46-e235-45ac-bd90-09ffffbfb361; trace=c37f4511-cc25-4315-81b7-9491aabbcaec,id=1c4dd07a-7a80-45c2-afb7-eb43afba9e24; trace=90792890-d2c4-4889-a045-dab9be069835,id=c73d4ad1-196f-4c13-962a-ec63ad8d1647; trace=c37f4511-cc25-4315-81b7-9491aabbcaec,id=c37f4511-cc25-4315-81b7-9491aabbcaec; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=45f0ae24-c2a1-422c-ae2b-01ef27820401; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=57c4b7af-29c4-4c8d-9722-9eb2d96ae2f6; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=57c4b7af-29c4-4c8d-9722-9eb2d96ae2f6; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=19a541c8-6e66-41f2-a656-1d6c180de86a; trace=aece4ca1-1a22-461a-809e-6ea962a8f5d1,id=aece4ca1-1a22-461a-809e-6ea962a8f5d1; trace=f908506b-dd7e-4793-9ce7-0e8ccb1f5bc1,id=e7dffd09-27a3-4842-987c-5a70251e51db; trace=f908506b-dd7e-4793-9ce7-0e8ccb1f5bc1,id=f908506b-dd7e-4793-9ce7-0e8ccb1f5bc1; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=dc611029-7b06-4d3c-a88a-66b346aba501; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=992d7e10-3ac1-4356-8479-e5117db5c593; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=992d7e10-3ac1-4356-8479-e5117db5c593; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=89901631-67af-4860-9bfd-ba5a3114da94; trace=9d655bb0-2d1d-489b-a530-7c5dccfa37c0,id=9d655bb0-2d1d-489b-a530-7c5dccfa37c0; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=2ace513a-341d-4414-936b-f38e0ea7cc61; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=1014f6e3-7c57-44e2-b938-d34d3bd69720; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=1014f6e3-7c57-44e2-b938-d34d3bd69720; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=bc67c0af-8d05-453c-a9fb-2634e19b11f2; trace=e13fd483-b4df-494c-892c-7940ce25a81d,id=e13fd483-b4df-494c-892c-7940ce25a81d
+2025-06-09 01:03:30,743 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:30,834 - llm_manager - DEBUG - ✅ LLM Manager health check completed - Status: healthy
+2025-06-09 01:03:30,835 - assistant_core - DEBUG - ✅ System status gathered successfully
+2025-06-09 01:03:30,835 - assistant_core - DEBUG - ✅ System health good: 1.00
+2025-06-09 01:03:31,338 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=90792890-d2c4-4889-a045-dab9be069835,id=c73d4ad1-196f-4c13-962a-ec63ad8d1647; trace=90792890-d2c4-4889-a045-dab9be069835,id=90792890-d2c4-4889-a045-dab9be069835
+2025-06-09 01:03:31,488 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:31,994 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=20fbe124-664d-4f89-8bbf-fb806b1b4e41,id=45303359-5384-48ea-943f-9cfaf2356cce; trace=20fbe124-664d-4f89-8bbf-fb806b1b4e41,id=20fbe124-664d-4f89-8bbf-fb806b1b4e41
+2025-06-09 01:03:32,201 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:33,437 - assistant_core - DEBUG - ✅ System status gathered successfully
+2025-06-09 01:03:33,437 - debug - INFO - ✅ Assistant Core: Assistant core initialized successfully - All components ready
+2025-06-09 01:03:33,438 - debug - DEBUG - ⏸️ Pausing 1.0s after medium test...
+2025-06-09 01:03:33,942 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=53e78ef6-6d46-41d7-ae60-ae680a019909; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=3aa72eaf-6f4d-4772-b0ef-e42b8c7754f8; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=3aa72eaf-6f4d-4772-b0ef-e42b8c7754f8; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=6e5b9c20-949f-4046-a653-344fe643005a; trace=eed55e6c-d78f-4ca9-8178-94744cfd9b25,id=eed55e6c-d78f-4ca9-8178-94744cfd9b25
+2025-06-09 01:03:34,147 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:34,439 - debug - INFO - 
+🔍 Testing: Message Processing Pipeline
+2025-06-09 01:03:34,439 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:03:34,439 - debug - DEBUG - Testing message processing pipeline...
+2025-06-09 01:03:34,439 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 01:03:34,440 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 01:03:34,440 - assistant_core - DEBUG - 🛣️ Setting up FastAPI routes...
+2025-06-09 01:03:34,441 - assistant_core - DEBUG - ✅ FastAPI routes configured
+2025-06-09 01:03:34,441 - assistant_core - DEBUG - ✅ AssistantCore instance created
+2025-06-09 01:03:34,441 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 01:03:34,441 - assistant_core - DEBUG - 🔧 Configuration check:
+2025-06-09 01:03:34,441 - assistant_core - DEBUG -   - Config object: True
+2025-06-09 01:03:34,441 - assistant_core - DEBUG -   - Workspace dir: /home/user/morteydev/workspace
+2025-06-09 01:03:34,441 - assistant_core - DEBUG -   - LLM config loaded: True
+2025-06-09 01:03:34,442 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 01:03:34,442 - checkpointer - DEBUG - 🔍 Environment detected from ENVIRONMENT var: production
+2025-06-09 01:03:34,442 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 01:03:34,455 - checkpointer - INFO - ✅ LangGraph 0.4.8 async PostgreSQL checkpointer created
+2025-06-09 01:03:34,455 - checkpointer - INFO - ✅ Production async PostgreSQL checkpointer created
+2025-06-09 01:03:34,455 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncPostgresSaver
+2025-06-09 01:03:34,455 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 01:03:34,466 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 01:03:34,466 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 01:03:34,466 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 01:03:34,466 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:34,466 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:34,467 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:34,468 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:34,468 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:34,471 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:34,472 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:34,475 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:34,983 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=cbae6454-72f2-48d0-835d-429410215b87,id=cbae6454-72f2-48d0-835d-429410215b87; trace=471762b2-4f10-48ff-a48a-04ee3b31b0cc,id=471762b2-4f10-48ff-a48a-04ee3b31b0cc; trace=6411bbd9-81fd-46b2-8d31-e21c50d8c6fc,id=6411bbd9-81fd-46b2-8d31-e21c50d8c6fc; trace=cbae6454-72f2-48d0-835d-429410215b87,id=2b2bf00e-cb84-4662-acf7-348989262aff; trace=e1a351ff-939e-40d1-b96d-dcb36fb10183,id=e1a351ff-939e-40d1-b96d-dcb36fb10183; trace=471762b2-4f10-48ff-a48a-04ee3b31b0cc,id=d18f4637-b8eb-4b8a-ba86-c406eb73d717; trace=6411bbd9-81fd-46b2-8d31-e21c50d8c6fc,id=dbf09514-d11a-4e6a-8fa3-fb0f5c6f1e57; trace=e1a351ff-939e-40d1-b96d-dcb36fb10183,id=cd277cc8-350e-4ca0-9ccb-5f6bee31e8cf
+2025-06-09 01:03:35,171 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:35,386 - agents - DEBUG - ✅ LLM model web working
+2025-06-09 01:03:35,424 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:35,481 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:35,986 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=6411bbd9-81fd-46b2-8d31-e21c50d8c6fc,id=dbf09514-d11a-4e6a-8fa3-fb0f5c6f1e57; trace=6411bbd9-81fd-46b2-8d31-e21c50d8c6fc,id=6411bbd9-81fd-46b2-8d31-e21c50d8c6fc; trace=e1a351ff-939e-40d1-b96d-dcb36fb10183,id=cd277cc8-350e-4ca0-9ccb-5f6bee31e8cf; trace=e1a351ff-939e-40d1-b96d-dcb36fb10183,id=e1a351ff-939e-40d1-b96d-dcb36fb10183; trace=cbae6454-72f2-48d0-835d-429410215b87,id=2b2bf00e-cb84-4662-acf7-348989262aff; trace=cbae6454-72f2-48d0-835d-429410215b87,id=cbae6454-72f2-48d0-835d-429410215b87
+2025-06-09 01:03:36,202 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:36,211 - agents - DEBUG - ✅ LLM model coder working
+2025-06-09 01:03:36,236 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 01:03:36,237 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 01:03:36,237 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 01:03:36,237 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 01:03:36,237 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 01:03:36,237 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 01:03:36,237 - assistant_core - DEBUG - 📊 Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 01:03:36,238 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 01:03:36,238 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 01:03:36,238 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 01:03:36,238 - assistant_core - DEBUG - 🔧 Supervisor initialization inputs:
+2025-06-09 01:03:36,238 - assistant_core - DEBUG -   - Agents count: 4
+2025-06-09 01:03:36,238 - assistant_core - DEBUG -   - Tools count: 13
+2025-06-09 01:03:36,238 - assistant_core - DEBUG -   - Checkpointer: True
+2025-06-09 01:03:36,247 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 01:03:36,247 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 01:03:36,247 - assistant_core - DEBUG - ✅ Supervisor graph verified as ready
+2025-06-09 01:03:36,247 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 01:03:36,247 - assistant_core - DEBUG - ✅ Background tasks started
+2025-06-09 01:03:36,247 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 01:03:36,247 - debug - DEBUG - Processing test message 1: Hello, how are you?...
+2025-06-09 01:03:36,247 - assistant_core - INFO - 🔄 Starting message processing - Session: debug_session_0, User: debug_user
+2025-06-09 01:03:36,247 - assistant_core - DEBUG - 📝 Message content: Hello, how are you?...
+2025-06-09 01:03:36,247 - assistant_core - DEBUG - 🔧 Component status check:
+2025-06-09 01:03:36,247 - assistant_core - DEBUG -   - Supervisor initialized: True
+2025-06-09 01:03:36,247 - assistant_core - DEBUG -   - Checkpointer available: True
+2025-06-09 01:03:36,247 - assistant_core - DEBUG -   - Active sessions: 0
+2025-06-09 01:03:36,247 - assistant_core - DEBUG - 📂 Retrieving session state...
+2025-06-09 01:03:36,248 - assistant_core - DEBUG - 🧹 Starting session cleanup task...
+2025-06-09 01:03:36,248 - assistant_core - DEBUG - 🔍 Checking for expired sessions...
+2025-06-09 01:03:36,248 - assistant_core - DEBUG - ❤️ Starting health monitoring task...
+2025-06-09 01:03:36,248 - assistant_core - DEBUG - 🔍 Performing health check...
+2025-06-09 01:03:36,248 - assistant_core - DEBUG - 📊 Gathering system status...
+2025-06-09 01:03:36,248 - llm_manager - DEBUG - 🔍 Starting LLM Manager health check...
+2025-06-09 01:03:36,260 - llm_manager - DEBUG - ✅ Using cached model: anthropic:claude-sonnet-4-20250514:0.0:5
+2025-06-09 01:03:36,261 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1:0.0:5
+2025-06-09 01:03:36,269 - assistant_core - DEBUG - Error loading session: 'NoneType' object has no attribute 'get'
+2025-06-09 01:03:36,270 - assistant_core - DEBUG - ✅ Session state retrieved: debug_session_0
+2025-06-09 01:03:36,270 - assistant_core - DEBUG - 💬 Adding message to state...
+2025-06-09 01:03:36,270 - assistant_core - DEBUG - 📊 State updated - Messages: 1, Agent: chat
+2025-06-09 01:03:36,270 - assistant_core - DEBUG - 🎯 Preparing supervisor invocation...
+2025-06-09 01:03:36,270 - assistant_core - DEBUG - 🔧 LangGraph config: {'configurable': {'thread_id': 'debug_session_0'}}
+2025-06-09 01:03:36,270 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 01:03:36,282 - supervisor - INFO - 🎯 No specific keywords matched, routing to default: chat
+2025-06-09 01:03:36,815 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=471762b2-4f10-48ff-a48a-04ee3b31b0cc,id=d18f4637-b8eb-4b8a-ba86-c406eb73d717; trace=471762b2-4f10-48ff-a48a-04ee3b31b0cc,id=471762b2-4f10-48ff-a48a-04ee3b31b0cc; trace=671407bf-cc78-4b8e-a4f7-8377a6d612ad,id=671407bf-cc78-4b8e-a4f7-8377a6d612ad; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=300a7a77-4d2d-415a-8a7e-6f1db127ceec; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=4991b339-4cff-4171-b0d4-d4077444282c; trace=e6a25036-66c9-429b-8101-df30211c796c,id=e6a25036-66c9-429b-8101-df30211c796c; trace=e6a25036-66c9-429b-8101-df30211c796c,id=be3f3f69-b9e4-4c0b-affc-513e88105970; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=8951f359-3663-4f19-b2c3-31741cbeebcf; trace=671407bf-cc78-4b8e-a4f7-8377a6d612ad,id=9b041498-3b4e-4015-84ef-c2674ca18090; trace=3ebc3a0f-6b7a-4d3a-a908-529fe5fa8005,id=3ebc3a0f-6b7a-4d3a-a908-529fe5fa8005; trace=12708f67-6035-4a80-8104-7147f47b93f0,id=12708f67-6035-4a80-8104-7147f47b93f0; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=d1da9567-10bc-4e96-aa54-8d65cd012370; trace=e6a25036-66c9-429b-8101-df30211c796c,id=442a731d-8829-4989-ba71-75dac5f2b1f8; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=15dfa8a3-8cb0-41aa-ba1a-7cc4866947e9; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=3f5fbb06-2f8b-4f5e-9ee6-f3c30e00b33e; trace=e6a25036-66c9-429b-8101-df30211c796c,id=c19bccdb-ee56-4211-a207-8539bcccd25c; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=42b599b0-6277-4f91-b7b1-45cd0a4c2c32; trace=671407bf-cc78-4b8e-a4f7-8377a6d612ad,id=9b041498-3b4e-4015-84ef-c2674ca18090; trace=3ebc3a0f-6b7a-4d3a-a908-529fe5fa8005,id=d47a7eca-45c2-4174-b5ba-2cce27c41482; trace=12708f67-6035-4a80-8104-7147f47b93f0,id=87ce6609-caf3-4502-bbc0-78cacaa548ce; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=429fb6f0-f52b-4f74-adf7-db1ca2ec7106; trace=e6a25036-66c9-429b-8101-df30211c796c,id=6692c606-307b-4fba-b4c2-43262422528b; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=5b610863-3212-49cc-9d54-cd1edca079c4; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=468a1c30-1dc3-477f-afa9-8daacd3b6f4b; trace=671407bf-cc78-4b8e-a4f7-8377a6d612ad,id=62196101-3e53-4e7e-b9b2-bd00721f74a4; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=df0965f2-5960-4c4a-95f4-fdd9aa1ad0c9; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=40c6f0b6-611e-4132-a6a2-03cdc66e6459; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=429fb6f0-f52b-4f74-adf7-db1ca2ec7106; trace=e6a25036-66c9-429b-8101-df30211c796c,id=6692c606-307b-4fba-b4c2-43262422528b; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=5b610863-3212-49cc-9d54-cd1edca079c4; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=40c6f0b6-611e-4132-a6a2-03cdc66e6459; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=3f5fbb06-2f8b-4f5e-9ee6-f3c30e00b33e; trace=e6a25036-66c9-429b-8101-df30211c796c,id=c19bccdb-ee56-4211-a207-8539bcccd25c; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=42b599b0-6277-4f91-b7b1-45cd0a4c2c32; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=df0965f2-5960-4c4a-95f4-fdd9aa1ad0c9; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=14ec9512-0c96-4db0-a36e-3cc1e991a93e; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=d1da9567-10bc-4e96-aa54-8d65cd012370; trace=e6a25036-66c9-429b-8101-df30211c796c,id=442a731d-8829-4989-ba71-75dac5f2b1f8; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=01f89c3a-9af0-4fe6-9d44-d8eaeb005ad4; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=15dfa8a3-8cb0-41aa-ba1a-7cc4866947e9; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=4886e9a9-546c-47a6-8468-942c4564b2d7; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=7bbad63c-4257-4dd2-85cd-7ff84495d4ec; trace=e6a25036-66c9-429b-8101-df30211c796c,id=1570c8ae-2acb-46ca-a373-45a1f0ea32ba; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=5da4b30a-25cf-468e-9984-848c46119c23; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=4886e9a9-546c-47a6-8468-942c4564b2d7; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=7bbad63c-4257-4dd2-85cd-7ff84495d4ec; trace=e6a25036-66c9-429b-8101-df30211c796c,id=1570c8ae-2acb-46ca-a373-45a1f0ea32ba; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=5da4b30a-25cf-468e-9984-848c46119c23; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=7a4dc04e-2ce0-4d28-989c-dc84eb67a88a; trace=e6a25036-66c9-429b-8101-df30211c796c,id=a8501a24-df18-4e7c-a2f4-73ed0caccc07; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=949ae558-3511-4d95-b2ce-04212a61f496; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=a6783b5d-a0a2-4335-8a9e-9a75b265db97
+2025-06-09 01:03:37,222 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:37,298 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 01:03:37,298 - assistant_core - DEBUG - 📋 Result type: <class 'langgraph.pregel.io.AddableValuesDict'>
+2025-06-09 01:03:37,298 - assistant_core - DEBUG - 📋 Result keys: ['messages', 'session_id', 'user_id', 'current_agent']
+2025-06-09 01:03:37,299 - assistant_core - DEBUG - 📋 Result messages count: 2
+2025-06-09 01:03:37,299 - assistant_core - DEBUG - 💾 Session state updated
+2025-06-09 01:03:37,299 - assistant_core - INFO - ✅ Message processing completed - Response length: 73
+2025-06-09 01:03:37,299 - debug - DEBUG - ⏸️ Pausing 2 seconds before next message...
+2025-06-09 01:03:37,835 - llm_manager - DEBUG - ✅ LLM Manager health check completed - Status: healthy
+2025-06-09 01:03:38,525 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=12708f67-6035-4a80-8104-7147f47b93f0,id=87ce6609-caf3-4502-bbc0-78cacaa548ce; trace=12708f67-6035-4a80-8104-7147f47b93f0,id=12708f67-6035-4a80-8104-7147f47b93f0; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=a6783b5d-a0a2-4335-8a9e-9a75b265db97; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=01f89c3a-9af0-4fe6-9d44-d8eaeb005ad4; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=be5d3f45-4b71-40cb-9ca3-376f180285ea; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=be5d3f45-4b71-40cb-9ca3-376f180285ea; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=14ec9512-0c96-4db0-a36e-3cc1e991a93e; trace=468a1c30-1dc3-477f-afa9-8daacd3b6f4b,id=468a1c30-1dc3-477f-afa9-8daacd3b6f4b; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=949ae558-3511-4d95-b2ce-04212a61f496; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=b7bb510e-91c3-442d-ac63-33bc7de536da; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=b7bb510e-91c3-442d-ac63-33bc7de536da; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=8951f359-3663-4f19-b2c3-31741cbeebcf; trace=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd,id=3e1ba6f0-b6e8-43fa-8e13-8e67091cb5bd; trace=3ebc3a0f-6b7a-4d3a-a908-529fe5fa8005,id=d47a7eca-45c2-4174-b5ba-2cce27c41482; trace=3ebc3a0f-6b7a-4d3a-a908-529fe5fa8005,id=3ebc3a0f-6b7a-4d3a-a908-529fe5fa8005; trace=671407bf-cc78-4b8e-a4f7-8377a6d612ad,id=62196101-3e53-4e7e-b9b2-bd00721f74a4; trace=671407bf-cc78-4b8e-a4f7-8377a6d612ad,id=671407bf-cc78-4b8e-a4f7-8377a6d612ad; trace=e6a25036-66c9-429b-8101-df30211c796c,id=a8501a24-df18-4e7c-a2f4-73ed0caccc07; trace=e6a25036-66c9-429b-8101-df30211c796c,id=df72c648-58cf-46e3-a097-3f8c8f71be22; trace=e6a25036-66c9-429b-8101-df30211c796c,id=df72c648-58cf-46e3-a097-3f8c8f71be22; trace=e6a25036-66c9-429b-8101-df30211c796c,id=be3f3f69-b9e4-4c0b-affc-513e88105970; trace=e6a25036-66c9-429b-8101-df30211c796c,id=e6a25036-66c9-429b-8101-df30211c796c
+2025-06-09 01:03:38,860 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:39,302 - debug - DEBUG - Processing test message 2: Write a simple Python function...
+2025-06-09 01:03:39,302 - assistant_core - INFO - 🔄 Starting message processing - Session: debug_session_1, User: debug_user
+2025-06-09 01:03:39,302 - assistant_core - DEBUG - 📝 Message content: Write a simple Python function to add two numbers...
+2025-06-09 01:03:39,302 - assistant_core - DEBUG - 🔧 Component status check:
+2025-06-09 01:03:39,302 - assistant_core - DEBUG -   - Supervisor initialized: True
+2025-06-09 01:03:39,302 - assistant_core - DEBUG -   - Checkpointer available: True
+2025-06-09 01:03:39,303 - assistant_core - DEBUG -   - Active sessions: 1
+2025-06-09 01:03:39,303 - assistant_core - DEBUG - 📂 Retrieving session state...
+2025-06-09 01:03:39,304 - assistant_core - DEBUG - Error loading session: 'NoneType' object has no attribute 'get'
+2025-06-09 01:03:39,304 - assistant_core - DEBUG - ✅ Session state retrieved: debug_session_1
+2025-06-09 01:03:39,304 - assistant_core - DEBUG - 💬 Adding message to state...
+2025-06-09 01:03:39,304 - assistant_core - DEBUG - 📊 State updated - Messages: 1, Agent: chat
+2025-06-09 01:03:39,304 - assistant_core - DEBUG - 🎯 Preparing supervisor invocation...
+2025-06-09 01:03:39,304 - assistant_core - DEBUG - 🔧 LangGraph config: {'configurable': {'thread_id': 'debug_session_1'}}
+2025-06-09 01:03:39,304 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 01:03:39,308 - supervisor - INFO - 🎯 Routing to coder agent (score: 3, matched: python, function, write)
+2025-06-09 01:03:39,779 - assistant_core - DEBUG - ✅ System status gathered successfully
+2025-06-09 01:03:39,780 - assistant_core - DEBUG - ✅ System health good: 1.00
+2025-06-09 01:03:40,284 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=2e7ecbbc-62f4-417e-bca5-6edc654ac39b; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=6a86d842-ba9b-4495-87c0-9ef1e5af0352; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=6648864a-3b43-4f12-949f-f07974516fda; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=6648864a-3b43-4f12-949f-f07974516fda; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=6a86d842-ba9b-4495-87c0-9ef1e5af0352; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=2cb79fa6-0911-4a2e-ac76-4d3a2577d947; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=40f91245-feaf-4972-b843-bead8099e7b3; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=13da89a2-1059-4e57-9e6e-a4d58ad3df0a; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=02e8bd0e-e660-405b-9030-ea30b379ae59; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=5d427dd9-253b-456e-a208-dee39256a907; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=82fbffda-e6af-4d9e-9c83-b4fc1574aed9; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=82fbffda-e6af-4d9e-9c83-b4fc1574aed9; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=5d427dd9-253b-456e-a208-dee39256a907; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=02e8bd0e-e660-405b-9030-ea30b379ae59; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=3f8ee57c-3284-4b11-9d59-5723ee777d43; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=3f8ee57c-3284-4b11-9d59-5723ee777d43; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=422ab7c9-089c-4269-ad53-04515a0cc462; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=7a4dc04e-2ce0-4d28-989c-dc84eb67a88a; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=ee513ed1-d553-4ab2-a6d0-4e58e2473c97; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=ee513ed1-d553-4ab2-a6d0-4e58e2473c97; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=4991b339-4cff-4171-b0d4-d4077444282c; trace=300a7a77-4d2d-415a-8a7e-6f1db127ceec,id=300a7a77-4d2d-415a-8a7e-6f1db127ceec
+2025-06-09 01:03:40,513 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:41,814 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 01:03:41,814 - assistant_core - DEBUG - 📋 Result type: <class 'langgraph.pregel.io.AddableValuesDict'>
+2025-06-09 01:03:41,814 - assistant_core - DEBUG - 📋 Result keys: ['messages', 'session_id', 'user_id', 'current_agent']
+2025-06-09 01:03:41,814 - assistant_core - DEBUG - 📋 Result messages count: 1
+2025-06-09 01:03:41,815 - assistant_core - DEBUG - 💾 Session state updated
+2025-06-09 01:03:41,815 - assistant_core - INFO - ✅ Message processing completed - Response length: 49
+2025-06-09 01:03:41,815 - debug - DEBUG - ⏸️ Pausing 2 seconds before next message...
+2025-06-09 01:03:42,319 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=422ab7c9-089c-4269-ad53-04515a0cc462; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=0f672f60-06c1-410d-b383-ada3c955175c; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=0f672f60-06c1-410d-b383-ada3c955175c; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=13da89a2-1059-4e57-9e6e-a4d58ad3df0a; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=40f91245-feaf-4972-b843-bead8099e7b3; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=6bbcd298-b6de-4ce9-a9f6-e46ff40a4f7f; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=6bbcd298-b6de-4ce9-a9f6-e46ff40a4f7f; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=2cb79fa6-0911-4a2e-ac76-4d3a2577d947; trace=2e7ecbbc-62f4-417e-bca5-6edc654ac39b,id=2e7ecbbc-62f4-417e-bca5-6edc654ac39b
+2025-06-09 01:03:42,544 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:43,817 - debug - DEBUG - Processing test message 3: What is 2 + 2?...
+2025-06-09 01:03:43,818 - assistant_core - INFO - 🔄 Starting message processing - Session: debug_session_2, User: debug_user
+2025-06-09 01:03:43,818 - assistant_core - DEBUG - 📝 Message content: What is 2 + 2?...
+2025-06-09 01:03:43,819 - assistant_core - DEBUG - 🔧 Component status check:
+2025-06-09 01:03:43,819 - assistant_core - DEBUG -   - Supervisor initialized: True
+2025-06-09 01:03:43,819 - assistant_core - DEBUG -   - Checkpointer available: True
+2025-06-09 01:03:43,820 - assistant_core - DEBUG -   - Active sessions: 2
+2025-06-09 01:03:43,820 - assistant_core - DEBUG - 📂 Retrieving session state...
+2025-06-09 01:03:43,823 - assistant_core - DEBUG - Error loading session: 'NoneType' object has no attribute 'get'
+2025-06-09 01:03:43,823 - assistant_core - DEBUG - ✅ Session state retrieved: debug_session_2
+2025-06-09 01:03:43,823 - assistant_core - DEBUG - 💬 Adding message to state...
+2025-06-09 01:03:43,823 - assistant_core - DEBUG - 📊 State updated - Messages: 1, Agent: chat
+2025-06-09 01:03:43,824 - assistant_core - DEBUG - 🎯 Preparing supervisor invocation...
+2025-06-09 01:03:43,824 - assistant_core - DEBUG - 🔧 LangGraph config: {'configurable': {'thread_id': 'debug_session_2'}}
+2025-06-09 01:03:43,824 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 01:03:43,829 - supervisor - INFO - 🎯 No specific keywords matched, routing to default: chat
+2025-06-09 01:03:44,337 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=cee92fdf-644d-44c4-8e70-e185149b5a2b; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=848e0ff1-b830-40ba-a79f-8baf7b63a5e4; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=7f086648-4ce7-4e3a-a86e-b9d12db01c57; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=7f086648-4ce7-4e3a-a86e-b9d12db01c57; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=848e0ff1-b830-40ba-a79f-8baf7b63a5e4; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=78d9a128-f4eb-4d60-9d52-9d5ad2fcf87e; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=4b539748-b032-458d-8959-fb6380a14809; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=60b475c9-b4b0-4507-9d23-fc867d78d119; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=60b475c9-b4b0-4507-9d23-fc867d78d119; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=0ad4074a-5c53-4379-bb3e-8b1aca08c8b2
+2025-06-09 01:03:44,592 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:44,885 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 01:03:44,886 - assistant_core - DEBUG - 📋 Result type: <class 'langgraph.pregel.io.AddableValuesDict'>
+2025-06-09 01:03:44,886 - assistant_core - DEBUG - 📋 Result keys: ['messages', 'session_id', 'user_id', 'current_agent']
+2025-06-09 01:03:44,887 - assistant_core - DEBUG - 📋 Result messages count: 2
+2025-06-09 01:03:44,887 - assistant_core - DEBUG - 💾 Session state updated
+2025-06-09 01:03:44,887 - assistant_core - INFO - ✅ Message processing completed - Response length: 94
+2025-06-09 01:03:44,887 - debug - INFO - ✅ Message Processing Pipeline: Message processing working - 3 messages processed
+2025-06-09 01:03:44,887 - debug - DEBUG - ⏸️ Pausing 3.0s after intensive test...
+2025-06-09 01:03:45,390 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=0ad4074a-5c53-4379-bb3e-8b1aca08c8b2; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=4b539748-b032-458d-8959-fb6380a14809; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=c95a0aef-37c1-45d7-acfd-e6ccb76d3986; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=c95a0aef-37c1-45d7-acfd-e6ccb76d3986; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=78d9a128-f4eb-4d60-9d52-9d5ad2fcf87e; trace=cee92fdf-644d-44c4-8e70-e185149b5a2b,id=cee92fdf-644d-44c4-8e70-e185149b5a2b
+2025-06-09 01:03:45,616 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:47,891 - debug - INFO - 
+🔍 Testing: Tools Integration
+2025-06-09 01:03:47,891 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:03:47,892 - debug - DEBUG - Testing tools integration...
+2025-06-09 01:03:47,892 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 01:03:47,893 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 01:03:47,909 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 01:03:47,919 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 01:03:47,920 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 01:03:47,920 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 01:03:47,920 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:47,920 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:47,920 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:47,920 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:47,923 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:47,926 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:47,926 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:47,927 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:48,436 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=664706e8-9a9b-4b0a-9859-533d9372c215,id=664706e8-9a9b-4b0a-9859-533d9372c215; trace=756fb5df-dd90-4eed-bac0-9dc94462c3c4,id=756fb5df-dd90-4eed-bac0-9dc94462c3c4; trace=046aa22e-3728-46d3-bf35-4499811d76bf,id=046aa22e-3728-46d3-bf35-4499811d76bf; trace=1fb1058c-9586-4bdb-9fb8-ef4a40de6e69,id=1fb1058c-9586-4bdb-9fb8-ef4a40de6e69; trace=664706e8-9a9b-4b0a-9859-533d9372c215,id=6f4f3e1d-56c7-48d1-b741-da021769b9f6; trace=756fb5df-dd90-4eed-bac0-9dc94462c3c4,id=ffedaaf6-7e6a-4062-b9b8-3bd3d1b16caf; trace=046aa22e-3728-46d3-bf35-4499811d76bf,id=d653bf30-c8de-4ea9-80e4-5b95339e5fd0; trace=1fb1058c-9586-4bdb-9fb8-ef4a40de6e69,id=db311ae1-f291-4cca-a30a-5e6fd54fc7e2
+2025-06-09 01:03:48,693 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:48,713 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:48,713 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:48,736 - agents - DEBUG - ✅ LLM model web working
+2025-06-09 01:03:49,218 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=1fb1058c-9586-4bdb-9fb8-ef4a40de6e69,id=db311ae1-f291-4cca-a30a-5e6fd54fc7e2; trace=756fb5df-dd90-4eed-bac0-9dc94462c3c4,id=ffedaaf6-7e6a-4062-b9b8-3bd3d1b16caf; trace=664706e8-9a9b-4b0a-9859-533d9372c215,id=6f4f3e1d-56c7-48d1-b741-da021769b9f6; trace=756fb5df-dd90-4eed-bac0-9dc94462c3c4,id=756fb5df-dd90-4eed-bac0-9dc94462c3c4; trace=1fb1058c-9586-4bdb-9fb8-ef4a40de6e69,id=1fb1058c-9586-4bdb-9fb8-ef4a40de6e69; trace=664706e8-9a9b-4b0a-9859-533d9372c215,id=664706e8-9a9b-4b0a-9859-533d9372c215
+2025-06-09 01:03:49,372 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:49,723 - agents - DEBUG - ✅ LLM model coder working
+2025-06-09 01:03:49,756 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 01:03:49,756 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 01:03:49,756 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 01:03:49,757 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 01:03:49,757 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 01:03:49,758 - debug - DEBUG - File write test result: File written successfully to debug_test.txt.
+2025-06-09 01:03:49,759 - debug - INFO - ✅ Tools Integration: Tools integration working - 12 file tools, 13 total tools
+2025-06-09 01:03:49,759 - debug - DEBUG - ⏸️ Pausing 1.0s after medium test...
+2025-06-09 01:03:50,263 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=046aa22e-3728-46d3-bf35-4499811d76bf,id=d653bf30-c8de-4ea9-80e4-5b95339e5fd0; trace=046aa22e-3728-46d3-bf35-4499811d76bf,id=046aa22e-3728-46d3-bf35-4499811d76bf; trace=6fcc64f2-b813-4bcc-88e3-acad3093043b,id=6fcc64f2-b813-4bcc-88e3-acad3093043b; trace=6fcc64f2-b813-4bcc-88e3-acad3093043b,id=6fcc64f2-b813-4bcc-88e3-acad3093043b
+2025-06-09 01:03:50,429 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:50,760 - debug - INFO - 
+🔍 Testing: Error Handling
+2025-06-09 01:03:50,760 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:03:50,761 - debug - DEBUG - Testing error handling...
+2025-06-09 01:03:50,761 - error_handling - CRITICAL - Error in debug_test: authentication_error - Test error for debugging
+2025-06-09 01:03:50,862 - debug - INFO - ✅ Error Handling: Error handling working - Error classification and circuit breakers operational
+2025-06-09 01:03:50,862 - debug - DEBUG - ⏸️ Pausing 0.5s after lightweight test...
+2025-06-09 01:03:51,363 - debug - INFO - 
+🔍 Testing: Circuit Breakers
+2025-06-09 01:03:51,364 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:03:51,364 - debug - DEBUG - Testing circuit breakers...
+2025-06-09 01:03:51,365 - debug - INFO - ✅ Circuit Breakers: Circuit breakers working - Health checks passing
+2025-06-09 01:03:51,365 - debug - DEBUG - ⏸️ Pausing 0.5s after lightweight test...
+2025-06-09 01:03:51,866 - debug - INFO - 
+🔍 Testing: Health Checks
+2025-06-09 01:03:51,867 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:03:51,867 - debug - DEBUG - Testing health checks...
+2025-06-09 01:03:51,867 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 01:03:51,868 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 01:03:51,868 - assistant_core - DEBUG - 🛣️ Setting up FastAPI routes...
+2025-06-09 01:03:51,871 - assistant_core - DEBUG - ✅ FastAPI routes configured
+2025-06-09 01:03:51,871 - assistant_core - DEBUG - ✅ AssistantCore instance created
+2025-06-09 01:03:51,871 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 01:03:51,871 - assistant_core - DEBUG - 🔧 Configuration check:
+2025-06-09 01:03:51,871 - assistant_core - DEBUG -   - Config object: True
+2025-06-09 01:03:51,871 - assistant_core - DEBUG -   - Workspace dir: /home/user/morteydev/workspace
+2025-06-09 01:03:51,871 - assistant_core - DEBUG -   - LLM config loaded: True
+2025-06-09 01:03:51,871 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 01:03:51,871 - checkpointer - DEBUG - 🔍 Environment detected from ENVIRONMENT var: production
+2025-06-09 01:03:51,871 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 01:03:51,883 - checkpointer - INFO - ✅ LangGraph 0.4.8 async PostgreSQL checkpointer created
+2025-06-09 01:03:51,884 - checkpointer - INFO - ✅ Production async PostgreSQL checkpointer created
+2025-06-09 01:03:51,884 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncPostgresSaver
+2025-06-09 01:03:51,884 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 01:03:51,897 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 01:03:51,897 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 01:03:51,897 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 01:03:51,897 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:51,897 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:51,897 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:51,897 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:51,900 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:51,908 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:51,909 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:51,911 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:52,421 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=2b1585bf-39f0-421e-bb59-f243340cf315,id=2b1585bf-39f0-421e-bb59-f243340cf315; trace=7fb9cd5d-27a1-4664-a9c7-748dd7ba9829,id=7fb9cd5d-27a1-4664-a9c7-748dd7ba9829; trace=fac90bfc-c677-4d54-b5a0-b2c10c4dc52d,id=fac90bfc-c677-4d54-b5a0-b2c10c4dc52d; trace=a89cb78a-2f05-4656-9518-187e8e5a0930,id=a89cb78a-2f05-4656-9518-187e8e5a0930; trace=2b1585bf-39f0-421e-bb59-f243340cf315,id=fbefcce9-b704-420e-a001-86e910d59c5a; trace=7fb9cd5d-27a1-4664-a9c7-748dd7ba9829,id=86b9b429-ce56-44a3-94c0-b858de20f7c2; trace=fac90bfc-c677-4d54-b5a0-b2c10c4dc52d,id=e1f5fa7a-63be-4a22-84c4-657d47707617; trace=a89cb78a-2f05-4656-9518-187e8e5a0930,id=f7f4c94a-f7b3-46a6-814c-1438bd391d21
+2025-06-09 01:03:52,682 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:52,695 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:52,901 - agents - DEBUG - ✅ LLM model web working
+2025-06-09 01:03:52,910 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:53,416 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=a89cb78a-2f05-4656-9518-187e8e5a0930,id=f7f4c94a-f7b3-46a6-814c-1438bd391d21; trace=a89cb78a-2f05-4656-9518-187e8e5a0930,id=a89cb78a-2f05-4656-9518-187e8e5a0930; trace=7fb9cd5d-27a1-4664-a9c7-748dd7ba9829,id=86b9b429-ce56-44a3-94c0-b858de20f7c2; trace=2b1585bf-39f0-421e-bb59-f243340cf315,id=fbefcce9-b704-420e-a001-86e910d59c5a; trace=7fb9cd5d-27a1-4664-a9c7-748dd7ba9829,id=7fb9cd5d-27a1-4664-a9c7-748dd7ba9829; trace=2b1585bf-39f0-421e-bb59-f243340cf315,id=2b1585bf-39f0-421e-bb59-f243340cf315
+2025-06-09 01:03:53,607 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:53,614 - agents - DEBUG - ✅ LLM model coder working
+2025-06-09 01:03:53,668 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 01:03:53,668 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 01:03:53,668 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 01:03:53,668 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 01:03:53,668 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 01:03:53,668 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 01:03:53,668 - assistant_core - DEBUG - 📊 Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 01:03:53,668 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 01:03:53,668 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 01:03:53,668 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 01:03:53,668 - assistant_core - DEBUG - 🔧 Supervisor initialization inputs:
+2025-06-09 01:03:53,669 - assistant_core - DEBUG -   - Agents count: 4
+2025-06-09 01:03:53,669 - assistant_core - DEBUG -   - Tools count: 13
+2025-06-09 01:03:53,669 - assistant_core - DEBUG -   - Checkpointer: True
+2025-06-09 01:03:53,677 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 01:03:53,678 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 01:03:53,678 - assistant_core - DEBUG - ✅ Supervisor graph verified as ready
+2025-06-09 01:03:53,678 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 01:03:53,678 - assistant_core - DEBUG - ✅ Background tasks started
+2025-06-09 01:03:53,678 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 01:03:53,678 - assistant_core - DEBUG - 📊 Gathering system status...
+2025-06-09 01:03:53,678 - assistant_core - DEBUG - 🧹 Starting session cleanup task...
+2025-06-09 01:03:53,678 - assistant_core - DEBUG - 🔍 Checking for expired sessions...
+2025-06-09 01:03:53,678 - assistant_core - DEBUG - ❤️ Starting health monitoring task...
+2025-06-09 01:03:53,678 - assistant_core - DEBUG - 🔍 Performing health check...
+2025-06-09 01:03:53,678 - assistant_core - DEBUG - 📊 Gathering system status...
+2025-06-09 01:03:53,678 - llm_manager - DEBUG - 🔍 Starting LLM Manager health check...
+2025-06-09 01:03:53,679 - llm_manager - DEBUG - 🔍 Starting LLM Manager health check...
+2025-06-09 01:03:53,697 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1:0.0:5
+2025-06-09 01:03:53,699 - llm_manager - DEBUG - ✅ Using cached model: anthropic:claude-sonnet-4-20250514:0.0:5
+2025-06-09 01:03:53,700 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1:0.0:5
+2025-06-09 01:03:54,241 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=fac90bfc-c677-4d54-b5a0-b2c10c4dc52d,id=e1f5fa7a-63be-4a22-84c4-657d47707617; trace=fac90bfc-c677-4d54-b5a0-b2c10c4dc52d,id=fac90bfc-c677-4d54-b5a0-b2c10c4dc52d; trace=aeb3ba53-0121-43b2-ba78-fddc51cf3311,id=aeb3ba53-0121-43b2-ba78-fddc51cf3311; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=76462a57-f563-4736-9ac7-7b5f7e7c6f07; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=b0569781-78c2-4321-91d2-c0c0785777a7; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=a134e4b7-ee2f-4988-a41c-f3898f12636a; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=97801c43-badf-4d8c-9c5f-65c05e16bd92; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=cc368254-24c3-4624-a5e2-fdab079e0272; trace=f2f1ecee-e12d-4ccc-be66-c7ced9c19732,id=f2f1ecee-e12d-4ccc-be66-c7ced9c19732; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=f230874a-a1c3-4b4b-9830-ad3fa3f730b5; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=61da3dfe-9395-4b61-8c93-b10da202fc1a; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=f083da0a-65e5-4e56-aef2-35f451333501; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=12add8e5-a5c6-480d-8b1c-7027171309d2; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=1379ae77-f8b4-40bb-9e54-cabca26c52b9; trace=aeb3ba53-0121-43b2-ba78-fddc51cf3311,id=4be1d8ae-ef4d-4d3d-b704-2846a039a501; trace=79324f7c-35e9-44f5-90e5-dc1921593547,id=79324f7c-35e9-44f5-90e5-dc1921593547; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=72b3b031-849a-485b-a247-ab0b03def352; trace=02764f49-1df5-49f7-851d-e5c79f6e00bc,id=02764f49-1df5-49f7-851d-e5c79f6e00bc; trace=062a68bf-456a-4ae0-829b-293ccb9200d1,id=062a68bf-456a-4ae0-829b-293ccb9200d1; trace=eb07f9a1-1efe-4f00-ba16-0b021b8c1c02,id=eb07f9a1-1efe-4f00-ba16-0b021b8c1c02; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=13010dfb-3feb-4030-a48b-79087e89b0e1; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=e0b4e491-63d4-4b71-a06a-d55db952f684; trace=f2f1ecee-e12d-4ccc-be66-c7ced9c19732,id=0227bc16-e1cd-46bb-b3e3-241c26087bcb; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=5dcd9e01-3325-448e-96c2-a6a3227260e5; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=762e13f8-dd60-4391-bb49-10ec66b24ee8; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=c711b82a-c2a2-4850-92cf-c66c1adfeebf; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=fdb783c1-5bbb-4896-8fd6-313f96553384; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=a6110ca6-2129-41d2-8c5e-1cc1b749b37d; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=333ea608-a965-4cac-89a6-ec317d265eb4; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=60d3db82-1a85-498c-9e7c-9c768e65b71c; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=20c418a5-83bd-4242-ba31-b6486fd47d94; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=f46a65e5-8016-4cbe-96d8-cb9f5bc6e3af; trace=aeb3ba53-0121-43b2-ba78-fddc51cf3311,id=4be1d8ae-ef4d-4d3d-b704-2846a039a501; trace=79324f7c-35e9-44f5-90e5-dc1921593547,id=3ba32a35-e45e-4fee-8321-dd54b43c2af0; trace=02764f49-1df5-49f7-851d-e5c79f6e00bc,id=78223019-fdfc-4cee-a0d9-a118d7eb3a12; trace=062a68bf-456a-4ae0-829b-293ccb9200d1,id=65149356-4540-479d-9cc2-c7f94f76edd3; trace=f2f1ecee-e12d-4ccc-be66-c7ced9c19732,id=0227bc16-e1cd-46bb-b3e3-241c26087bcb; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=7b64ecc7-4697-4f36-9f52-0c3b706ecf6a; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=5fc6445f-75c7-46de-a1e9-02ce9742e5cc; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=c426c539-2f6d-477c-b278-55fe953ec71e; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=afb1b875-1077-4659-b3e4-bf0769b1ef7e; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=0ffa67c3-1d5b-480c-88e2-80dbd9755703; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=a8daa9b7-40e6-42ce-978f-d964ceea7667; trace=aeb3ba53-0121-43b2-ba78-fddc51cf3311,id=77f059ea-0abc-478a-81bc-039726db11db; trace=f2f1ecee-e12d-4ccc-be66-c7ced9c19732,id=a66d4d1d-9ba9-44f5-b52a-14d31b6320dd; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=c426c539-2f6d-477c-b278-55fe953ec71e; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=5fc6445f-75c7-46de-a1e9-02ce9742e5cc; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=7b64ecc7-4697-4f36-9f52-0c3b706ecf6a; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=afb1b875-1077-4659-b3e4-bf0769b1ef7e; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=0ffa67c3-1d5b-480c-88e2-80dbd9755703; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=a8daa9b7-40e6-42ce-978f-d964ceea7667; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=333ea608-a965-4cac-89a6-ec317d265eb4; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=a6110ca6-2129-41d2-8c5e-1cc1b749b37d; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=fdb783c1-5bbb-4896-8fd6-313f96553384; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=60d3db82-1a85-498c-9e7c-9c768e65b71c; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=20c418a5-83bd-4242-ba31-b6486fd47d94; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=f46a65e5-8016-4cbe-96d8-cb9f5bc6e3af; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=e0b4e491-63d4-4b71-a06a-d55db952f684; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=13010dfb-3feb-4030-a48b-79087e89b0e1; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=72b3b031-849a-485b-a247-ab0b03def352; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=5dcd9e01-3325-448e-96c2-a6a3227260e5; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=762e13f8-dd60-4391-bb49-10ec66b24ee8; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=c711b82a-c2a2-4850-92cf-c66c1adfeebf; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=adf2c4ec-5b68-4d7b-8809-c2139feb7fc7; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=ba3ee27c-6841-410f-bae2-6795f945e570; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=ef71f216-4d41-43f7-8c6a-9fcb8bb2bfea; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=9f33e251-a12e-4b6b-971e-00b8568a0af5; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=f3b7c360-67d5-463d-be4e-e82e2db9439f; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=127e66cf-ee84-4e78-9415-e8e438b70bd3; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=adf2c4ec-5b68-4d7b-8809-c2139feb7fc7; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=ba3ee27c-6841-410f-bae2-6795f945e570; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=ef71f216-4d41-43f7-8c6a-9fcb8bb2bfea; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=9f33e251-a12e-4b6b-971e-00b8568a0af5; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=f3b7c360-67d5-463d-be4e-e82e2db9439f; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=127e66cf-ee84-4e78-9415-e8e438b70bd3; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=5468f7d8-fb30-4553-a45d-6729a3d1c750; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=ac561acf-c187-4810-846e-853fca3c81f7; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=7b89adce-2e52-4268-8def-8d71a47b168c; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=093d7eeb-6a0d-473c-96eb-5750c280b937; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=e5695bf2-dbee-4150-8a97-d8b4ef16a02c; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=61a57e64-a453-4f8b-a055-7f020213381f
+2025-06-09 01:03:54,793 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:54,986 - llm_manager - DEBUG - ✅ Using cached model: anthropic:claude-sonnet-4-20250514:0.0:5
+2025-06-09 01:03:54,991 - llm_manager - DEBUG - ✅ LLM Manager health check completed - Status: healthy
+2025-06-09 01:03:55,787 - assistant_core - DEBUG - ✅ System status gathered successfully
+2025-06-09 01:03:55,787 - debug - INFO - ✅ Health Checks: All health checks passing
+2025-06-09 01:03:55,787 - debug - DEBUG - ⏸️ Pausing 1.0s after medium test...
+2025-06-09 01:03:56,171 - llm_manager - DEBUG - ✅ LLM Manager health check completed - Status: healthy
+2025-06-09 01:03:56,171 - assistant_core - DEBUG - ✅ System status gathered successfully
+2025-06-09 01:03:56,171 - assistant_core - DEBUG - ✅ System health good: 1.00
+2025-06-09 01:03:56,675 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=79324f7c-35e9-44f5-90e5-dc1921593547,id=3ba32a35-e45e-4fee-8321-dd54b43c2af0; trace=79324f7c-35e9-44f5-90e5-dc1921593547,id=79324f7c-35e9-44f5-90e5-dc1921593547; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=61a57e64-a453-4f8b-a055-7f020213381f; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=824e4a48-ca4d-4171-909f-4e41ed9d9d12; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=824e4a48-ca4d-4171-909f-4e41ed9d9d12; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=1379ae77-f8b4-40bb-9e54-cabca26c52b9; trace=12add8e5-a5c6-480d-8b1c-7027171309d2,id=12add8e5-a5c6-480d-8b1c-7027171309d2; trace=062a68bf-456a-4ae0-829b-293ccb9200d1,id=65149356-4540-479d-9cc2-c7f94f76edd3; trace=062a68bf-456a-4ae0-829b-293ccb9200d1,id=062a68bf-456a-4ae0-829b-293ccb9200d1; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=e5695bf2-dbee-4150-8a97-d8b4ef16a02c; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=faa9707f-b36e-4448-a571-f32b811e7f3b; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=faa9707f-b36e-4448-a571-f32b811e7f3b; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=f083da0a-65e5-4e56-aef2-35f451333501; trace=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9,id=709c4c2d-68d6-4b0c-8f3c-84c3c60ce4f9; trace=02764f49-1df5-49f7-851d-e5c79f6e00bc,id=78223019-fdfc-4cee-a0d9-a118d7eb3a12; trace=eb07f9a1-1efe-4f00-ba16-0b021b8c1c02,id=9e073397-9e8c-4dc1-9088-31d4b86657ff; trace=02764f49-1df5-49f7-851d-e5c79f6e00bc,id=02764f49-1df5-49f7-851d-e5c79f6e00bc; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=5468f7d8-fb30-4553-a45d-6729a3d1c750; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=38087cc8-079d-4cd4-91bf-7bca8609539f; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=38087cc8-079d-4cd4-91bf-7bca8609539f; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=cc368254-24c3-4624-a5e2-fdab079e0272; trace=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826,id=3d19ede2-6e8c-4a9c-92e4-1a2490fe8826; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=093d7eeb-6a0d-473c-96eb-5750c280b937; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=924f68e7-8cb0-420b-91c4-12c8556a0335; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=924f68e7-8cb0-420b-91c4-12c8556a0335; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=61da3dfe-9395-4b61-8c93-b10da202fc1a; trace=f230874a-a1c3-4b4b-9830-ad3fa3f730b5,id=f230874a-a1c3-4b4b-9830-ad3fa3f730b5; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=7b89adce-2e52-4268-8def-8d71a47b168c; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=1a49a3e4-d358-43bb-8c59-8d64e008377b; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=1a49a3e4-d358-43bb-8c59-8d64e008377b; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=b0569781-78c2-4321-91d2-c0c0785777a7; trace=76462a57-f563-4736-9ac7-7b5f7e7c6f07,id=76462a57-f563-4736-9ac7-7b5f7e7c6f07; trace=aeb3ba53-0121-43b2-ba78-fddc51cf3311,id=77f059ea-0abc-478a-81bc-039726db11db; trace=aeb3ba53-0121-43b2-ba78-fddc51cf3311,id=aeb3ba53-0121-43b2-ba78-fddc51cf3311; trace=f2f1ecee-e12d-4ccc-be66-c7ced9c19732,id=a66d4d1d-9ba9-44f5-b52a-14d31b6320dd; trace=f2f1ecee-e12d-4ccc-be66-c7ced9c19732,id=f2f1ecee-e12d-4ccc-be66-c7ced9c19732; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=ac561acf-c187-4810-846e-853fca3c81f7; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=3c79a0d3-6ae0-4317-9477-d41cfa48f74f; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=3c79a0d3-6ae0-4317-9477-d41cfa48f74f; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=97801c43-badf-4d8c-9c5f-65c05e16bd92; trace=a134e4b7-ee2f-4988-a41c-f3898f12636a,id=a134e4b7-ee2f-4988-a41c-f3898f12636a; trace=eb07f9a1-1efe-4f00-ba16-0b021b8c1c02,id=9e073397-9e8c-4dc1-9088-31d4b86657ff; trace=eb07f9a1-1efe-4f00-ba16-0b021b8c1c02,id=eb07f9a1-1efe-4f00-ba16-0b021b8c1c02
+2025-06-09 01:03:56,789 - debug - INFO - 
+🔍 Testing: Performance Metrics
+2025-06-09 01:03:56,789 - debug - INFO - ------------------------------------------------------------
+2025-06-09 01:03:56,790 - debug - DEBUG - Testing performance metrics...
+2025-06-09 01:03:56,791 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 01:03:56,792 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 01:03:56,792 - assistant_core - DEBUG - 🛣️ Setting up FastAPI routes...
+2025-06-09 01:03:56,795 - assistant_core - DEBUG - ✅ FastAPI routes configured
+2025-06-09 01:03:56,795 - assistant_core - DEBUG - ✅ AssistantCore instance created
+2025-06-09 01:03:56,795 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 01:03:56,795 - assistant_core - DEBUG - 🔧 Configuration check:
+2025-06-09 01:03:56,795 - assistant_core - DEBUG -   - Config object: True
+2025-06-09 01:03:56,795 - assistant_core - DEBUG -   - Workspace dir: /home/user/morteydev/workspace
+2025-06-09 01:03:56,795 - assistant_core - DEBUG -   - LLM config loaded: True
+2025-06-09 01:03:56,795 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 01:03:56,796 - checkpointer - DEBUG - 🔍 Environment detected from ENVIRONMENT var: production
+2025-06-09 01:03:56,796 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 01:03:56,808 - checkpointer - INFO - ✅ LangGraph 0.4.8 async PostgreSQL checkpointer created
+2025-06-09 01:03:56,808 - checkpointer - INFO - ✅ Production async PostgreSQL checkpointer created
+2025-06-09 01:03:56,808 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncPostgresSaver
+2025-06-09 01:03:56,808 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 01:03:56,822 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 01:03:56,822 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 01:03:56,822 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 01:03:56,822 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:56,823 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:56,823 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:56,824 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:56,824 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:56,829 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 01:03:56,831 - llm_manager - DEBUG - ✅ Using cached model: openai:o3:1:50000
+2025-06-09 01:03:56,832 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 01:03:57,085 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:57,591 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=62c4661d-ec92-4917-b6fd-8c2953ba977a,id=62c4661d-ec92-4917-b6fd-8c2953ba977a; trace=dd8a44a5-9f33-447d-af11-cfdc4f0dd70a,id=dd8a44a5-9f33-447d-af11-cfdc4f0dd70a; trace=62c4661d-ec92-4917-b6fd-8c2953ba977a,id=a0285522-25b4-4a7e-ba9c-664860d8a54d; trace=80f70f1d-46be-49cb-ab4d-4df370e9dadb,id=80f70f1d-46be-49cb-ab4d-4df370e9dadb; trace=80eba792-84a1-45b5-a686-85ee71181279,id=80eba792-84a1-45b5-a686-85ee71181279; trace=dd8a44a5-9f33-447d-af11-cfdc4f0dd70a,id=6aa77e80-1957-4566-925b-dbd6049a9b34; trace=80f70f1d-46be-49cb-ab4d-4df370e9dadb,id=e781aefb-7032-4499-85ca-3a79678b2421; trace=80eba792-84a1-45b5-a686-85ee71181279,id=f15e8d68-d7f5-420e-9d41-b010230d7ec7
+2025-06-09 01:03:57,606 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:57,641 - agents - DEBUG - ✅ LLM model chat working
+2025-06-09 01:03:57,802 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:58,015 - agents - DEBUG - ✅ LLM model web working
+2025-06-09 01:03:58,425 - agents - DEBUG - ✅ LLM model coder working
+2025-06-09 01:03:58,447 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 01:03:58,447 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 01:03:58,447 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 01:03:58,447 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 01:03:58,447 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 01:03:58,447 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 01:03:58,448 - assistant_core - DEBUG - 📊 Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 01:03:58,448 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 01:03:58,448 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 01:03:58,448 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 01:03:58,448 - assistant_core - DEBUG - 🔧 Supervisor initialization inputs:
+2025-06-09 01:03:58,448 - assistant_core - DEBUG -   - Agents count: 4
+2025-06-09 01:03:58,448 - assistant_core - DEBUG -   - Tools count: 13
+2025-06-09 01:03:58,448 - assistant_core - DEBUG -   - Checkpointer: True
+2025-06-09 01:03:58,457 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 01:03:58,457 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 01:03:58,457 - assistant_core - DEBUG - ✅ Supervisor graph verified as ready
+2025-06-09 01:03:58,457 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 01:03:58,458 - assistant_core - DEBUG - ✅ Background tasks started
+2025-06-09 01:03:58,458 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 01:03:58,458 - assistant_core - INFO - 🔄 Starting message processing - Session: perf_test, User: debug_user
+2025-06-09 01:03:58,458 - assistant_core - DEBUG - 📝 Message content: Hello, this is a performance test...
+2025-06-09 01:03:58,458 - assistant_core - DEBUG - 🔧 Component status check:
+2025-06-09 01:03:58,458 - assistant_core - DEBUG -   - Supervisor initialized: True
+2025-06-09 01:03:58,458 - assistant_core - DEBUG -   - Checkpointer available: True
+2025-06-09 01:03:58,458 - assistant_core - DEBUG -   - Active sessions: 0
+2025-06-09 01:03:58,458 - assistant_core - DEBUG - 📂 Retrieving session state...
+2025-06-09 01:03:58,459 - assistant_core - DEBUG - 🧹 Starting session cleanup task...
+2025-06-09 01:03:58,459 - assistant_core - DEBUG - 🔍 Checking for expired sessions...
+2025-06-09 01:03:58,459 - assistant_core - DEBUG - ❤️ Starting health monitoring task...
+2025-06-09 01:03:58,459 - assistant_core - DEBUG - 🔍 Performing health check...
+2025-06-09 01:03:58,459 - assistant_core - DEBUG - 📊 Gathering system status...
+2025-06-09 01:03:58,460 - llm_manager - DEBUG - 🔍 Starting LLM Manager health check...
+2025-06-09 01:03:58,471 - llm_manager - DEBUG - ✅ Using cached model: anthropic:claude-sonnet-4-20250514:0.0:5
+2025-06-09 01:03:58,474 - llm_manager - DEBUG - ✅ Using cached model: openai:gpt-4.1:0.0:5
+2025-06-09 01:03:58,475 - assistant_core - DEBUG - Error loading session: 'NoneType' object has no attribute 'get'
+2025-06-09 01:03:58,475 - assistant_core - DEBUG - ✅ Session state retrieved: perf_test
+2025-06-09 01:03:58,475 - assistant_core - DEBUG - 💬 Adding message to state...
+2025-06-09 01:03:58,475 - assistant_core - DEBUG - 📊 State updated - Messages: 1, Agent: chat
+2025-06-09 01:03:58,475 - assistant_core - DEBUG - 🎯 Preparing supervisor invocation...
+2025-06-09 01:03:58,475 - assistant_core - DEBUG - 🔧 LangGraph config: {'configurable': {'thread_id': 'perf_test'}}
+2025-06-09 01:03:58,475 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 01:03:58,483 - supervisor - INFO - 🎯 No specific keywords matched, routing to default: chat
+2025-06-09 01:03:59,005 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=62c4661d-ec92-4917-b6fd-8c2953ba977a,id=a0285522-25b4-4a7e-ba9c-664860d8a54d; trace=62c4661d-ec92-4917-b6fd-8c2953ba977a,id=62c4661d-ec92-4917-b6fd-8c2953ba977a; trace=dd8a44a5-9f33-447d-af11-cfdc4f0dd70a,id=6aa77e80-1957-4566-925b-dbd6049a9b34; trace=dd8a44a5-9f33-447d-af11-cfdc4f0dd70a,id=dd8a44a5-9f33-447d-af11-cfdc4f0dd70a; trace=80eba792-84a1-45b5-a686-85ee71181279,id=f15e8d68-d7f5-420e-9d41-b010230d7ec7; trace=80eba792-84a1-45b5-a686-85ee71181279,id=80eba792-84a1-45b5-a686-85ee71181279; trace=80f70f1d-46be-49cb-ab4d-4df370e9dadb,id=e781aefb-7032-4499-85ca-3a79678b2421; trace=80f70f1d-46be-49cb-ab4d-4df370e9dadb,id=80f70f1d-46be-49cb-ab4d-4df370e9dadb; trace=77905c59-4db2-4f76-81c1-fad7c4f7c183,id=77905c59-4db2-4f76-81c1-fad7c4f7c183; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=61ad09f2-6c80-489c-9389-08f430fb12c5; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=58023c12-871f-4fe9-a479-ce0ef421677f; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=dc1a692a-3c52-4f5c-b277-8aa8955d14bf; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=53e0a802-d204-4425-b868-aa1869abf9a8; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=a2f4bf05-d754-44a6-b888-fb4eef337fa2; trace=77905c59-4db2-4f76-81c1-fad7c4f7c183,id=84531d59-c65e-4bfc-9a62-98afeb4eec2b; trace=7d8ad09b-8660-4616-acff-e9fd59a60a3b,id=7d8ad09b-8660-4616-acff-e9fd59a60a3b; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=759fb3ac-e71c-465a-bc92-207e94c0766a; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=2fb3651e-4d7a-468b-8e68-a2d2967d7b8b; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=688a1971-07b5-4447-b0fa-6c6560d072ca; trace=eaf35686-572f-4de6-ac8a-a40bce3c783c,id=eaf35686-572f-4de6-ac8a-a40bce3c783c; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=eaec4328-23d8-45db-a0e7-18b33ef075fc; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=31fa6928-5096-43f5-a5ac-eb3e07872b5e; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=1ab8b322-5453-4493-97bd-fa30f8389162; trace=77905c59-4db2-4f76-81c1-fad7c4f7c183,id=84531d59-c65e-4bfc-9a62-98afeb4eec2b; trace=7d8ad09b-8660-4616-acff-e9fd59a60a3b,id=2200c698-63c4-4e3b-bbf4-236a9d5cfd61; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=e2b4414a-be2d-42b6-9543-9f73ed2b291f; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=2364f758-e2c5-4cb9-96a2-fb9536d0fb44; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=e5a03646-c6e3-4504-8b95-84175b39408f; trace=eaf35686-572f-4de6-ac8a-a40bce3c783c,id=e6a5f0e5-8b34-4b99-ae15-d0459dbc11f7; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=89646ab6-c3a1-4361-9d50-043166d8204b; trace=77905c59-4db2-4f76-81c1-fad7c4f7c183,id=5c669d5a-a144-4fa6-9d65-89293c2173fc; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=e5a03646-c6e3-4504-8b95-84175b39408f; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=2364f758-e2c5-4cb9-96a2-fb9536d0fb44; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=e2b4414a-be2d-42b6-9543-9f73ed2b291f; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=8cf99a29-ea27-4e08-8f39-10611cb3ddea; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=8ac9799c-763c-4e12-ba75-cf3f1bcee82e; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=1ab8b322-5453-4493-97bd-fa30f8389162; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=31fa6928-5096-43f5-a5ac-eb3e07872b5e; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=eaec4328-23d8-45db-a0e7-18b33ef075fc; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=688a1971-07b5-4447-b0fa-6c6560d072ca; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=8ac9799c-763c-4e12-ba75-cf3f1bcee82e; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=2fb3651e-4d7a-468b-8e68-a2d2967d7b8b; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=759fb3ac-e71c-465a-bc92-207e94c0766a; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=1c8b2415-9dd5-4fc1-8839-b46df36f4973; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=550dfbca-a2c7-45b9-a84d-d339f71d2826; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=704e030d-896b-4469-bc6c-cbdb40e71392; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=8cf99a29-ea27-4e08-8f39-10611cb3ddea; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=1c8b2415-9dd5-4fc1-8839-b46df36f4973; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=5223c138-27cf-4a88-b0f0-27259be5262f; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=550dfbca-a2c7-45b9-a84d-d339f71d2826; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=704e030d-896b-4469-bc6c-cbdb40e71392; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=1e1e77af-1528-482c-98e5-297d01c9e9c7; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=1a46e0a3-cf76-4b15-b6f4-cf2d943dc7ca; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=12314ada-fc40-4780-9158-0c079c295083; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=3397b449-8d29-4a7c-9289-a152c6cb542e; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=ed506222-74f0-40a2-9acc-936c3ec0bf3b; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=12314ada-fc40-4780-9158-0c079c295083; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=76551e48-68f4-42f3-aabb-35910b182216
+2025-06-09 01:03:59,370 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:03:59,537 - llm_manager - DEBUG - ✅ LLM Manager health check completed - Status: healthy
+2025-06-09 01:04:00,424 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 01:04:00,424 - assistant_core - DEBUG - 📋 Result type: <class 'langgraph.pregel.io.AddableValuesDict'>
+2025-06-09 01:04:00,425 - assistant_core - DEBUG - 📋 Result keys: ['messages', 'session_id', 'user_id', 'current_agent']
+2025-06-09 01:04:00,425 - assistant_core - DEBUG - 📋 Result messages count: 2
+2025-06-09 01:04:00,425 - assistant_core - DEBUG - 💾 Session state updated
+2025-06-09 01:04:00,426 - assistant_core - INFO - ✅ Message processing completed - Response length: 65
+2025-06-09 01:04:00,426 - debug - INFO - ✅ Performance Metrics: Performance metrics gathered - 1968.2ms message processing
+2025-06-09 01:04:00,426 - debug - INFO - 
+================================================================================
+2025-06-09 01:04:00,426 - debug - INFO - 🎯 MORTEY ASSISTANT DEBUG REPORT
+2025-06-09 01:04:00,426 - debug - INFO - ================================================================================
+2025-06-09 01:04:00,427 - debug - INFO - 📊 Summary: 13/13 tests passed (100.0%)
+2025-06-09 01:04:00,427 - debug - INFO - ⏱️ Total time: 76.47s (avg: 4798.4ms per test)
+2025-06-09 01:04:00,427 - debug - INFO - 
+✅ Successful Tests (13):
+2025-06-09 01:04:00,427 - debug - INFO -   - Environment Setup: Environment OK - Python 3.13, all vars and dirs present
+2025-06-09 01:04:00,427 - debug - INFO -   - Configuration Loading: Config loaded successfully - 2 providers, 4 nodes
+2025-06-09 01:04:00,427 - debug - INFO -   - Checkpointer Initialization: Checkpointer factory working - Type: AsyncPostgresSaver
+2025-06-09 01:04:00,428 - debug - INFO -   - LLM Manager: LLM Manager working - Generated 66 chars
+2025-06-09 01:04:00,428 - debug - INFO -   - Agent Factory: Agent factory working - 4 agents, 13 tools
+2025-06-09 01:04:00,428 - debug - INFO -   - Supervisor Initialization: Supervisor initialized successfully - Graph ready with 4 agents
+2025-06-09 01:04:00,428 - debug - INFO -   - Assistant Core: Assistant core initialized successfully - All components ready
+2025-06-09 01:04:00,428 - debug - INFO -   - Message Processing: Message processing working - 3 messages processed
+2025-06-09 01:04:00,428 - debug - INFO -   - Tools Integration: Tools integration working - 12 file tools, 13 total tools
+2025-06-09 01:04:00,429 - debug - INFO -   - Error Handling: Error handling working - Error classification and circuit breakers operational
+2025-06-09 01:04:00,429 - debug - INFO -   - Circuit Breakers: Circuit breakers working - Health checks passing
+2025-06-09 01:04:00,429 - debug - INFO -   - Health Checks: All health checks passing
+2025-06-09 01:04:00,429 - debug - INFO -   - Performance Metrics: Performance metrics gathered - 1968.2ms message processing
+2025-06-09 01:04:00,429 - debug - INFO - 
+================================================================================
+2025-06-09 01:04:00,431 - debug - INFO - 
+📄 Full debug report saved to: debug_report.json
+2025-06-09 01:04:00,449 - langsmith.client - DEBUG - Main thread is dead, stopping tracing thread
+2025-06-09 01:04:00,450 - langsmith.client - DEBUG - Tracing control thread is shutting down
+2025-06-09 01:04:00,495 - langsmith.client - DEBUG - Main thread is dead, stopping compression thread
+2025-06-09 01:04:00,497 - langsmith.client - DEBUG - Sending compressed multipart request with context: trace=eaf35686-572f-4de6-ac8a-a40bce3c783c,id=e6a5f0e5-8b34-4b99-ae15-d0459dbc11f7; trace=eaf35686-572f-4de6-ac8a-a40bce3c783c,id=eaf35686-572f-4de6-ac8a-a40bce3c783c; trace=7d8ad09b-8660-4616-acff-e9fd59a60a3b,id=2200c698-63c4-4e3b-bbf4-236a9d5cfd61; trace=7d8ad09b-8660-4616-acff-e9fd59a60a3b,id=7d8ad09b-8660-4616-acff-e9fd59a60a3b; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=1a46e0a3-cf76-4b15-b6f4-cf2d943dc7ca; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=4bf58319-42d6-45df-b29a-3d4c2ec1ab01; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=4bf58319-42d6-45df-b29a-3d4c2ec1ab01; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=a2f4bf05-d754-44a6-b888-fb4eef337fa2; trace=53e0a802-d204-4425-b868-aa1869abf9a8,id=53e0a802-d204-4425-b868-aa1869abf9a8; trace=77905c59-4db2-4f76-81c1-fad7c4f7c183,id=5c669d5a-a144-4fa6-9d65-89293c2173fc; trace=77905c59-4db2-4f76-81c1-fad7c4f7c183,id=77905c59-4db2-4f76-81c1-fad7c4f7c183; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=ed506222-74f0-40a2-9acc-936c3ec0bf3b; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=f5bae079-a17a-49ee-bbe1-a238669025a2; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=f5bae079-a17a-49ee-bbe1-a238669025a2; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=61ad09f2-6c80-489c-9389-08f430fb12c5; trace=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86,id=47f1e7e2-e146-43e7-b7e1-a12c1bb45b86; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=76551e48-68f4-42f3-aabb-35910b182216; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=1e1e77af-1528-482c-98e5-297d01c9e9c7; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=2a686bda-fd54-42da-8d8b-b97187fd3ba7; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=2a686bda-fd54-42da-8d8b-b97187fd3ba7; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=5223c138-27cf-4a88-b0f0-27259be5262f; trace=89646ab6-c3a1-4361-9d50-043166d8204b,id=89646ab6-c3a1-4361-9d50-043166d8204b; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=3397b449-8d29-4a7c-9289-a152c6cb542e; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=dc1a692a-3c52-4f5c-b277-8aa8955d14bf; trace=58023c12-871f-4fe9-a479-ce0ef421677f,id=58023c12-871f-4fe9-a479-ce0ef421677f
+2025-06-09 01:04:00,719 - urllib3.connectionpool - DEBUG - https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+2025-06-09 01:04:00,720 - langsmith.client - DEBUG - Compressed traces control thread is shutting down
+2025-06-09 01:04:00,721 - langsmith.client - DEBUG - Closing Client.session
+2025-06-09 01:04:00,722 - langsmith.client - DEBUG - Closing Client.session
+2025-06-09 01:04:00,723 - langsmith.client - DEBUG - Closing Client.session
+2025-06-09 01:04:00,723 - langsmith.client - DEBUG - Closing Client.session

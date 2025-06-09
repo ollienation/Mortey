@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Any, Literal, Optional, List, Union, Self
+from typing import Any, Literal, Optional, List, Union, Self
 from dataclasses import dataclass
 from collections.abc import Sequence  # Python 3.13.4 preferred import
 
@@ -9,6 +9,7 @@ from langchain_core.messages import AIMessage, HumanMessage, BaseMessage
 
 from core.state import AssistantState
 from core.error_handling import ErrorHandler
+from core.checkpointer import Checkpointer
 
 logger = logging.getLogger("supervisor")
 
@@ -33,7 +34,11 @@ class SupervisorConfig:
                     "code", "python", "function", "class", "def", "import", 
                     "script", "programming", "debug", "refactor", "algorithm",
                     "variable", "loop", "condition", "syntax", "error",
-                    "compile", "execute", "method", "object", "inheritance"
+                    "compile", "execute", "method", "object", "inheritance",
+                    "file", "save", "create", "write", "json", "csv", "txt",
+                    "generate", "build", "make", "output", "export", "yaml",
+                    "xml", "html", "css", "js", "javascript", "sql", 
+                    "config", "configuration", "data", "structure"
                 ],
                 "web": [
                     "search", "web", "news", "internet", "google", "find", 
@@ -66,7 +71,7 @@ class Supervisor:
         self, 
         agents: dict[str, Any],  # Python 3.13.4 syntax
         all_tools: list[Any],  # Python 3.13.4 syntax
-        checkpointer=None
+        checkpointer: Optional[Checkpointer] = None
     ) -> None:
         """
         Initialize supervisor with agents and tools using modern LangGraph patterns.

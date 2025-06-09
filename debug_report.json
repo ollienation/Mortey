@@ -1,0 +1,576 @@
+{
+  "summary": {
+    "total_tests": 13,
+    "successful_tests": 13,
+    "failed_tests": 0,
+    "success_rate": 100.0,
+    "total_duration_s": 76.47035717964172,
+    "average_test_duration_ms": 4798.360072649442
+  },
+  "results": [
+    {
+      "test_name": "Environment Setup",
+      "success": true,
+      "message": "Environment OK - Python 3.13, all vars and dirs present",
+      "duration_ms": 40.21883010864258,
+      "metadata": {
+        "python_version": "3.13.4",
+        "project_root": "/home/user/morteydev"
+      }
+    },
+    {
+      "test_name": "Configuration Loading",
+      "success": true,
+      "message": "Config loaded successfully - 2 providers, 4 nodes",
+      "duration_ms": 100.67319869995117,
+      "metadata": {
+        "providers_count": 2,
+        "nodes_count": 4,
+        "workspace_dir": "/home/user/morteydev/workspace",
+        "default_provider": "anthropic"
+      }
+    },
+    {
+      "test_name": "Checkpointer Initialization",
+      "success": true,
+      "message": "Checkpointer factory working - Type: AsyncPostgresSaver",
+      "duration_ms": 185.8961582183838,
+      "metadata": {
+        "checkpointer_type": "AsyncPostgresSaver",
+        "health_status": {
+          "postgres_async_context": "CheckpointerHealth(healthy=False, checkpointer_type='postgres_async_context', connection_status='invalid_checkpointer', last_check=54739.813928691, error_message=None, metadata={'response_time_ms': 0.002077002136502415})",
+          "postgres_async": "CheckpointerHealth(healthy=True, checkpointer_type='postgres_async', connection_status='connected', last_check=54739.813941381, error_message=None, metadata={'response_time_ms': 1.7333610012428835})"
+        },
+        "factory_stats": {
+          "config": {
+            "environment": "development",
+            "prefer_async": true,
+            "connection_timeout": 30.0,
+            "max_connections": 10
+          },
+          "connections": {
+            "active_count": 2,
+            "connection_types": [
+              "postgres_async_context",
+              "postgres_async"
+            ]
+          },
+          "health": {
+            "last_check_count": 2,
+            "healthy_connections": 1
+          },
+          "capabilities": {
+            "postgres_available": true,
+            "async_postgres": true,
+            "sync_postgres": true
+          }
+        }
+      }
+    },
+    {
+      "test_name": "LLM Manager",
+      "success": true,
+      "message": "LLM Manager working - Generated 66 chars",
+      "duration_ms": 28822.586059570312,
+      "metadata": {
+        "health_status": {
+          "healthy": false,
+          "overall_status": "degraded",
+          "health_score": 0.5,
+          "provider_health": {
+            "openai": "healthy",
+            "anthropic": "unhealthy: timeout"
+          },
+          "providers": {
+            "total": 2,
+            "healthy": 1,
+            "unhealthy": 1
+          },
+          "cache": {
+            "total_models": 2,
+            "models_by_state": {
+              "ready": 2
+            },
+            "cache_hit_rate": 0.0
+          },
+          "usage": {
+            "total_tokens": 0,
+            "estimated_cost": 0.0,
+            "providers_initialized": 2
+          },
+          "performance": {
+            "error_rate": 0.0,
+            "models_in_error_state": 0
+          },
+          "timestamp": 1749423776.8755474
+        },
+        "usage_stats": {
+          "providers_initialized": [
+            "openai",
+            "anthropic"
+          ],
+          "langsmith_enabled": true,
+          "total_providers": 2,
+          "token_usage": {
+            "total_tokens": 0,
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "estimated_cost": 0.0,
+            "by_provider": {},
+            "by_model": {}
+          },
+          "cache_info": {
+            "total_models": 3,
+            "models_by_state": {
+              "ready": 3
+            },
+            "models_by_provider": {
+              "anthropic": 1,
+              "openai": 2
+            },
+            "memory_efficient": true,
+            "models": [
+              {
+                "cache_key": "anthropic:claude-sonnet-4-20250514:0.0:5",
+                "state": "ready",
+                "usage_count": 1,
+                "error_count": 0,
+                "last_used": 1749423766.993463,
+                "age_hours": 0.007845025261243184
+              },
+              {
+                "cache_key": "openai:gpt-4.1:0.0:5",
+                "state": "ready",
+                "usage_count": 1,
+                "error_count": 0,
+                "last_used": 1749423767.215999,
+                "age_hours": 0.007798747287856208
+              },
+              {
+                "cache_key": "openai:gpt-4.1-mini:0.7:1500",
+                "state": "ready",
+                "usage_count": 1,
+                "error_count": 0,
+                "last_used": 1749423776.8797302,
+                "age_hours": 0.005064905815654331
+              }
+            ]
+          },
+          "concurrency_limits": {
+            "global_max": 10,
+            "provider_limits": {
+              "anthropic": 3,
+              "openai": 5,
+              "google": 3,
+              "cohere": 2,
+              "default": 2
+            }
+          }
+        },
+        "response_length": 66
+      }
+    },
+    {
+      "test_name": "Agent Factory",
+      "success": true,
+      "message": "Agent factory working - 4 agents, 13 tools",
+      "duration_ms": 4303.438663482666,
+      "metadata": {
+        "agents_count": 4,
+        "tools_count": 13,
+        "agent_names": [
+          "chat",
+          "coder",
+          "web",
+          "file_manager"
+        ],
+        "health_status": {
+          "chat": true,
+          "coder": false,
+          "web": false,
+          "file_manager": false
+        },
+        "factory_stats": {
+          "total_agents": 4,
+          "total_tools": 13,
+          "agents_by_type": {
+            "chat": 1,
+            "coder": 1,
+            "web_search": 1,
+            "file_manager": 1,
+            "supervisor": 0
+          },
+          "tools_by_category": {
+            "file_tools": 12,
+            "web_search": 1
+          },
+          "agent_names": [
+            "chat",
+            "coder",
+            "web",
+            "file_manager"
+          ],
+          "initialization_complete": true
+        }
+      }
+    },
+    {
+      "test_name": "Supervisor Initialization",
+      "success": true,
+      "message": "Supervisor initialized successfully - Graph ready with 4 agents",
+      "duration_ms": 1414.5209789276123,
+      "metadata": {
+        "graph_ready": true,
+        "routing_stats": {
+          "config": {
+            "default_agent": "chat",
+            "max_replays": 5,
+            "routing_logs_enabled": true,
+            "human_in_loop_enabled": false
+          },
+          "stats": {
+            "total_routes": 0,
+            "routes_by_agent": {
+              "chat": 0,
+              "coder": 0,
+              "web": 0,
+              "file_manager": 0
+            },
+            "routing_errors": 0
+          },
+          "agents_available": [
+            "chat",
+            "coder",
+            "web",
+            "file_manager"
+          ],
+          "tools_count": 13,
+          "graph_initialized": true
+        },
+        "agents_available": [
+          "chat",
+          "coder",
+          "web",
+          "file_manager"
+        ]
+      }
+    },
+    {
+      "test_name": "Assistant Core",
+      "success": true,
+      "message": "Assistant core initialized successfully - All components ready",
+      "duration_ms": 7537.9064083099365,
+      "metadata": {
+        "active_sessions": 0,
+        "system_status": {
+          "agents": {
+            "chat": true,
+            "coder": false,
+            "web": false,
+            "file_manager": false
+          },
+          "circuit_breakers": {
+            "llm_anthropic": true,
+            "llm_openai": false
+          },
+          "checkpointer": {
+            "health_status": {
+              "postgres_async_context": "CheckpointerHealth(healthy=False, checkpointer_type='postgres_async_context', connection_status='invalid_checkpointer', last_check=54782.422550946, error_message=None, metadata={'response_time_ms': 0.0030430019251070917})",
+              "postgres_async": "CheckpointerHealth(healthy=True, checkpointer_type='postgres_async', connection_status='connected', last_check=54782.422564361, error_message=None, metadata={'response_time_ms': 24.481514003127813})"
+            },
+            "factory_stats": {
+              "config": {
+                "environment": "development",
+                "prefer_async": true,
+                "connection_timeout": 30.0,
+                "max_connections": 10
+              },
+              "connections": {
+                "active_count": 2,
+                "connection_types": [
+                  "postgres_async_context",
+                  "postgres_async"
+                ]
+              },
+              "health": {
+                "last_check_count": 2,
+                "healthy_connections": 1
+              },
+              "capabilities": {
+                "postgres_available": true,
+                "async_postgres": true,
+                "sync_postgres": true
+              }
+            },
+            "active_connections": 2,
+            "checkpointer_type": "AsyncPostgresSaver"
+          },
+          "llm_manager": {
+            "healthy": true,
+            "overall_status": "healthy",
+            "health_score": 1.0,
+            "provider_health": {
+              "openai": "healthy",
+              "anthropic": "healthy"
+            },
+            "providers": {
+              "total": 2,
+              "healthy": 2,
+              "unhealthy": 0
+            },
+            "cache": {
+              "total_models": 6,
+              "models_by_state": {
+                "ready": 6
+              },
+              "cache_hit_rate": 0.8333333333333334
+            },
+            "usage": {
+              "total_tokens": 0,
+              "estimated_cost": 0.0,
+              "providers_initialized": 2
+            },
+            "performance": {
+              "error_rate": 0.0,
+              "models_in_error_state": 0
+            },
+            "timestamp": 1749423809.3637617
+          },
+          "active_sessions": 0,
+          "versions": {
+            "python": "3.13.4",
+            "langgraph": "0.4.8",
+            "postgres": "17"
+          }
+        }
+      }
+    },
+    {
+      "test_name": "Message Processing",
+      "success": true,
+      "message": "Message processing working - 3 messages processed",
+      "duration_ms": 10447.972059249878,
+      "metadata": {
+        "messages_processed": 3,
+        "results_summary": [
+          {
+            "message": "Hello, how are you?",
+            "response_length": 73,
+            "session_id": "debug_session_0",
+            "timestamp": 1749423817.2997022
+          },
+          {
+            "message": "Write a simple Python function to add two numbers",
+            "response_length": 49,
+            "session_id": "debug_session_1",
+            "timestamp": 1749423821.8154092
+          },
+          {
+            "message": "What is 2 + 2?",
+            "response_length": 94,
+            "session_id": "debug_session_2",
+            "timestamp": 1749423824.8876438
+          }
+        ],
+        "sessions_created": 3
+      }
+    },
+    {
+      "test_name": "Tools Integration",
+      "success": true,
+      "message": "Tools integration working - 12 file tools, 13 total tools",
+      "duration_ms": 1866.9705390930176,
+      "metadata": {
+        "file_tools_count": 12,
+        "total_tools_count": 13,
+        "tool_names": [
+          "read_file",
+          "write_file",
+          "list_directory",
+          "copy_file",
+          "move_file"
+        ]
+      }
+    },
+    {
+      "test_name": "Error Handling",
+      "success": true,
+      "message": "Error handling working - Error classification and circuit breakers operational",
+      "duration_ms": 101.40085220336914,
+      "metadata": {
+        "error_response": {
+          "response": "I'm experiencing an authentication issue. Please contact support.",
+          "error": "authentication_error",
+          "error_message": "Authentication error",
+          "details": null,
+          "retryable": false,
+          "fallback_used": true,
+          "context": "debug_test",
+          "user_facing": false,
+          "severity": "critical",
+          "timestamp": 1749423830.7612398,
+          "recovery_suggestions": [
+            "Check API key configuration",
+            "Verify credentials"
+          ]
+        },
+        "circuit_health": {
+          "llm_anthropic": true,
+          "llm_openai": true,
+          "agent_chat": true,
+          "agent_coder": true
+        },
+        "error_stats": {
+          "classification": {
+            "distribution": {
+              "counts": {
+                "authentication_error": 1
+              },
+              "percentages": {
+                "authentication_error": 100.0
+              }
+            },
+            "temporal": {
+              "recent_count": 1,
+              "error_rate_per_hour": 1,
+              "trending_errors": [
+                "authentication_error"
+              ]
+            },
+            "context": {
+              "debug_test": 1
+            },
+            "total_errors": 1,
+            "pattern_effectiveness": {
+              "authentication_error:5": 1
+            }
+          },
+          "circuit_breakers": {},
+          "patterns_learned": 1,
+          "total_services": 0
+        }
+      }
+    },
+    {
+      "test_name": "Circuit Breakers",
+      "success": true,
+      "message": "Circuit breakers working - Health checks passing",
+      "duration_ms": 0.6554126739501953,
+      "metadata": {
+        "health_status": {
+          "llm_anthropic": true,
+          "llm_openai": true,
+          "agent_chat": true,
+          "agent_coder": true
+        },
+        "test_result": "Circuit breaker test successful"
+      }
+    },
+    {
+      "test_name": "Health Checks",
+      "success": true,
+      "message": "All health checks passing",
+      "duration_ms": 3920.273542404175,
+      "metadata": {
+        "system_status": {
+          "agents": {
+            "chat": true,
+            "coder": false,
+            "web": false,
+            "file_manager": false
+          },
+          "circuit_breakers": {
+            "llm_anthropic": true,
+            "llm_openai": true,
+            "agent_chat": true,
+            "agent_coder": true,
+            "debug_test_service": true
+          },
+          "checkpointer": {
+            "health_status": {
+              "postgres_async_context": "CheckpointerHealth(healthy=False, checkpointer_type='postgres_async_context', connection_status='invalid_checkpointer', last_check=54808.210617948, error_message=None, metadata={'response_time_ms': 0.001868000254034996})",
+              "postgres_async": "CheckpointerHealth(healthy=True, checkpointer_type='postgres_async', connection_status='connected', last_check=54808.210624805, error_message=None, metadata={'response_time_ms': 27.30917300505098})"
+            },
+            "factory_stats": {
+              "config": {
+                "environment": "development",
+                "prefer_async": true,
+                "connection_timeout": 30.0,
+                "max_connections": 10
+              },
+              "connections": {
+                "active_count": 2,
+                "connection_types": [
+                  "postgres_async_context",
+                  "postgres_async"
+                ]
+              },
+              "health": {
+                "last_check_count": 2,
+                "healthy_connections": 1
+              },
+              "capabilities": {
+                "postgres_available": true,
+                "async_postgres": true,
+                "sync_postgres": true
+              }
+            },
+            "active_connections": 2,
+            "checkpointer_type": "AsyncPostgresSaver"
+          },
+          "llm_manager": {
+            "healthy": true,
+            "overall_status": "healthy",
+            "health_score": 1.0,
+            "provider_health": {
+              "openai": "healthy",
+              "anthropic": "healthy"
+            },
+            "providers": {
+              "total": 2,
+              "healthy": 2,
+              "unhealthy": 0
+            },
+            "cache": {
+              "total_models": 6,
+              "models_by_state": {
+                "ready": 6
+              },
+              "cache_hit_rate": 0.8333333333333334
+            },
+            "usage": {
+              "total_tokens": 0,
+              "estimated_cost": 0.0,
+              "providers_initialized": 2
+            },
+            "performance": {
+              "error_rate": 0.0,
+              "models_in_error_state": 0
+            },
+            "timestamp": 1749423834.9916842
+          },
+          "active_sessions": 0,
+          "versions": {
+            "python": "3.13.4",
+            "langgraph": "0.4.8",
+            "postgres": "17"
+          }
+        },
+        "health_issues": [],
+        "active_sessions": 0
+      }
+    },
+    {
+      "test_name": "Performance Metrics",
+      "success": true,
+      "message": "Performance metrics gathered - 1968.2ms message processing",
+      "duration_ms": 3636.1682415008545,
+      "metadata": {
+        "memory_usage_mb": 161.34,
+        "cpu_percent": 0.0,
+        "message_processing_time_ms": 1968.17,
+        "total_debug_time_s": 76.47
+      }
+    }
+  ]
+}

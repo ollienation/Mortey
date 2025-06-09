@@ -1,0 +1,2353 @@
+2025-06-08 23:17:23,449 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-08 23:17:23,449 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-08 23:17:24,093 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-08 23:17:24,095 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-08 23:17:24,095 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-08 23:17:24,096 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-08 23:17:24,099 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-08 23:17:24,102 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-08 23:17:24,114 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-08 23:17:24,121 - settings - INFO - ✅ Configuration validation passed
+2025-06-08 23:17:24,122 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-08 23:17:24,782 - llm_manager - INFO - 📊 LLM Manager: LangSmith tracing disabled
+2025-06-08 23:17:24,803 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-08 23:17:24,803 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-08 23:17:24,804 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-08 23:17:24,804 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-08 23:17:24,804 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:17:24,804 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:17:24,805 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-08 23:17:24,805 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-08 23:17:24,805 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:17:24,805 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:17:24,806 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-08 23:17:24,806 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-08 23:17:24,806 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-08 23:17:24,806 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-08 23:17:24,807 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-08 23:17:24,807 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-08 23:17:24,807 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-08 23:17:24,820 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-08 23:17:24,820 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-08 23:17:24,826 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-08 23:17:27,244 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:17:30,997 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:17:31,024 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:17:31,033 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:17:31,078 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-08 23:17:31,078 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-08 23:17:31,078 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-08 23:17:31,078 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-08 23:17:31,078 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-08 23:17:31,078 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-08 23:17:31,078 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-08 23:17:31,078 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-08 23:17:31,078 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-08 23:17:31,089 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-08 23:17:31,090 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-08 23:17:31,090 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-08 23:17:31,090 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-08 23:17:31,090 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-08 23:17:31,090 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-08 23:17:31,090 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-08 23:17:31,090 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-08 23:17:31,090 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-08 23:17:31,090 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_session, User: test_user
+2025-06-08 23:17:31,111 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-08 23:17:31,113 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: code, python)
+2025-06-08 23:17:31,676 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:17:31,678 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:17:32,295 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:17:32,801 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:17:34,644 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:17:42,224 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2025-06-08 23:17:42,227 - agents - ERROR - ❌ Agent coder execution failed: Error code: 400 - {'error': {'message': "Unsupported value: 'messages[3].role' does not support 'function' with this model.", 'type': 'invalid_request_error', 'param': 'messages[3].role', 'code': 'unsupported_value'}}
+2025-06-08 23:17:42,300 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-08 23:17:42,300 - assistant_core - INFO - ✅ Message processing completed - Response length: 59
+2025-06-08 23:17:42,300 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-08 23:17:42,301 - test_coder_agent - INFO - Response length: 59
+2025-06-08 23:17:42,301 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-08 23:17:42,301 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:17:42,301 - test_coder_agent - INFO - I encountered an issue. Please try rephrasing your request.
+2025-06-08 23:17:42,301 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:17:42,302 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-08 23:17:42,302 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-08 23:17:42,302 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:17:42,302 - test_coder_agent - INFO - """gui.py
+A minimal Tkinter GUI application that meets the following requirements:
+
+1. Main window with a green background
+2. A red button centered in the window
+3. Prints "Button clicked!" to stdout when the button is pressed
+
+Run the file with: ``python gui.py``
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+def on_button_click() -> None:
+    """Callback executed when the button is pressed."""
+    print("Button clicked!")
+
+
+def create_app() -> tk.Tk:
+    """Create and configure the main application window.
+
+    Returns
+    -------
+    tk.Tk
+        The configured Tkinter root window.
+    """
+    # Initialize the main application window
+    root = tk.Tk()
+    root.title("Simple Tkinter GUI")
+
+    # Configure the window's background color
+    root.configure(bg="green")
+
+    # Make the window a reasonable default size
+    root.geometry("400x300")  # Width x Height in pixels (optional)
+
+    # Ensure the window is resizable and the button stays centered
+    root.rowconfigure(0, weight=1)
+    root.columnconfigure(0, weight=1)
+
+    # Create a styled button
+    button = tk.Button(
+        root,
+        text="Click Me",
+        command=on_button_click,
+        bg="red",
+        fg="white",
+        activebackground="dark red",
+        font=("Arial", 14, "bold"),
+        relief=tk.RAISED,
+        borderwidth=4,
+    )
+
+    # Place the button at the center using grid geometry manager
+    button.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+
+    return root
+
+
+if __name__ == "__main__":
+    app = create_app()
+    app.mainloop()
+
+2025-06-08 23:17:42,302 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:17:42,303 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-08 23:17:42,303 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-08 23:17:42,303 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-08 23:17:42,303 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-08 23:17:42,303 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-08 23:17:42,303 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-08 23:17:42,304 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-08 23:17:42,304 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-08 23:17:42,304 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-08 23:17:42,304 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-08 23:17:42,304 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-08 23:17:42,304 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-08 23:17:42,305 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-08 23:21:55,413 - test_coder_agent - INFO - 🔬 Running additional coder agent tests...
+2025-06-08 23:21:55,414 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:21:55,414 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:21:55,417 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-08 23:21:55,418 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-08 23:21:55,418 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-08 23:21:55,419 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-08 23:21:55,419 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-08 23:21:55,419 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-08 23:21:55,431 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-08 23:21:55,431 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-08 23:21:55,431 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-08 23:21:55,435 - openai._base_client - INFO - Retrying request to /chat/completions in 0.375568 seconds
+2025-06-08 23:21:56,484 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:21:56,541 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:21:56,791 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:21:57,099 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:21:57,117 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-08 23:21:57,117 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-08 23:21:57,117 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-08 23:21:57,118 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-08 23:21:57,118 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-08 23:21:57,118 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-08 23:21:57,118 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-08 23:21:57,119 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-08 23:21:57,119 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-08 23:21:57,132 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-08 23:21:57,132 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-08 23:21:57,132 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-08 23:21:57,132 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-08 23:21:57,132 - test_coder_agent - INFO - 🧪 Running test 1: Simple Python Script
+2025-06-08 23:21:57,132 - assistant_core - INFO - 🔄 Starting message processing - Session: test_session_1, User: test_user
+2025-06-08 23:21:57,147 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-08 23:21:57,149 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: python, script)
+2025-06-08 23:21:57,814 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:21:57,925 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:21:58,433 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:21:59,192 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2025-06-08 23:21:59,195 - agents - ERROR - ❌ Agent coder execution failed: Error code: 400 - {'error': {'message': "Unsupported value: 'messages[3].role' does not support 'function' with this model.", 'type': 'invalid_request_error', 'param': 'messages[3].role', 'code': 'unsupported_value'}}
+2025-06-08 23:21:59,239 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-08 23:21:59,239 - assistant_core - INFO - ✅ Message processing completed - Response length: 59
+2025-06-08 23:21:59,240 - test_coder_agent - ERROR - ❌ Additional tests failed: name 'config' is not defined
+2025-06-08 23:23:17,553 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-08 23:23:17,553 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-08 23:23:18,176 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-08 23:23:18,179 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-08 23:23:18,179 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-08 23:23:18,180 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-08 23:23:18,183 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-08 23:23:18,186 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-08 23:23:18,197 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-08 23:23:18,205 - settings - INFO - ✅ Configuration validation passed
+2025-06-08 23:23:18,205 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-08 23:23:18,819 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-08 23:23:18,839 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-08 23:23:18,839 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-08 23:23:18,840 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-08 23:23:18,840 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-08 23:23:18,840 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:23:18,841 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:23:18,842 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-08 23:23:18,842 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-08 23:23:18,842 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:23:18,842 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:23:18,843 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-08 23:23:18,843 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-08 23:23:18,843 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-08 23:23:18,843 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-08 23:23:18,844 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-08 23:23:18,844 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-08 23:23:18,844 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-08 23:23:18,857 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-08 23:23:18,857 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-08 23:23:18,862 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-08 23:23:19,942 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:23:19,944 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:23:20,477 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:23:21,681 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:23:21,704 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-08 23:23:21,741 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-08 23:23:21,741 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-08 23:23:21,741 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-08 23:23:21,741 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-08 23:23:21,741 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-08 23:23:21,741 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-08 23:23:21,742 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-08 23:23:21,742 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-08 23:23:21,751 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-08 23:23:21,751 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-08 23:23:21,751 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-08 23:23:21,751 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-08 23:23:21,751 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-08 23:23:21,751 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-08 23:23:21,751 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-08 23:23:21,751 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-08 23:23:21,751 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-08 23:23:21,751 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_session, User: test_user
+2025-06-08 23:23:21,902 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-08 23:23:21,905 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: code, python)
+2025-06-08 23:23:22,442 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:23:23,099 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:23:23,632 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:23:23,694 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:23:23,881 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:23:28,341 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2025-06-08 23:23:28,353 - agents - ERROR - ❌ Agent coder execution failed: Error code: 400 - {'error': {'message': "Unsupported value: 'messages[3].role' does not support 'function' with this model.", 'type': 'invalid_request_error', 'param': 'messages[3].role', 'code': 'unsupported_value'}}
+2025-06-08 23:23:28,427 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-08 23:23:28,427 - assistant_core - INFO - ✅ Message processing completed - Response length: 59
+2025-06-08 23:23:28,428 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-08 23:23:28,428 - test_coder_agent - INFO - Response length: 59
+2025-06-08 23:23:28,428 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-08 23:23:28,429 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:23:28,429 - test_coder_agent - INFO - I encountered an issue. Please try rephrasing your request.
+2025-06-08 23:23:28,429 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:23:28,429 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-08 23:23:28,430 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-08 23:23:28,430 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:23:28,430 - test_coder_agent - INFO - """gui.py
+A minimal Tkinter GUI application.
+
+Requirements:
+1. A window with a green background.
+2. A red button centered in the window.
+3. When the button is pressed it prints "Button clicked!" to stdout.
+
+Run this script directly with a Python interpreter (Python 3.x).
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+def on_button_click() -> None:
+    """Callback for button click; prints a message to stdout."""
+    print("Button clicked!")
+
+
+def main() -> None:
+    """Create and start the Tkinter GUI application."""
+    # Initialize root window
+    root = tk.Tk()
+    root.title("Tkinter GUI Example")
+
+    # Configure green background for the entire window
+    root.configure(bg="green")
+
+    # Use a frame to help with centering the button if window is resized
+    container = ttk.Frame(root, padding=20)
+    container.pack(expand=True)  # expand makes the frame fill available space
+
+    # Create the red button. For a red background we'll use a regular tk.Button
+    button = tk.Button(
+        container,
+        text="Click Me",
+        command=on_button_click,
+        fg="white",           # text color
+        bg="red",            # button background color
+        activebackground="darkred",
+        activeforeground="white",
+        padx=20,
+        pady=10,
+        relief=tk.RAISED,
+    )
+
+    # Center the button inside the container
+    button.pack(expand=True)
+
+    # Start the Tkinter main event loop
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
+
+2025-06-08 23:23:28,430 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:23:28,430 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-08 23:23:28,431 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-08 23:23:28,431 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-08 23:23:28,431 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-08 23:23:28,431 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-08 23:23:28,431 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-08 23:23:28,431 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-08 23:23:28,432 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-08 23:23:28,432 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-08 23:23:28,432 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-08 23:23:28,432 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-08 23:23:28,432 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-08 23:23:28,433 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-08 23:35:09,124 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-08 23:35:09,124 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-08 23:35:09,748 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-08 23:35:09,750 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-08 23:35:09,750 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-08 23:35:09,751 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-08 23:35:09,754 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-08 23:35:09,757 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-08 23:35:09,768 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-08 23:35:09,776 - settings - INFO - ✅ Configuration validation passed
+2025-06-08 23:35:09,776 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-08 23:35:10,391 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-08 23:35:10,411 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-08 23:35:10,411 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-08 23:35:10,412 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-08 23:35:10,412 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-08 23:35:10,412 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:35:10,412 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:35:10,413 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-08 23:35:10,413 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-08 23:35:10,414 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:35:10,414 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:35:10,414 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-08 23:35:10,415 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-08 23:35:10,415 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-08 23:35:10,415 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-08 23:35:10,415 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-08 23:35:10,415 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-08 23:35:10,415 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-08 23:35:10,428 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-08 23:35:10,428 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-08 23:35:10,434 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-08 23:35:11,427 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:11,843 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:12,253 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:12,457 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:12,515 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-08 23:35:12,515 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-08 23:35:12,515 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-08 23:35:12,515 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-08 23:35:12,515 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-08 23:35:12,516 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-08 23:35:12,516 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-08 23:35:12,516 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-08 23:35:12,516 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-08 23:35:12,527 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-08 23:35:12,527 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-08 23:35:12,527 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-08 23:35:12,527 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-08 23:35:12,527 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-08 23:35:12,527 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-08 23:35:12,527 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-08 23:35:12,527 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-08 23:35:12,527 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-08 23:35:12,527 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_session, User: test_user
+2025-06-08 23:35:12,610 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-08 23:35:12,623 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: code, python)
+2025-06-08 23:35:13,257 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:13,585 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:13,850 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:14,404 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:15,289 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:19,322 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:22,039 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2025-06-08 23:35:22,083 - agents - ERROR - ❌ Agent coder execution failed: Error code: 400 - {'error': {'message': "Unsupported value: 'messages[4].role' does not support 'function' with this model.", 'type': 'invalid_request_error', 'param': 'messages[4].role', 'code': 'unsupported_value'}}
+2025-06-08 23:35:22,155 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-08 23:35:22,156 - assistant_core - INFO - ✅ Message processing completed - Response length: 59
+2025-06-08 23:35:22,156 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-08 23:35:22,156 - test_coder_agent - INFO - Response length: 59
+2025-06-08 23:35:22,157 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-08 23:35:22,157 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:35:22,157 - test_coder_agent - INFO - I encountered an issue. Please try rephrasing your request.
+2025-06-08 23:35:22,157 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:35:22,158 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-08 23:35:22,158 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-08 23:35:22,158 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:35:22,159 - test_coder_agent - INFO - """gui.py
+
+A simple Tkinter GUI application that opens a window with a green background
+and a centered red button. Clicking the button prints a message to the
+console.
+
+How to run:
+    python gui.py
+
+Dependencies:
+    This script uses only the Python Standard Library (tkinter is included
+    with most Python installations).
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+def on_button_click() -> None:
+    """Callback executed when the button is pressed."""
+    print("Button clicked!")
+
+
+def create_app() -> tk.Tk:
+    """Create and configure the main Tkinter application window.
+
+    Returns
+    -------
+    tk.Tk
+        The configured main application window.
+    """
+    # Initialize the root window
+    root = tk.Tk()
+    root.title("Simple Tkinter GUI")
+
+    # Set the window size (optional) and background color
+    root.configure(bg="green")
+
+    # Create a style for the ttk button to give it a red background
+    style = ttk.Style(root)
+
+    # Ensure we are using the default theme so our custom settings apply
+    default_theme = style.theme_use()
+
+    # Configure a new style "Red.TButton" with desired properties
+    style.configure(
+        "Red.TButton",
+        foreground="white",  # Text color
+        background="red",    # Button face color
+        borderwidth=1,
+        focusthickness=3,
+        focuscolor="none",
+        padding=(10, 5),
+    )
+
+    # Note: On some platforms the native theme may override the background
+    # color. If so, we fall back to the classic Tk button instead of ttk.
+    try:
+        button = ttk.Button(
+            root,
+            text="Click Me",
+            style="Red.TButton",
+            command=on_button_click,
+        )
+        # Force style to apply
+        style.map(
+            "Red.TButton",
+            background=[("active", "#cc0000"), ("!active", "red")],
+        )
+    except tk.TclError:
+        # Fallback to a classic Tk button if ttk style fails
+        button = tk.Button(
+            root,
+            text="Click Me",
+            bg="red",
+            fg="white",
+            activebackground="#cc0000",
+            activeforeground="white",
+            command=on_button_click,
+            relief=tk.FLAT,
+            padx=10,
+            pady=5,
+        )
+
+    # Center the button in the window using the pack geometry manager
+    button.pack(expand=True)
+
+    return root
+
+
+def main() -> None:
+    """Entry point for the application."""
+    app = create_app()
+    app.mainloop()
+
+
+if __name__ == "__main__":
+    main()
+
+2025-06-08 23:35:22,159 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:35:22,159 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-08 23:35:22,160 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-08 23:35:22,160 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-08 23:35:22,160 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-08 23:35:22,160 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-08 23:35:22,161 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-08 23:35:22,161 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-08 23:35:22,161 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-08 23:35:22,162 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-08 23:35:22,162 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-08 23:35:22,162 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-08 23:35:22,162 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-08 23:35:22,163 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-08 23:35:24,963 - test_coder_agent - INFO - 🔬 Running additional coder agent tests...
+2025-06-08 23:35:24,963 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:35:24,964 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:35:24,967 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-08 23:35:24,967 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-08 23:35:24,967 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-08 23:35:24,969 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-08 23:35:24,969 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-08 23:35:24,970 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-08 23:35:25,012 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-08 23:35:25,012 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-08 23:35:25,013 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-08 23:35:25,023 - openai._base_client - INFO - Retrying request to /chat/completions in 0.498473 seconds
+2025-06-08 23:35:25,974 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:26,478 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:26,612 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:26,888 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:26,896 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-08 23:35:26,896 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-08 23:35:26,896 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-08 23:35:26,897 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-08 23:35:26,897 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-08 23:35:26,897 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-08 23:35:26,897 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-08 23:35:26,897 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-08 23:35:26,898 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-08 23:35:26,908 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-08 23:35:26,908 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-08 23:35:26,909 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-08 23:35:26,909 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-08 23:35:26,909 - test_coder_agent - INFO - 🧪 Running test 1: Simple Python Script
+2025-06-08 23:35:26,909 - assistant_core - INFO - 🔄 Starting message processing - Session: test_session_1, User: test_user
+2025-06-08 23:35:26,932 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-08 23:35:26,940 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: python, script)
+2025-06-08 23:35:27,707 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:27,748 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:28,099 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:28,114 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:28,864 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:35:29,353 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2025-06-08 23:35:29,373 - agents - ERROR - ❌ Agent coder execution failed: Error code: 400 - {'error': {'message': "Unsupported value: 'messages[3].role' does not support 'function' with this model.", 'type': 'invalid_request_error', 'param': 'messages[3].role', 'code': 'unsupported_value'}}
+2025-06-08 23:35:29,448 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-08 23:35:29,449 - assistant_core - INFO - ✅ Message processing completed - Response length: 59
+2025-06-08 23:35:29,449 - test_coder_agent - ERROR - ❌ Additional tests failed: name 'config' is not defined
+2025-06-08 23:52:44,493 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-08 23:52:44,493 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-08 23:52:45,185 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-08 23:52:45,187 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-08 23:52:45,187 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-08 23:52:45,189 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-08 23:52:45,192 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-08 23:52:45,195 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-08 23:52:45,208 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-08 23:52:45,217 - settings - INFO - ✅ Configuration validation passed
+2025-06-08 23:52:45,217 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-08 23:52:45,871 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-08 23:52:45,893 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-08 23:52:45,893 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-08 23:52:45,894 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-08 23:52:45,894 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-08 23:52:45,894 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:52:45,895 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:52:45,896 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-08 23:52:45,896 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-08 23:52:45,896 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-08 23:52:45,896 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-08 23:52:45,897 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-08 23:52:45,897 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-08 23:52:45,897 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-08 23:52:45,897 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-08 23:52:45,898 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-08 23:52:45,898 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-08 23:52:45,898 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-08 23:52:45,911 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-08 23:52:45,911 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-08 23:52:45,918 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-08 23:52:47,183 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:52:47,214 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:52:47,798 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:52:48,149 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:52:48,175 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-08 23:52:48,176 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-08 23:52:48,176 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-08 23:52:48,176 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-08 23:52:48,176 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-08 23:52:48,176 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-08 23:52:48,176 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-08 23:52:48,176 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-08 23:52:48,176 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-08 23:52:48,188 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-08 23:52:48,188 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-08 23:52:48,188 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-08 23:52:48,188 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-08 23:52:48,188 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-08 23:52:48,188 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-08 23:52:48,188 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-08 23:52:48,188 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-08 23:52:48,188 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-08 23:52:48,188 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_session, User: test_user
+2025-06-08 23:52:48,331 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-08 23:52:48,336 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: code, python)
+2025-06-08 23:52:49,150 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:52:49,187 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:52:49,953 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:52:50,498 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:52:55,066 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-08 23:52:55,612 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-08 23:52:55,612 - assistant_core - INFO - ✅ Message processing completed - Response length: 342
+2025-06-08 23:52:55,612 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-08 23:52:55,613 - test_coder_agent - INFO - Response length: 342
+2025-06-08 23:52:55,613 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-08 23:52:55,613 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:52:55,613 - test_coder_agent - INFO - Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Create a window with a green background
+2. Add a red button in the center
+3. The button should print "Button clicked!" when pressed
+4. Save this as gui.py in the workspace
+
+Please write clean, well-commented code and make sure it's ready to run.
+2025-06-08 23:52:55,613 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:52:55,614 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-08 23:52:55,614 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-08 23:52:55,614 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:52:55,614 - test_coder_agent - INFO - """gui.py
+A simple GUI application using Python's Tkinter library.
+
+Requirements implemented:
+1. Create a window with a green background.
+2. Add a red button in the center of the window.
+3. Print "Button clicked!" to the console whenever the button is pressed.
+
+How to run:
+    python gui.py
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+def on_button_click() -> None:
+    """Callback executed when the center button is pressed."""
+    print("Button clicked!")
+
+
+def create_main_window() -> tk.Tk:
+    """Creates and configures the main application window.
+
+    Returns
+    -------
+    tk.Tk
+        The configured root window ready for the application loop.
+    """
+    # Initialize main window
+    root = tk.Tk()
+    root.title("Simple Tkinter GUI")
+
+    # Configure window size (optional). Comment out to allow auto‐size.
+    root.geometry("300x200")
+
+    # Set the background color to green for the *entire* window.
+    root.configure(background="green")
+
+    # Make sure the window is non-resizable if a fixed size is desired
+    # root.resizable(False, False)
+
+    return root
+
+
+def add_center_button(root: tk.Tk) -> None:
+    """Adds a centered red button to the provided root window.
+
+    Parameters
+    ----------
+    root : tk.Tk
+        The main application window to attach the button to.
+    """
+    # Style the button (foreground=text color, background=button color)
+    button = tk.Button(
+        root,
+        text="Click Me",
+        command=on_button_click,
+        fg="white",
+        bg="red",
+        activebackground="darkred",
+        activeforeground="white",
+        padx=20,
+        pady=10,
+        borderwidth=0,
+        relief=tk.FLAT,
+        font=("Helvetica", 12, "bold"),
+    )
+
+    # Center the button in the window using `pack` with expand & fill
+    button.pack(expand=True)
+
+
+def main() -> None:
+    """Entry-point for the GUI application."""
+    root = create_main_window()
+    add_center_button(root)
+
+    # Start the Tkinter main event loop (blocking call)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
+
+2025-06-08 23:52:55,614 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-08 23:52:55,615 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-08 23:52:55,615 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-08 23:52:55,615 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-08 23:52:55,616 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-08 23:52:55,616 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-08 23:52:55,616 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-08 23:52:55,616 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-08 23:52:55,616 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-08 23:52:55,616 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-08 23:52:55,616 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-08 23:52:55,617 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-08 23:52:55,617 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-08 23:52:55,617 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:02:47,421 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:02:47,421 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:02:48,018 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:02:48,020 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:02:48,020 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:02:48,021 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:02:48,024 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:02:48,027 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:02:48,037 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:02:48,045 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:02:48,045 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:02:48,647 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:02:48,666 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:02:48,666 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:02:48,667 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:02:48,667 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:02:48,667 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:02:48,668 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:02:48,669 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:02:48,669 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:02:48,669 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:02:48,669 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:02:48,670 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:02:48,670 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:02:48,670 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:02:48,670 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-09 00:02:48,670 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-09 00:02:48,671 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-09 00:02:48,671 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:02:48,684 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:02:48,684 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:02:48,689 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:02:48,918 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:02:48,919 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:02:48,920 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:02:48,931 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1
+2025-06-09 00:02:48,935 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:1
+2025-06-09 00:02:48,937 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1
+2025-06-09 00:02:49,364 - httpx - INFO - HTTP Request: POST https://api.openai.com/chat/completions "HTTP/1.1 404 Not Found"
+2025-06-09 00:02:49,367 - httpx - INFO - HTTP Request: POST https://api.openai.com/chat/completions "HTTP/1.1 404 Not Found"
+2025-06-09 00:02:49,370 - httpx - INFO - HTTP Request: POST https://api.openai.com/chat/completions "HTTP/1.1 404 Not Found"
+2025-06-09 00:02:49,376 - httpx - INFO - HTTP Request: POST https://api.openai.com/chat/completions "HTTP/1.1 404 Not Found"
+2025-06-09 00:02:49,389 - llm_manager - WARNING - Attempt 1/4 failed: <html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>. Retrying in 1.10s
+2025-06-09 00:02:49,389 - llm_manager - WARNING - Attempt 1/4 failed: <html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>. Retrying in 1.10s
+2025-06-09 00:02:49,389 - llm_manager - WARNING - Attempt 1/4 failed: <html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>. Retrying in 1.10s
+2025-06-09 00:02:49,392 - llm_manager - WARNING - Attempt 1/4 failed: <html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>. Retrying in 1.10s
+2025-06-09 00:02:50,935 - httpx - INFO - HTTP Request: POST https://api.openai.com/chat/completions "HTTP/1.1 404 Not Found"
+2025-06-09 00:02:50,938 - httpx - INFO - HTTP Request: POST https://api.openai.com/chat/completions "HTTP/1.1 404 Not Found"
+2025-06-09 00:02:50,940 - httpx - INFO - HTTP Request: POST https://api.openai.com/chat/completions "HTTP/1.1 404 Not Found"
+2025-06-09 00:02:50,943 - httpx - INFO - HTTP Request: POST https://api.openai.com/chat/completions "HTTP/1.1 404 Not Found"
+2025-06-09 00:02:50,952 - llm_manager - WARNING - Attempt 2/4 failed: <html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>. Retrying in 2.13s
+2025-06-09 00:02:50,952 - llm_manager - WARNING - Attempt 2/4 failed: <html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>. Retrying in 2.13s
+2025-06-09 00:02:50,952 - llm_manager - WARNING - Attempt 2/4 failed: <html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>. Retrying in 2.13s
+2025-06-09 00:02:50,953 - llm_manager - WARNING - Attempt 2/4 failed: <html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>. Retrying in 2.13s
+2025-06-09 00:02:53,089 - circuit_breaker - WARNING - Tripping circuit llm_openai: 8 consecutive failures (adaptive threshold: 5)
+2025-06-09 00:02:53,089 - circuit_breaker - ERROR - 🔴 Circuit OPEN: llm_openai
+2025-06-09 00:02:53,089 - llm_manager - WARNING - Attempt 3/4 failed: Circuit breaker open for service: llm_openai (state: open). Retrying in 4.13s
+2025-06-09 00:02:53,090 - llm_manager - WARNING - Attempt 3/4 failed: Circuit breaker open for service: llm_openai (state: open). Retrying in 4.13s
+2025-06-09 00:02:53,090 - llm_manager - WARNING - Attempt 3/4 failed: Circuit breaker open for service: llm_openai (state: open). Retrying in 4.13s
+2025-06-09 00:02:53,091 - llm_manager - WARNING - Attempt 3/4 failed: Circuit breaker open for service: llm_openai (state: open). Retrying in 4.13s
+2025-06-09 00:02:57,228 - llm_manager - ERROR - ❌ All 4 attempts failed: Circuit breaker open for service: llm_openai (state: open)
+2025-06-09 00:02:57,228 - llm_manager - ERROR - ❌ All 4 attempts failed: Circuit breaker open for service: llm_openai (state: open)
+2025-06-09 00:02:57,229 - llm_manager - ERROR - ❌ All 4 attempts failed: Circuit breaker open for service: llm_openai (state: open)
+2025-06-09 00:02:57,229 - llm_manager - ERROR - ❌ All 4 attempts failed: Circuit breaker open for service: llm_openai (state: open)
+2025-06-09 00:02:57,232 - agents - ERROR - Failed to get LLM for node coder: Circuit breaker open for service: llm_openai (state: open)
+2025-06-09 00:02:57,233 - agents - ERROR - Error creating agent coder: Circuit breaker open for service: llm_openai (state: open)
+2025-06-09 00:02:57,234 - agents - ERROR - ❌ Agent factory initialization failed: unhandled errors in a TaskGroup (1 sub-exception)
+2025-06-09 00:02:57,234 - agents - WARNING - ⚠️ Using fallback agents due to initialization failure
+2025-06-09 00:02:57,234 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:02:57,234 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:02:57,234 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:02:57,234 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:02:57,246 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:02:57,246 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:02:57,246 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:02:57,246 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:02:57,246 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-09 00:02:57,246 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-09 00:02:57,246 - test_coder_agent - ERROR - ❌ Coder agent not found in available agents
+2025-06-09 00:02:57,247 - test_coder_agent - INFO - Available agents: []
+2025-06-09 00:02:57,247 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:02:57,247 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:02:57,247 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:02:57,247 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:02:57,247 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:02:57,247 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:08:01,683 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:08:01,683 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:08:02,323 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:08:02,326 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:08:02,326 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:08:02,327 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:08:02,330 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:08:02,333 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:08:02,344 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:08:02,352 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:08:02,352 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:08:02,986 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:08:03,007 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:08:03,007 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:08:03,008 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:08:03,008 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:08:03,008 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:08:03,009 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:08:03,010 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:08:03,010 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:08:03,010 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:08:03,010 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:08:03,011 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:08:03,011 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:08:03,011 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:08:03,011 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-09 00:08:03,012 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-09 00:08:03,012 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-09 00:08:03,012 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:08:03,025 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:08:03,025 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:08:03,031 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:08:03,272 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:08:03,273 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:08:03,274 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:08:03,284 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1
+2025-06-09 00:08:03,289 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:1
+2025-06-09 00:08:03,291 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1
+2025-06-09 00:08:04,090 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2025-06-09 00:08:04,109 - llm_manager - WARNING - Attempt 1/4 failed: Error code: 400 - {'error': {'message': 'Could not finish the message because max_tokens or model output limit was reached. Please try again with higher max_tokens.', 'type': 'invalid_request_error', 'param': None, 'code': None}}. Retrying in 1.10s
+2025-06-09 00:08:04,145 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:08:04,396 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:08:05,105 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:08:06,331 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2025-06-09 00:08:06,337 - llm_manager - WARNING - Attempt 2/4 failed: Error code: 400 - {'error': {'message': 'Could not finish the message because max_tokens or model output limit was reached. Please try again with higher max_tokens.', 'type': 'invalid_request_error', 'param': None, 'code': None}}. Retrying in 2.13s
+2025-06-09 00:08:09,215 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2025-06-09 00:08:09,228 - llm_manager - WARNING - Attempt 3/4 failed: Error code: 400 - {'error': {'message': 'Could not finish the message because max_tokens or model output limit was reached. Please try again with higher max_tokens.', 'type': 'invalid_request_error', 'param': None, 'code': None}}. Retrying in 4.13s
+2025-06-09 00:08:13,891 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2025-06-09 00:08:13,896 - llm_manager - ERROR - ❌ All 4 attempts failed: Error code: 400 - {'error': {'message': 'Could not finish the message because max_tokens or model output limit was reached. Please try again with higher max_tokens.', 'type': 'invalid_request_error', 'param': None, 'code': None}}
+2025-06-09 00:08:13,896 - agents - ERROR - Failed to get LLM for node coder: Error code: 400 - {'error': {'message': 'Could not finish the message because max_tokens or model output limit was reached. Please try again with higher max_tokens.', 'type': 'invalid_request_error', 'param': None, 'code': None}}
+2025-06-09 00:08:13,896 - agents - ERROR - Error creating agent coder: Error code: 400 - {'error': {'message': 'Could not finish the message because max_tokens or model output limit was reached. Please try again with higher max_tokens.', 'type': 'invalid_request_error', 'param': None, 'code': None}}
+2025-06-09 00:08:13,897 - agents - ERROR - ❌ Agent factory initialization failed: unhandled errors in a TaskGroup (1 sub-exception)
+2025-06-09 00:08:13,897 - agents - WARNING - ⚠️ Using fallback agents due to initialization failure
+2025-06-09 00:08:13,897 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:08:13,897 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:08:13,897 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:08:13,897 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:08:13,907 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:08:13,907 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:08:13,907 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:08:13,907 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:08:13,907 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-09 00:08:13,907 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-09 00:08:13,907 - test_coder_agent - ERROR - ❌ Coder agent not found in available agents
+2025-06-09 00:08:13,907 - test_coder_agent - INFO - Available agents: []
+2025-06-09 00:08:13,907 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:08:13,908 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:08:13,908 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:08:13,908 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:08:13,908 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:08:13,908 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:12:18,975 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:12:18,975 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:12:19,633 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:12:19,636 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:12:19,636 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:12:19,637 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:12:19,640 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:12:19,643 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:12:19,655 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:12:19,663 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:12:19,663 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:12:20,318 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:12:20,340 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:12:20,340 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:12:20,341 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:12:20,341 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:12:20,341 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:12:20,341 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:12:20,343 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:12:20,343 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:12:20,343 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:12:20,343 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:12:20,343 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:12:20,344 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:12:20,344 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:12:20,344 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-09 00:12:20,344 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-09 00:12:20,344 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-09 00:12:20,344 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:12:20,358 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:12:20,358 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:12:20,364 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:12:20,615 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:12:20,617 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:12:20,618 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:12:21,423 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:21,425 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:21,819 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:22,375 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:22,412 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:12:22,412 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:12:22,412 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:12:22,412 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:12:22,413 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:12:22,413 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:12:22,413 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:12:22,413 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:12:22,413 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:12:22,422 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:12:22,422 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:12:22,422 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:12:22,422 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:12:22,422 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-09 00:12:22,422 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-09 00:12:22,422 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 00:12:22,423 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-09 00:12:22,423 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-09 00:12:22,423 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_session, User: test_user
+2025-06-09 00:12:22,507 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:12:22,521 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: code, python)
+2025-06-09 00:12:23,119 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:23,190 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:24,391 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:24,506 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:25,712 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:30,432 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:12:31,141 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:12:31,141 - assistant_core - INFO - ✅ Message processing completed - Response length: 342
+2025-06-09 00:12:31,141 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-09 00:12:31,141 - test_coder_agent - INFO - Response length: 342
+2025-06-09 00:12:31,141 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-09 00:12:31,142 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:12:31,142 - test_coder_agent - INFO - Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Create a window with a green background
+2. Add a red button in the center
+3. The button should print "Button clicked!" when pressed
+4. Save this as gui.py in the workspace
+
+Please write clean, well-commented code and make sure it's ready to run.
+2025-06-09 00:12:31,142 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:12:31,142 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-09 00:12:31,143 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-09 00:12:31,143 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:12:31,143 - test_coder_agent - INFO - """gui.py
+A minimal tkinter-based GUI application.
+
+Requirements satisfied:
+1. Main window with a green background.
+2. A red button centered in the window.
+3. Clicking the button prints "Button clicked!" to the console.
+
+Run the application:
+    python gui.py
+
+"""
+
+import tkinter as tk
+
+
+def on_button_click() -> None:
+    """Callback executed when the button is pressed."""
+    print("Button clicked!")
+
+
+def main() -> None:
+    """Create the GUI components and start the main event loop."""
+    # Initialize the main application window
+    root = tk.Tk()
+    root.title("Simple GUI")
+
+    # Configure the window's background color
+    root.configure(bg="green")
+
+    # Optional: Set a starting size for the window (width x height)
+    root.geometry("400x300")
+
+    # Create a button widget
+    button = tk.Button(
+        root,
+        text="Click Me",
+        bg="red",
+        fg="white",
+        activebackground="dark red",
+        command=on_button_click,
+        padx=20,
+        pady=10,
+        font=("Helvetica", 12, "bold"),
+    )
+
+    # Center the button in the window by packing it with 'expand=True'
+    button.pack(expand=True)
+
+    # Start the Tkinter event loop
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
+
+2025-06-09 00:12:31,143 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:12:31,143 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-09 00:12:31,144 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-09 00:12:31,144 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-09 00:12:31,144 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-09 00:12:31,144 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-09 00:12:31,144 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-09 00:12:31,145 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-09 00:12:31,145 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:12:31,145 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:12:31,145 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:12:31,145 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:12:31,145 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:12:31,146 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:14:10,824 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:14:10,824 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:14:11,451 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:14:11,453 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:14:11,453 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:14:11,455 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:14:11,458 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:14:11,461 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:14:11,472 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:14:11,480 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:14:11,481 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:14:12,101 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:14:12,122 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:14:12,122 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:14:12,123 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:14:12,123 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:14:12,123 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:14:12,123 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:14:12,124 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:14:12,124 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:14:12,124 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:14:12,125 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:14:12,125 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:14:12,125 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:14:12,126 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:14:12,126 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-09 00:14:12,126 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-09 00:14:12,126 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-09 00:14:12,126 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:14:12,140 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:14:12,140 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:14:12,145 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:14:12,389 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:14:12,390 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:14:12,394 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:14:13,231 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:13,447 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:13,648 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:15,385 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:15,410 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:14:15,410 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:14:15,410 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:14:15,410 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:14:15,410 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:14:15,410 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:14:15,410 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:14:15,410 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:14:15,410 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:14:15,419 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:14:15,419 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:14:15,420 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:14:15,420 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:14:15,420 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-09 00:14:15,420 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-09 00:14:15,420 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 00:14:15,420 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-09 00:14:15,420 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-09 00:14:15,420 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_session2, User: test_user
+2025-06-09 00:14:15,504 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:14:15,509 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: code, python)
+2025-06-09 00:14:16,062 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:16,223 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:16,756 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:17,057 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:17,418 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:21,529 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:14:22,364 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:14:22,364 - assistant_core - INFO - ✅ Message processing completed - Response length: 342
+2025-06-09 00:14:22,365 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-09 00:14:22,365 - test_coder_agent - INFO - Response length: 342
+2025-06-09 00:14:22,365 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-09 00:14:22,365 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:14:22,365 - test_coder_agent - INFO - Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Create a window with a green background
+2. Add a red button in the center
+3. The button should print "Button clicked!" when pressed
+4. Save this as gui.py in the workspace
+
+Please write clean, well-commented code and make sure it's ready to run.
+2025-06-09 00:14:22,366 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:14:22,366 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-09 00:14:22,366 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-09 00:14:22,366 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:14:22,367 - test_coder_agent - INFO - """Simple Tkinter GUI application.
+
+This script creates a window with a green background and places a red button at
+its centre. When the button is pressed, the text "Button clicked!" is printed
+to the console.
+
+How to run
+----------
+$ python gui.py
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+def on_button_click() -> None:
+    """Callback executed when the button is pressed."""
+    print("Button clicked!")
+
+
+def main() -> None:
+    """Create and run the Tkinter GUI application."""
+    # Create the main application window
+    root = tk.Tk()
+    root.title("Sample GUI")
+
+    # Set the window's background color to green
+    root.configure(bg="green")
+
+    # Configure a grid with a single cell that expands
+    root.rowconfigure(0, weight=1)
+    root.columnconfigure(0, weight=1)
+
+    # Create a red button and place it in the center of the window
+    button = ttk.Button(root, text="Click Me", command=on_button_click)
+
+    # Apply a red background to the button by modifying its style
+    style = ttk.Style()
+    style.configure("Red.TButton", background="red", foreground="white")
+    button.configure(style="Red.TButton")
+
+    # Use grid geometry manager to center the button
+    button.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+
+    # Start the Tkinter main event loop
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
+
+2025-06-09 00:14:22,367 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:14:22,367 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-09 00:14:22,367 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-09 00:14:22,367 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-09 00:14:22,368 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-09 00:14:22,368 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-09 00:14:22,368 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-09 00:14:22,368 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-09 00:14:22,368 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:14:22,369 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:14:22,369 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:14:22,369 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:14:22,369 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:14:22,369 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:15:01,142 - test_coder_agent - INFO - 🔬 Running additional coder agent tests...
+2025-06-09 00:15:01,142 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:15:01,143 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:15:01,146 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:15:01,146 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:15:01,146 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-09 00:15:01,147 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-09 00:15:01,147 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-09 00:15:01,147 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:15:01,159 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:15:01,160 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:15:01,160 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:15:01,166 - openai._base_client - INFO - Retrying request to /chat/completions in 0.398271 seconds
+2025-06-09 00:15:01,874 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:01,944 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:02,774 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:03,820 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:03,845 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:15:03,845 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:15:03,845 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:15:03,846 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:15:03,846 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:15:03,846 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:15:03,846 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:15:03,846 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:15:03,846 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:15:03,854 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:15:03,854 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:15:03,854 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:15:03,854 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:15:03,855 - test_coder_agent - INFO - 🧪 Running test 1: Simple Python Script
+2025-06-09 00:15:03,855 - assistant_core - INFO - 🔄 Starting message processing - Session: test_session2_1, User: test_user
+2025-06-09 00:15:03,873 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:15:03,890 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: python, script)
+2025-06-09 00:15:04,433 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:04,582 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:04,991 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:05,467 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:05,892 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:06,584 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:15:06,804 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:15:06,805 - assistant_core - INFO - ✅ Message processing completed - Response length: 79
+2025-06-09 00:15:06,805 - test_coder_agent - ERROR - ❌ Additional tests failed: name 'config' is not defined
+2025-06-09 00:20:00,118 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:20:00,118 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:20:00,718 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:20:00,721 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:20:00,721 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:20:00,722 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:20:00,725 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:20:00,727 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:20:00,738 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:20:00,745 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:20:00,745 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:20:01,331 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:20:01,350 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:20:01,350 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:20:01,351 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:20:01,351 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:20:01,351 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:20:01,351 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:20:01,352 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:20:01,352 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:20:01,352 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:20:01,353 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:20:01,353 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:20:01,353 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:20:01,353 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:20:01,353 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-09 00:20:01,354 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-09 00:20:01,354 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-09 00:20:01,354 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:20:01,366 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:20:01,366 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:20:01,372 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:20:01,598 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:20:01,599 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:20:01,602 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:20:02,422 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:03,240 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:11,656 - openai._base_client - INFO - Retrying request to /chat/completions in 0.433554 seconds
+2025-06-09 00:20:11,657 - openai._base_client - INFO - Retrying request to /chat/completions in 0.490101 seconds
+2025-06-09 00:20:12,862 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:13,380 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:13,396 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:20:13,396 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:20:13,396 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:20:13,397 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:20:13,397 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:20:13,397 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:20:13,397 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:20:13,397 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:20:13,397 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:20:13,406 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:20:13,406 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:20:13,406 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:20:13,406 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:20:13,406 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-09 00:20:13,406 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-09 00:20:13,406 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 00:20:13,406 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-09 00:20:13,406 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-09 00:20:13,406 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_sesh, User: test_user
+2025-06-09 00:20:13,482 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:20:13,488 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: code, python)
+2025-06-09 00:20:14,297 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:14,303 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:14,656 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:14,832 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:15,018 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:19,122 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:19,859 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:20:19,859 - assistant_core - INFO - ✅ Message processing completed - Response length: 342
+2025-06-09 00:20:19,860 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-09 00:20:19,860 - test_coder_agent - INFO - Response length: 342
+2025-06-09 00:20:19,861 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-09 00:20:19,861 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:20:19,861 - test_coder_agent - INFO - Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Create a window with a green background
+2. Add a red button in the center
+3. The button should print "Button clicked!" when pressed
+4. Save this as gui.py in the workspace
+
+Please write clean, well-commented code and make sure it's ready to run.
+2025-06-09 00:20:19,862 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:20:19,862 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-09 00:20:19,863 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-09 00:20:19,863 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:20:19,863 - test_coder_agent - INFO - """gui.py
+
+A minimal Tkinter GUI application that creates a window with a green
+background and a centered red button. Clicking the button prints
+"Button clicked!" to the console.
+
+This script is self-contained and can be run directly with a standard
+Python interpreter that includes the Tkinter module (usually available
+with default Python installations on Windows, macOS, and many Linux
+distributions).
+"""
+
+import tkinter as tk
+from tkinter import ttk  # Using ttk is optional here but demonstrates best practice
+
+
+def on_button_click() -> None:
+    """Callback for the button click event."""
+    print("Button clicked!")
+
+
+def main() -> None:
+    """Entry point for the GUI application."""
+    # Create the main application window (also called the "root" window).
+    root = tk.Tk()
+    root.title("Simple Tkinter GUI")
+
+    # Set the window's background color to green.
+    root.configure(bg="green")
+
+    # Optionally, set a minimum size for better layout control.
+    root.minsize(width=300, height=200)
+
+    # ------------------------------------------------------------
+    # Create and place the button.
+    # ------------------------------------------------------------
+    # We use a regular tk.Button instead of ttk.Button because ttk
+    # does not allow direct background color changes on some platforms
+    # without additional styling.
+    button = tk.Button(
+        root,
+        text="Click Me!",
+        command=on_button_click,
+        bg="red",
+        fg="white",
+        activebackground="dark red",
+        activeforeground="white",
+        font=("Helvetica", 12, "bold"),
+        relief=tk.RAISED,
+        padx=10,
+        pady=5,
+    )
+
+    # Use the pack geometry manager to center the button in both
+    # directions. 'expand=True' allows the button to remain centered
+    # even when the window is resized.
+    button.pack(expand=True)
+
+    # ------------------------------------------------------------
+    # Start the Tkinter event loop.
+    # ------------------------------------------------------------
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
+
+2025-06-09 00:20:19,864 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:20:19,864 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-09 00:20:19,864 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-09 00:20:19,865 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-09 00:20:19,865 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-09 00:20:19,865 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-09 00:20:19,865 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-09 00:20:19,866 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-09 00:20:19,866 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:20:19,866 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:20:19,866 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:20:19,866 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:20:19,866 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:20:19,866 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:20:25,171 - test_coder_agent - INFO - 🔬 Running additional coder agent tests...
+2025-06-09 00:20:25,172 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:20:25,172 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:20:25,176 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:20:25,176 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:20:25,177 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-09 00:20:25,178 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-09 00:20:25,178 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-09 00:20:25,178 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:20:25,190 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:20:25,190 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:20:25,190 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:20:25,194 - openai._base_client - INFO - Retrying request to /chat/completions in 0.496787 seconds
+2025-06-09 00:20:26,077 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:26,379 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:26,405 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:27,314 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:27,377 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:20:27,377 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:20:27,377 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:20:27,377 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:20:27,378 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:20:27,378 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:20:27,378 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:20:27,378 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:20:27,378 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:20:27,386 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:20:27,386 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:20:27,386 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:20:27,386 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:20:27,386 - test_coder_agent - INFO - 🧪 Running test 1: Simple Python Script
+2025-06-09 00:20:27,387 - assistant_core - INFO - 🔄 Starting message processing - Session: test_sesh_1, User: test_user
+2025-06-09 00:20:27,407 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:20:27,420 - supervisor - INFO - 🎯 Routing to coder agent (score: 2, matched: python, script)
+2025-06-09 00:20:28,046 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:28,487 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:29,043 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:29,082 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:29,619 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:29,840 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:20:29,840 - assistant_core - INFO - ✅ Message processing completed - Response length: 79
+2025-06-09 00:20:29,841 - test_coder_agent - INFO -   📄 Response: {'response': "Create a simple Python script that prints 'Hello World' and save it as hello.py", 'session_id': 'test_sesh_1', 'timestamp': 1749421229.8410478}
+2025-06-09 00:20:29,841 - test_coder_agent - INFO -   📄 Response length: 79
+2025-06-09 00:20:29,841 - test_coder_agent - INFO -   ✅ File created: hello.py
+2025-06-09 00:20:29,841 - test_coder_agent - INFO -   📄 File content length: 20
+2025-06-09 00:20:29,841 - test_coder_agent - INFO -   ✅ Content validation passed
+2025-06-09 00:20:29,841 - test_coder_agent - INFO - 🧪 Running test 2: JSON File Creation
+2025-06-09 00:20:29,841 - assistant_core - INFO - 🔄 Starting message processing - Session: test_sesh_2, User: test_user
+2025-06-09 00:20:29,842 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:20:29,845 - supervisor - INFO - 🎯 No specific keywords matched, routing to default: chat
+2025-06-09 00:20:31,298 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:32,641 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:34,987 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:20:35,057 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:20:35,057 - assistant_core - INFO - ✅ Message processing completed - Response length: 634
+2025-06-09 00:20:35,058 - test_coder_agent - INFO -   📄 Response: {'response': 'I can provide you with the content for a JSON file containing sample user data. Here is an example:\n\n```json\n[\n  {\n    "name": "Alice Johnson",\n    "age": 28,\n    "email": "alice.johnson@example.com"\n  },\n  {\n    "name": "Bob Smith",\n    "age": 34,\n    "email": "bob.smith@example.com"\n  },\n  {\n    "name": "Carol Williams",\n    "age": 22,\n    "email": "carol.williams@example.com"\n  }\n]\n```\n\nTo save this as `sample_data.json`, you can copy the above content into a text editor and save the file with that name.\n\nIf you want, I can also provide a script in Python to create and save this JSON file automatically. Would you like that?', 'session_id': 'test_sesh_2', 'timestamp': 1749421235.0580504}
+2025-06-09 00:20:35,058 - test_coder_agent - INFO -   📄 Response length: 634
+2025-06-09 00:20:35,059 - test_coder_agent - ERROR -   ❌ File not created: sample_data.json
+2025-06-09 00:20:35,060 - test_coder_agent - INFO -   📂 Workspace files: ['debug_test.txt', 'gui.py', 'assistant.db', 'assistant.db-shm', 'hello.py', 'assistant.db-wal']
+2025-06-09 00:20:35,060 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:20:35,060 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:20:35,061 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:20:35,061 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:27:27,188 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:27:27,188 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:27:27,835 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:27:27,838 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:27:27,838 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:27:27,839 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:27:27,842 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:27:27,845 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:27:27,857 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:27:27,865 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:27:27,865 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:27:28,513 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:27:28,534 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:27:28,534 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:27:28,535 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:27:28,535 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:27:28,535 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:27:28,535 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:27:28,536 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:27:28,536 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:27:28,536 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:27:28,537 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:27:28,537 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:27:28,538 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:27:28,538 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:27:28,538 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-09 00:27:28,538 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-09 00:27:28,538 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-09 00:27:28,538 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:27:28,552 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:27:28,552 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:27:28,558 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:27:28,807 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:27:28,809 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:27:28,812 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:27:29,710 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:29,713 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:29,714 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:30,016 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:30,051 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:27:30,051 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:27:30,051 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:27:30,051 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:27:30,051 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:27:30,051 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:27:30,052 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:27:30,052 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:27:30,052 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:27:30,067 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:27:30,067 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:27:30,067 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:27:30,068 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:27:30,068 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-09 00:27:30,068 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-09 00:27:30,068 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 00:27:30,068 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-09 00:27:30,068 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-09 00:27:30,068 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_sesh, User: test_user
+2025-06-09 00:27:30,188 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:27:30,206 - supervisor - INFO - 🎯 Routing to coder agent (score: 6, matched: code, python, save)
+2025-06-09 00:27:30,798 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:30,900 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:31,298 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:31,398 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:31,784 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:37,603 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:37,896 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:27:37,897 - assistant_core - INFO - ✅ Message processing completed - Response length: 342
+2025-06-09 00:27:37,897 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-09 00:27:37,897 - test_coder_agent - INFO - Response length: 342
+2025-06-09 00:27:37,897 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-09 00:27:37,897 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:27:37,897 - test_coder_agent - INFO - Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Create a window with a green background
+2. Add a red button in the center
+3. The button should print "Button clicked!" when pressed
+4. Save this as gui.py in the workspace
+
+Please write clean, well-commented code and make sure it's ready to run.
+2025-06-09 00:27:37,897 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:27:37,898 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-09 00:27:37,898 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-09 00:27:37,898 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:27:37,898 - test_coder_agent - INFO - """gui.py
+A simple tkinter GUI application.
+
+Requirements:
+1. Create a window with a green background.
+2. Add a red button in the center.
+3. The button should print "Button clicked!" when pressed.
+
+Run this file directly:
+    python gui.py
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+class SimpleGUI(tk.Tk):
+    """Main application window."""
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        # --- Window configuration ---
+        self.title("Simple Tkinter GUI")
+        self.configure(bg="green")  # Set the background color to green
+
+        # Make the window non-resizable for a consistent appearance
+        self.resizable(False, False)
+
+        # Center the window on the screen
+        self._center_window(width=300, height=200)
+
+        # --- Widgets ---
+        self._create_widgets()
+
+    # ------------------------------------------------------------------
+    # Internal helper methods
+    # ------------------------------------------------------------------
+    def _center_window(self, width: int, height: int) -> None:
+        """Center the window on the user's screen.
+
+        Args:
+            width: Desired width of the window.
+            height: Desired height of the window.
+        """
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x_coordinate = (screen_width // 2) - (width // 2)
+        y_coordinate = (screen_height // 2) - (height // 2)
+        self.geometry(f"{width}x{height}+{x_coordinate}+{y_coordinate}")
+
+    def _create_widgets(self) -> None:
+        """Create and layout widgets."""
+        # Use a Frame to help with centering the button
+        container = ttk.Frame(self, padding=10)
+        container.pack(expand=True)
+
+        # Create a red button in the center
+        button = ttk.Button(
+            container,
+            text="Click Me",
+            command=self._on_button_click,
+            style="Red.TButton",
+        )
+        button.pack()
+
+        # Configure custom styles (red background, white text)
+        style = ttk.Style(self)
+        style.configure("Red.TButton", background="red", foreground="white")
+        # "map" ensures the button changes styles on hover/press
+        style.map(
+            "Red.TButton",
+            background=[("active", "#cc0000"), ("pressed", "#990000")],
+            foreground=[("disabled", "gray")],
+        )
+
+    # ------------------------------------------------------------------
+    # Callback methods
+    # ------------------------------------------------------------------
+    def _on_button_click(self) -> None:
+        """Handle button click event."""
+        print("Button clicked!")
+
+
+# ----------------------------------------------------------------------
+# Main entry point
+# ----------------------------------------------------------------------
+if __name__ == "__main__":
+    app = SimpleGUI()
+    app.mainloop()
+
+2025-06-09 00:27:37,898 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:27:37,898 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-09 00:27:37,898 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-09 00:27:37,898 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-09 00:27:37,899 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-09 00:27:37,899 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-09 00:27:37,899 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-09 00:27:37,899 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-09 00:27:37,899 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:27:37,899 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:27:37,899 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:27:37,899 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:27:37,899 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:27:37,899 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:27:42,865 - test_coder_agent - INFO - 🔬 Running additional coder agent tests...
+2025-06-09 00:27:42,865 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:27:42,866 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:27:42,869 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:27:42,870 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:27:42,870 - checkpointer - INFO - 🎯 Creating checkpointer for development environment
+2025-06-09 00:27:42,870 - checkpointer - INFO - ✅ Development async SQLite checkpointer created: /home/user/morteydev/workspace/assistant.db
+2025-06-09 00:27:42,870 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncSqliteSaver
+2025-06-09 00:27:42,871 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:27:42,883 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:27:42,883 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:27:42,883 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:27:42,888 - openai._base_client - INFO - Retrying request to /chat/completions in 0.483898 seconds
+2025-06-09 00:27:43,601 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:43,637 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:44,861 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:45,170 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:45,233 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:27:45,233 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:27:45,233 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:27:45,233 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:27:45,233 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:27:45,233 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:27:45,233 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:27:45,233 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:27:45,234 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:27:45,242 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:27:45,242 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:27:45,242 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:27:45,242 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:27:45,242 - test_coder_agent - INFO - 🧪 Running test 1: Simple Python Script
+2025-06-09 00:27:45,242 - assistant_core - INFO - 🔄 Starting message processing - Session: test_sesh_1, User: test_user
+2025-06-09 00:27:45,263 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:27:45,275 - supervisor - INFO - 🎯 Routing to coder agent (score: 4, matched: python, script, save)
+2025-06-09 00:27:45,987 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:45,991 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:46,058 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:46,922 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:47,014 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:48,343 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:48,511 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:27:48,511 - assistant_core - INFO - ✅ Message processing completed - Response length: 79
+2025-06-09 00:27:48,512 - test_coder_agent - INFO -   📄 Response: {'response': "Create a simple Python script that prints 'Hello World' and save it as hello.py", 'session_id': 'test_sesh_1', 'timestamp': 1749421668.5121865}
+2025-06-09 00:27:48,512 - test_coder_agent - INFO -   📄 Response length: 79
+2025-06-09 00:27:48,513 - test_coder_agent - INFO -   ✅ File created: hello.py
+2025-06-09 00:27:48,513 - test_coder_agent - INFO -   📄 File content length: 165
+2025-06-09 00:27:48,514 - test_coder_agent - INFO -   ✅ Content validation passed
+2025-06-09 00:27:48,514 - test_coder_agent - INFO - 🧪 Running test 2: JSON File Creation
+2025-06-09 00:27:48,514 - assistant_core - INFO - 🔄 Starting message processing - Session: test_sesh_2, User: test_user
+2025-06-09 00:27:48,519 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:27:48,530 - supervisor - INFO - 🎯 Routing to coder agent (score: 6, matched: file, save, create)
+2025-06-09 00:27:50,903 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:52,850 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:27:53,101 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:27:53,101 - assistant_core - INFO - ✅ Message processing completed - Response length: 91
+2025-06-09 00:27:53,102 - test_coder_agent - INFO -   📄 Response: {'response': 'Create a JSON file with sample user data (name, age, email) and save it as sample_data.json', 'session_id': 'test_sesh_2', 'timestamp': 1749421673.1022775}
+2025-06-09 00:27:53,102 - test_coder_agent - INFO -   📄 Response length: 91
+2025-06-09 00:27:53,102 - test_coder_agent - INFO -   ✅ File created: sample_data.json
+2025-06-09 00:27:53,103 - test_coder_agent - INFO -   📄 File content length: 450
+2025-06-09 00:27:53,103 - test_coder_agent - WARNING -   ⚠️ Content validation failed
+2025-06-09 00:27:53,103 - test_coder_agent - INFO -   📄 Content preview: [
+  {
+    "name": "Alice Smith",
+    "age": 28,
+    "email": "alice.smith@example.com"
+  },
+  {
+    "name": "Bob Johnson",
+    "age": 35,
+    "email": "bob.johnson@example.com"
+  },
+  {
+    "name": "C...
+2025-06-09 00:27:53,104 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:27:53,104 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:27:53,104 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:27:53,104 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:30:50,194 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:30:50,194 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:30:50,847 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:30:50,849 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:30:50,849 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:30:50,851 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:30:50,854 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:30:50,857 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:30:50,868 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:30:50,877 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:30:50,877 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:30:51,513 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:30:51,535 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:30:51,535 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:30:51,536 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:30:51,536 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:30:51,536 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:30:51,536 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:30:51,537 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:30:51,537 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:30:51,537 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:30:51,537 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:30:51,538 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:30:51,538 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:30:51,538 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:30:51,539 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 00:30:51,569 - checkpointer - ERROR - ❌ LangGraph PostgreSQL checkpointer creation failed: '_AsyncGeneratorContextManager' object has no attribute 'setup'
+2025-06-09 00:30:51,569 - checkpointer - WARNING - ⚠️ Async PostgreSQL failed: '_AsyncGeneratorContextManager' object has no attribute 'setup', trying sync version
+2025-06-09 00:30:51,583 - checkpointer - INFO - ✅ LangGraph sync PostgreSQL checkpointer created
+2025-06-09 00:30:51,583 - checkpointer - INFO - ✅ Production sync PostgreSQL checkpointer created
+2025-06-09 00:30:51,583 - assistant_core - INFO - ✅ Checkpointer initialized: _GeneratorContextManager
+2025-06-09 00:30:51,583 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:30:51,598 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:30:51,598 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:30:51,605 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:30:51,868 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:30:51,868 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:30:51,870 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:30:52,872 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:30:53,384 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:30:53,427 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:30:53,997 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:30:54,022 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:30:54,022 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:30:54,022 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:30:54,022 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:30:54,023 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:30:54,023 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:30:54,023 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:30:54,023 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:30:54,023 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:30:54,034 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:30:54,034 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:30:54,034 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:30:54,035 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:30:54,035 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-09 00:30:54,035 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-09 00:30:54,035 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 00:30:54,035 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-09 00:30:54,035 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-09 00:30:54,036 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_sesh, User: test_user
+2025-06-09 00:30:54,036 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:30:54,110 - assistant_core - ERROR - ❌ CRITICAL: Message processing failed at step: '_GeneratorContextManager' object has no attribute 'get_next_version'
+2025-06-09 00:30:54,111 - assistant_core - ERROR - ❌ Exception type: AttributeError
+2025-06-09 00:30:54,111 - assistant_core - ERROR - ❌ Exception args: ("'_GeneratorContextManager' object has no attribute 'get_next_version'",)
+2025-06-09 00:30:54,111 - assistant_core - ERROR - 🔍 Component state at failure:
+2025-06-09 00:30:54,112 - assistant_core - ERROR -   - Supervisor graph: True
+2025-06-09 00:30:54,112 - assistant_core - ERROR -   - Checkpointer: True
+2025-06-09 00:30:54,112 - assistant_core - ERROR -   - Session ID: test_coder_sesh
+2025-06-09 00:30:54,112 - assistant_core - ERROR -   - Updated state keys: ['messages', 'session_id', 'user_id', 'current_agent']
+2025-06-09 00:30:54,115 - assistant_core - ERROR - ❌ Full traceback:
+Traceback (most recent call last):
+  File "/home/user/morteydev/core/assistant_core.py", line 260, in process_message
+    result = await self.supervisor.supervisor_graph.ainvoke(updated_state, config_dict)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/morteydev/venv/lib/python3.13/site-packages/langgraph/pregel/__init__.py", line 2788, in ainvoke
+    async for chunk in self.astream(
+    ...<19 lines>...
+            chunks.append(chunk)
+  File "/home/user/morteydev/venv/lib/python3.13/site-packages/langgraph/pregel/__init__.py", line 2596, in astream
+    async with AsyncPregelLoop(
+               ~~~~~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<20 lines>...
+        cache_policy=self.cache_policy,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ) as loop:
+    ^
+  File "/home/user/morteydev/venv/lib/python3.13/site-packages/langgraph/pregel/loop.py", line 1238, in __init__
+    self.checkpointer_get_next_version = checkpointer.get_next_version
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: '_GeneratorContextManager' object has no attribute 'get_next_version'
+
+2025-06-09 00:30:54,118 - error_handling - ERROR - Error in message_processing: context_manager_error - '_GeneratorContextManager' object has no attribute 'get_next_version'
+2025-06-09 00:30:54,118 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-09 00:30:54,119 - test_coder_agent - INFO - Response length: 68
+2025-06-09 00:30:54,119 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-09 00:30:54,119 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:30:54,120 - test_coder_agent - INFO - I'm experiencing a technical issue. Let me try a different approach.
+2025-06-09 00:30:54,120 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:30:54,121 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-09 00:30:54,123 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-09 00:30:54,123 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:30:54,124 - test_coder_agent - INFO - """gui.py
+A simple tkinter GUI application.
+
+Requirements:
+1. Create a window with a green background.
+2. Add a red button in the center.
+3. The button should print "Button clicked!" when pressed.
+
+Run this file directly:
+    python gui.py
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+class SimpleGUI(tk.Tk):
+    """Main application window."""
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        # --- Window configuration ---
+        self.title("Simple Tkinter GUI")
+        self.configure(bg="green")  # Set the background color to green
+
+        # Make the window non-resizable for a consistent appearance
+        self.resizable(False, False)
+
+        # Center the window on the screen
+        self._center_window(width=300, height=200)
+
+        # --- Widgets ---
+        self._create_widgets()
+
+    # ------------------------------------------------------------------
+    # Internal helper methods
+    # ------------------------------------------------------------------
+    def _center_window(self, width: int, height: int) -> None:
+        """Center the window on the user's screen.
+
+        Args:
+            width: Desired width of the window.
+            height: Desired height of the window.
+        """
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x_coordinate = (screen_width // 2) - (width // 2)
+        y_coordinate = (screen_height // 2) - (height // 2)
+        self.geometry(f"{width}x{height}+{x_coordinate}+{y_coordinate}")
+
+    def _create_widgets(self) -> None:
+        """Create and layout widgets."""
+        # Use a Frame to help with centering the button
+        container = ttk.Frame(self, padding=10)
+        container.pack(expand=True)
+
+        # Create a red button in the center
+        button = ttk.Button(
+            container,
+            text="Click Me",
+            command=self._on_button_click,
+            style="Red.TButton",
+        )
+        button.pack()
+
+        # Configure custom styles (red background, white text)
+        style = ttk.Style(self)
+        style.configure("Red.TButton", background="red", foreground="white")
+        # "map" ensures the button changes styles on hover/press
+        style.map(
+            "Red.TButton",
+            background=[("active", "#cc0000"), ("pressed", "#990000")],
+            foreground=[("disabled", "gray")],
+        )
+
+    # ------------------------------------------------------------------
+    # Callback methods
+    # ------------------------------------------------------------------
+    def _on_button_click(self) -> None:
+        """Handle button click event."""
+        print("Button clicked!")
+
+
+# ----------------------------------------------------------------------
+# Main entry point
+# ----------------------------------------------------------------------
+if __name__ == "__main__":
+    app = SimpleGUI()
+    app.mainloop()
+
+2025-06-09 00:30:54,132 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:30:54,132 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-09 00:30:54,132 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-09 00:30:54,133 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-09 00:30:54,133 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-09 00:30:54,133 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-09 00:30:54,134 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-09 00:30:54,134 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-09 00:30:54,134 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:30:54,135 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:30:54,135 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:30:54,135 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:30:54,136 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:30:54,138 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:45:23,283 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:45:23,283 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:45:24,005 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:45:24,008 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:45:24,008 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:45:24,009 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:45:24,013 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:45:24,016 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:45:24,028 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:45:24,037 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:45:24,037 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:45:24,737 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:45:24,761 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:45:24,761 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:45:24,762 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:45:24,762 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:45:24,762 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:45:24,763 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:45:24,764 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:45:24,764 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:45:24,764 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:45:24,764 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:45:24,765 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:45:24,765 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:45:24,766 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:45:24,766 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 00:45:24,766 - checkpointer - ERROR - ❌ Modern checkpointer creation failed: AsyncPostgresSaver.__init__() got an unexpected keyword argument 'connection_string'
+2025-06-09 00:45:24,766 - checkpointer - WARNING - ⚠️ Async PostgreSQL failed: AsyncPostgresSaver.__init__() got an unexpected keyword argument 'connection_string', trying sync version
+2025-06-09 00:45:24,783 - checkpointer - INFO - ✅ LangGraph sync PostgreSQL checkpointer created
+2025-06-09 00:45:24,783 - checkpointer - INFO - ✅ Production sync PostgreSQL checkpointer created
+2025-06-09 00:45:24,784 - assistant_core - INFO - ✅ Checkpointer initialized: _GeneratorContextManager
+2025-06-09 00:45:24,784 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:45:24,799 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:45:24,799 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:45:24,807 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:45:25,093 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:45:25,094 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:45:25,099 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:45:25,883 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:45:25,985 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:45:26,019 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:45:26,470 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:45:26,470 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:45:26,470 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:45:26,470 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:45:26,470 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:45:26,470 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:46:02,536 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:46:02,536 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:46:03,149 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:46:03,151 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:46:03,152 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:46:03,153 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:46:03,156 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:46:03,158 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:46:03,170 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:46:03,177 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:46:03,177 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:46:03,790 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:46:03,810 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:46:03,810 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:46:03,811 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:46:03,811 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:46:03,811 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:46:03,811 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:46:03,812 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:46:03,812 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:46:03,813 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:46:03,813 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:46:03,814 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:46:03,814 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:46:03,814 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:46:03,814 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 00:46:03,814 - checkpointer - ERROR - ❌ Modern checkpointer creation failed: AsyncPostgresSaver.__init__() got an unexpected keyword argument 'connection_string'
+2025-06-09 00:46:03,814 - checkpointer - WARNING - ⚠️ Async PostgreSQL failed: AsyncPostgresSaver.__init__() got an unexpected keyword argument 'connection_string', trying sync version
+2025-06-09 00:46:03,828 - checkpointer - INFO - ✅ LangGraph sync PostgreSQL checkpointer created
+2025-06-09 00:46:03,828 - checkpointer - INFO - ✅ Production sync PostgreSQL checkpointer created
+2025-06-09 00:46:03,828 - assistant_core - INFO - ✅ Checkpointer initialized: _GeneratorContextManager
+2025-06-09 00:46:03,828 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:46:03,840 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:46:03,840 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:46:03,845 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:46:04,084 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:46:04,085 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:46:04,089 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:46:04,799 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:46:04,918 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:46:04,955 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:46:04,955 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:46:04,955 - checkpointer - INFO - ✅ All connections cleaned up successfully
+2025-06-09 00:46:04,956 - circuit_breaker - INFO - 🛑 Circuit breaker monitoring stopped
+2025-06-09 00:46:04,956 - assistant_core - INFO - ✅ Graceful shutdown completed
+2025-06-09 00:46:04,956 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:47:59,116 - test_coder_agent - INFO - 🚀 Starting Coder Agent Test
+2025-06-09 00:47:59,116 - test_coder_agent - INFO - 📦 Importing components...
+2025-06-09 00:47:59,771 - settings - INFO - ✅ Loaded .env from: /home/user/morteydev/.env
+2025-06-09 00:47:59,774 - settings - INFO - ✅ Loaded LLM config from: /home/user/morteydev/config/llm_config.yaml
+2025-06-09 00:47:59,774 - settings - INFO - 🔧 Using modular provider configuration
+2025-06-09 00:47:59,775 - settings - INFO - 🔧 Loading 2 active providers: ['openai', 'anthropic']
+2025-06-09 00:47:59,778 - settings - INFO - ✅ Provider openai configured with 3 models
+2025-06-09 00:47:59,781 - settings - INFO - ✅ Provider anthropic configured with 3 models
+2025-06-09 00:47:59,793 - settings - INFO - ✅ Modular config loaded: 2 providers, 4 nodes
+2025-06-09 00:47:59,801 - settings - INFO - ✅ Configuration validation passed
+2025-06-09 00:47:59,801 - settings - INFO - ✅ Configuration loaded successfully
+2025-06-09 00:48:00,460 - llm_manager - INFO - ✅ LLM Manager: LangSmith tracing enabled for project: mortey-assistant
+2025-06-09 00:48:00,482 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:48:00,482 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:48:00,483 - file_tools - INFO - ✅ Workspace directory ensured: /home/user/morteydev/workspace
+2025-06-09 00:48:00,483 - file_tools - INFO - ✅ File tools initialized with workspace: /home/user/morteydev/workspace
+2025-06-09 00:48:00,483 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:48:00,484 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:48:00,485 - test_coder_agent - INFO - ✅ Components imported successfully
+2025-06-09 00:48:00,485 - test_coder_agent - INFO - 🔧 Initializing Assistant Core...
+2025-06-09 00:48:00,485 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:48:00,485 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:48:00,486 - test_coder_agent - INFO - ⚙️ Initializing system components...
+2025-06-09 00:48:00,487 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:48:00,487 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:48:00,487 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 00:48:00,571 - checkpointer - INFO - ✅ LangGraph 0.4.8 async PostgreSQL checkpointer created
+2025-06-09 00:48:00,571 - checkpointer - INFO - ✅ Production async PostgreSQL checkpointer created
+2025-06-09 00:48:00,571 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncPostgresSaver
+2025-06-09 00:48:00,572 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:48:00,599 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:48:00,599 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:48:00,610 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:48:00,868 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.7:1500
+2025-06-09 00:48:00,868 - llm_manager - INFO - ✅ Cached new model: openai:o3:1:50000
+2025-06-09 00:48:00,870 - llm_manager - INFO - ✅ Cached new model: openai:gpt-4.1-mini:0.3:1000
+2025-06-09 00:48:01,894 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:01,898 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:02,120 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:02,405 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:02,440 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:48:02,441 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:48:02,441 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:48:02,441 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:48:02,441 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:48:02,441 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:48:02,441 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:48:02,442 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:48:02,442 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:48:02,451 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:48:02,451 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:48:02,451 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:48:02,451 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:48:02,451 - test_coder_agent - INFO - ✅ Assistant Core initialized successfully
+2025-06-09 00:48:02,451 - test_coder_agent - INFO - 🤖 Checking agent availability...
+2025-06-09 00:48:02,451 - test_coder_agent - INFO - ✅ Coder agent found. Available agents: ['chat', 'coder', 'web', 'file_manager']
+2025-06-09 00:48:02,451 - test_coder_agent - INFO - 📝 Sending test message to coder agent...
+2025-06-09 00:48:02,451 - test_coder_agent - INFO - Message: Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Cre...
+2025-06-09 00:48:02,451 - assistant_core - INFO - 🔄 Starting message processing - Session: test_coder_sesh, User: test_user
+2025-06-09 00:48:02,532 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:48:02,538 - supervisor - INFO - 🎯 Routing to coder agent (score: 6, matched: code, python, save)
+2025-06-09 00:48:03,347 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:03,350 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:03,461 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:04,272 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:04,498 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:09,880 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:10,113 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:48:10,114 - assistant_core - INFO - ✅ Message processing completed - Response length: 342
+2025-06-09 00:48:10,114 - test_coder_agent - INFO - ✅ Received response from coder agent
+2025-06-09 00:48:10,115 - test_coder_agent - INFO - Response length: 342
+2025-06-09 00:48:10,115 - test_coder_agent - INFO - 📄 Coder Agent Response:
+2025-06-09 00:48:10,115 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:48:10,115 - test_coder_agent - INFO - Please create a simple GUI application using Python's tkinter library. The requirements are:
+
+1. Create a window with a green background
+2. Add a red button in the center
+3. The button should print "Button clicked!" when pressed
+4. Save this as gui.py in the workspace
+
+Please write clean, well-commented code and make sure it's ready to run.
+2025-06-09 00:48:10,116 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:48:10,116 - test_coder_agent - INFO - ✅ SUCCESS: gui.py file was created!
+2025-06-09 00:48:10,117 - test_coder_agent - INFO - 📄 Created gui.py content:
+2025-06-09 00:48:10,117 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:48:10,117 - test_coder_agent - INFO - """gui.py
+A minimal Tkinter GUI application that demonstrates:
+1. A main window with a green background
+2. A red button centered in the window
+3. Printing a message to the console when the button is clicked
+
+Run this file directly with a Python interpreter (Python 3.x).
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+def on_button_click() -> None:
+    """Callback triggered when the red button is pressed."""
+    print("Button clicked!")
+
+
+def main() -> None:
+    """Create and run the GUI application."""
+    # Create the main application window
+    root = tk.Tk()
+    root.title("Simple Tkinter GUI")
+
+    # Configure the window's background color
+    root.configure(bg="green")
+
+    # Ensure the window has a reasonable default size
+    root.geometry("300x200")  # Width x Height
+
+    # Create a red button. Use ttk for a modern look, but set style to make it red.
+    style = ttk.Style(root)
+    style.configure("Red.TButton", foreground="white", background="red")
+    # Note: On some platforms ttk may ignore the background option. In that case, use tk.Button instead.
+
+    # Fallback to tk.Button for consistent background color across platforms
+    button = tk.Button(
+        root,
+        text="Click Me",
+        bg="red",
+        fg="white",
+        activebackground="dark red",
+        command=on_button_click,
+        relief=tk.RAISED,
+        padx=20,
+        pady=10,
+    )
+
+    # Center the button in the window using pack with "expand" and "fill" options
+    button.pack(expand=True)
+
+    # Start the Tkinter event loop
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
+
+2025-06-09 00:48:10,117 - test_coder_agent - INFO - --------------------------------------------------
+2025-06-09 00:48:10,118 - test_coder_agent - INFO - 🔍 Validating file content:
+2025-06-09 00:48:10,118 - test_coder_agent - INFO -   ✅ tkinter import: PASS
+2025-06-09 00:48:10,118 - test_coder_agent - INFO -   ✅ green background: PASS
+2025-06-09 00:48:10,118 - test_coder_agent - INFO -   ✅ red button: PASS
+2025-06-09 00:48:10,119 - test_coder_agent - INFO -   ✅ button creation: PASS
+2025-06-09 00:48:10,119 - test_coder_agent - INFO -   ✅ window/root creation: PASS
+2025-06-09 00:48:10,119 - test_coder_agent - INFO - 🎉 ALL VALIDATION CHECKS PASSED!
+2025-06-09 00:48:10,119 - test_coder_agent - INFO - 🧹 Performing cleanup...
+2025-06-09 00:48:10,119 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:48:10,119 - assistant_core - ERROR - ❌ Error during shutdown: 'CheckpointerFactory' object has no attribute 'cleanup_connections'
+2025-06-09 00:48:10,119 - test_coder_agent - INFO - ✅ Cleanup completed
+2025-06-09 00:48:48,630 - test_coder_agent - INFO - 🔬 Running additional coder agent tests...
+2025-06-09 00:48:48,630 - assistant_core - INFO - 🚀 Initializing AssistantCore...
+2025-06-09 00:48:48,631 - checkpointer - INFO - 🏭 CheckpointerFactory initialized for development environment
+2025-06-09 00:48:48,634 - assistant_core - INFO - 🚀 Starting Assistant Core Initialization
+2025-06-09 00:48:48,634 - assistant_core - INFO - 📂 Initializing checkpointer...
+2025-06-09 00:48:48,635 - checkpointer - INFO - 🎯 Creating checkpointer for production environment
+2025-06-09 00:48:48,649 - checkpointer - INFO - ✅ LangGraph 0.4.8 async PostgreSQL checkpointer created
+2025-06-09 00:48:48,649 - checkpointer - INFO - ✅ Production async PostgreSQL checkpointer created
+2025-06-09 00:48:48,649 - assistant_core - INFO - ✅ Checkpointer initialized: AsyncPostgresSaver
+2025-06-09 00:48:48,649 - assistant_core - INFO - 🤖 Initializing agents...
+2025-06-09 00:48:48,661 - file_tools - INFO - ✅ File tools ready: 5 base + 7 enhanced
+2025-06-09 00:48:48,662 - agents - INFO - ✅ File tools initialized: 12 tools
+2025-06-09 00:48:48,662 - agents - INFO - ✅ Web search tools initialized: 1 tools
+2025-06-09 00:48:48,667 - openai._base_client - INFO - Retrying request to /chat/completions in 0.443483 seconds
+2025-06-09 00:48:49,714 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:49,718 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:50,021 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:50,759 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:50,783 - agents - INFO - ✅ Agent 'chat' initialized successfully
+2025-06-09 00:48:50,783 - agents - INFO - ✅ Agent 'coder' initialized successfully
+2025-06-09 00:48:50,783 - agents - INFO - ✅ Agent 'web' initialized successfully
+2025-06-09 00:48:50,783 - agents - INFO - ✅ Agent 'file_manager' initialized successfully
+2025-06-09 00:48:50,783 - agents - INFO - ✅ Agent factory initialized with 4 agents
+2025-06-09 00:48:50,784 - assistant_core - INFO - ✅ Agents initialized: 4 agents
+2025-06-09 00:48:50,784 - assistant_core - INFO - 🔧 Gathering tools...
+2025-06-09 00:48:50,784 - assistant_core - INFO - ✅ Tools gathered: 13 tools
+2025-06-09 00:48:50,784 - assistant_core - INFO - 🎯 Initializing supervisor...
+2025-06-09 00:48:50,792 - supervisor - INFO - ✅ Enhanced supervisor initialized with 4 agents and 13 tools (LangGraph 0.4.8)
+2025-06-09 00:48:50,792 - assistant_core - INFO - ✅ Supervisor initialized successfully
+2025-06-09 00:48:50,792 - assistant_core - INFO - ⚙️ Starting background tasks...
+2025-06-09 00:48:50,792 - assistant_core - INFO - ✅ Assistant Core Initialization Complete
+2025-06-09 00:48:50,792 - test_coder_agent - INFO - 🧪 Running test 1: Simple Python Script
+2025-06-09 00:48:50,792 - assistant_core - INFO - 🔄 Starting message processing - Session: test_sesh_1, User: test_user
+2025-06-09 00:48:50,806 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:48:50,813 - supervisor - INFO - 🎯 Routing to coder agent (score: 4, matched: python, script, save)
+2025-06-09 00:48:51,356 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:51,711 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:51,761 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:52,118 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:52,497 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:53,476 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:53,732 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:48:53,732 - assistant_core - INFO - ✅ Message processing completed - Response length: 79
+2025-06-09 00:48:53,733 - test_coder_agent - INFO -   📄 Response: {'response': "Create a simple Python script that prints 'Hello World' and save it as hello.py", 'session_id': 'test_sesh_1', 'timestamp': 1749422933.732975}
+2025-06-09 00:48:53,733 - test_coder_agent - INFO -   📄 Response length: 79
+2025-06-09 00:48:53,733 - test_coder_agent - INFO -   ✅ File created: hello.py
+2025-06-09 00:48:53,734 - test_coder_agent - INFO -   📄 File content length: 186
+2025-06-09 00:48:53,734 - test_coder_agent - INFO -   ✅ Content validation passed
+2025-06-09 00:48:53,734 - test_coder_agent - INFO - 🧪 Running test 2: JSON File Creation
+2025-06-09 00:48:53,734 - assistant_core - INFO - 🔄 Starting message processing - Session: test_sesh_2, User: test_user
+2025-06-09 00:48:53,737 - assistant_core - INFO - 🚀 Invoking supervisor graph...
+2025-06-09 00:48:53,742 - supervisor - INFO - 🎯 Routing to coder agent (score: 6, matched: file, save, create)
+2025-06-09 00:48:55,709 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:57,701 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-06-09 00:48:57,887 - assistant_core - INFO - ✅ Supervisor graph completed successfully
+2025-06-09 00:48:57,887 - assistant_core - INFO - ✅ Message processing completed - Response length: 91
+2025-06-09 00:48:57,888 - test_coder_agent - INFO -   📄 Response: {'response': 'Create a JSON file with sample user data (name, age, email) and save it as sample_data.json', 'session_id': 'test_sesh_2', 'timestamp': 1749422937.8881428}
+2025-06-09 00:48:57,888 - test_coder_agent - INFO -   📄 Response length: 91
+2025-06-09 00:48:57,888 - test_coder_agent - INFO -   ✅ File created: sample_data.json
+2025-06-09 00:48:57,889 - test_coder_agent - INFO -   📄 File content length: 459
+2025-06-09 00:48:57,889 - test_coder_agent - WARNING -   ⚠️ Content validation failed
+2025-06-09 00:48:57,889 - test_coder_agent - INFO -   📄 Content preview: [
+  {
+    "name": "Alice Smith",
+    "age": 28,
+    "email": "alice.smith@example.com"
+  },
+  {
+    "name": "Bob Johnson",
+    "age": 34,
+    "email": "bob.johnson@example.com"
+  },
+  {
+    "name": "C...
+2025-06-09 00:48:57,890 - assistant_core - INFO - 🔌 Starting graceful shutdown...
+2025-06-09 00:48:57,890 - assistant_core - ERROR - ❌ Error during shutdown: 'CheckpointerFactory' object has no attribute 'cleanup_connections'

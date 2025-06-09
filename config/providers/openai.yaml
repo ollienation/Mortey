@@ -1,0 +1,65 @@
+# config/providers/openai.yaml - OPENAI-SPECIFIC CONFIGURATION
+provider_info:
+  name: "openai"
+  display_name: "OpenAI"
+  type: "openai"
+  description: "OpenAI GPT models with function calling"
+  documentation: "https://platform.openai.com/docs"
+
+connection:
+  api_key_env: "OPENAI_API_KEY"
+  base_url: "https://api.openai.com/v1/"
+  timeout: 30
+  max_retries: 3
+
+capabilities:
+  function_calling: true
+  streaming: true
+  vision: true
+  embeddings: true
+  fine_tuning: true
+
+rate_limits:
+  requests_per_minute: 500
+  tokens_per_minute: 150000
+  max_concurrent_requests: 5
+
+# Model configurations
+models:
+  # Tasks/reasoning
+  gpt-4.1:
+    display_name: "GPT-4.1"
+    max_tokens: 32768
+    supports_functions: true
+    cost_per_1k_tokens: 0.008
+
+  # General purpose
+  gpt-4.1-mini:
+    display_name: "gpt-4.1 mini"
+    max_tokens: 32768
+    supports_functions: true
+    cost_per_1k_tokens: 0.0044
+
+  # Monster model, Heavy data tasks, takes a bazilion gpu's to run.
+  o3:
+    display_name: "o3"
+    max_tokens: 100000
+    supports_functions: true
+    cost_per_1k_tokens: 0.04 # Hurts in the wallet  
+
+# Node templates for easy reuse
+node_templates:
+  chat_default:
+    model: "gpt-4.1-mini"
+    temperature: 0.6
+    max_tokens: 1500
+    
+  coder_default:
+    model: "o3"
+    temperature: 1
+    max_tokens: 50000
+    
+  reasoning_default:
+    model: "gpt-4.1"
+    temperature: 0.4
+    max_tokens: 2000

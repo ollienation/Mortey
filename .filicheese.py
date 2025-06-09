@@ -52,6 +52,7 @@ if __name__ == "__main__":
         './agents',
         './core',
         './config',
+        './config/providers',
         './tools',
         './test',
         # Add more directories here as needed

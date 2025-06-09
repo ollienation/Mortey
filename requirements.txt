@@ -8,10 +8,15 @@ langchain-core>=0.3.63
 langchain-anthropic>=0.3.14
 langchain-openai>=0.3.18
 langchain-community>=0.3.24
+langchain-postgres>=0.0.12
 
 # Database persistence
 langgraph-checkpoint-sqlite>=0.1.0 # Required for SQLite checkpointing
 langgraph-checkpoint-postgres>=0.1.0 # Required for PostgreSQL checkpointing
+psycopg[binary]>=3.1.0 
+
+# Openai slob
+openai
 
 # Memory and store management
 langmem>=0.0.27

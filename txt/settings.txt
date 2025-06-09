@@ -2,12 +2,14 @@
 import os
 import pathlib
 import logging
-import yaml  # ✅ CRITICAL FIX: Add missing yaml import
+import yaml
 from dataclasses import dataclass, field
-from typing import Optional
-from collections.abc import Mapping  # Python 3.13.4 preferred import
-
+from typing import Optional, TYPE_CHECKING, Protocol, runtime_checkable, Any
+from collections.abc import Mapping
 from dotenv import load_dotenv
+
+if TYPE_CHECKING:
+    from config.providers import ProviderRegistry
 
 logger = logging.getLogger("settings")
 
@@ -82,6 +84,12 @@ class DatabaseConfig:
         if self.type not in valid_types:
             raise ValueError(f"Database type must be one of {valid_types}, got {self.type}")
 
+@runtime_checkable  
+class ProviderRegistryProtocol(Protocol):
+    """Interface for provider registry"""
+    def get_provider(self, provider_name: str) -> Optional[object]: ...
+    def get_available_providers(self) -> list[str]: ...
+
 @dataclass
 class MorteyConfig:
     """
@@ -126,12 +134,73 @@ class MorteyConfig:
     circuit_breaker_enabled: bool = True
     
     # Security settings
-    allowed_file_extensions: set[str] = field(default_factory=lambda: {  # Python 3.13.4 syntax
+    allowed_file_extensions: set[str] = field(default_factory=lambda: { 
         ".txt", ".md", ".py", ".js", ".html", ".css", ".json", ".yaml", ".yml", 
         ".csv", ".xml", ".log", ".cfg", ".ini", ".toml"
     })
     max_file_size_mb: int = 50
+
+    provider_registry: Optional[ProviderRegistryProtocol] = field(default=None, init=False)
     
+    def __post_init__(self) -> None:
+        """Initialize with validation"""
+        from config.providers import get_provider_registry
+        
+        registry = get_provider_registry()
+        
+        # Runtime validation
+        required_methods = ['get_provider', 'get_available_providers']
+        if not all(hasattr(registry, method) for method in required_methods):
+            missing = [m for m in required_methods if not hasattr(registry, m)]
+            raise TypeError(f"Provider registry missing required methods: {missing}")
+        
+        self.llm_config = {
+            'global': {
+                'default_provider': self.default_provider,
+                'fallback_provider': self.fallback_provider,
+                'retry_attempts': self.retry_attempts,
+                'timeout_seconds': self.timeout_seconds,
+                'enable_caching': self.enable_caching,
+                'max_concurrent_requests': self.max_concurrent_requests,
+                'request_timeout': self.request_timeout,
+                'circuit_breaker_enabled': self.circuit_breaker_enabled
+            },
+            'providers': {name: self._provider_to_dict(provider) for name, provider in self.providers.items()},
+            'nodes': {name: self._node_to_dict(node) for name, node in self.nodes.items()}
+        }
+
+        self.provider_registry = registry
+        logger.debug("✅ Provider registry initialized and validated")
+    
+
+    # Quick fix NEEDS CLEANING
+    def _provider_to_dict(self, provider: ProviderConfig) -> dict[str, Any]:
+        """Convert ProviderConfig to dict for backward compatibility"""
+        return {
+            'api_key_env': provider.api_key_env,
+            'api_key': provider.api_key,  # Add this
+            'base_url': provider.base_url,
+            'rate_limit_per_minute': provider.rate_limit_per_minute,
+            'retry_attempts': provider.retry_attempts,
+            'models': {name: {
+                'model_id': model.model_id,
+                'max_tokens': model.max_tokens,
+                'temperature': model.temperature,
+                'cost_per_1k_tokens': model.cost_per_1k_tokens
+            } for name, model in provider.models.items()}
+        }
+    
+    def _node_to_dict(self, node: NodeConfig) -> dict[str, Any]:
+        """Convert NodeConfig to dict for backward compatibility"""
+        return {
+            'provider': node.provider,
+            'model': node.model,
+            'max_tokens': node.max_tokens,
+            'temperature': node.temperature,
+            'description': node.description,
+            'tools_enabled': node.tools_enabled
+        }
+
     @classmethod
     def from_environment(cls) -> 'MorteyConfig':
         """
@@ -212,10 +281,9 @@ class MorteyConfig:
             raise
     
     @classmethod
-    def _load_llm_config(cls, config_file: pathlib.Path) -> tuple[dict[str, ProviderConfig], dict[str, NodeConfig], dict[str, any]]:  # Python 3.13.4 syntax
-        """
-        Load LLM configuration from YAML file with enhanced error handling
-        """
+    def _load_llm_config(cls, config_file: pathlib.Path) -> tuple[dict[str, ProviderConfig], dict[str, NodeConfig], dict[str, Any]]:
+        """Load LLM configuration with modular provider support"""
+        
         if not config_file.exists():
             logger.warning(f"❌ LLM config file not found: {config_file}")
             return {}, {}, {}
@@ -230,84 +298,222 @@ class MorteyConfig:
             
             logger.info(f"✅ Loaded LLM config from: {config_file}")
             
-            # Parse providers with enhanced validation
-            providers: dict[str, ProviderConfig] = {}  # Python 3.13.4 syntax
-            for provider_name, provider_data in config_data.get('providers', {}).items():
-                try:
-                    api_key = os.getenv(provider_data['api_key_env'])
-                    
-                    # Parse models for this provider
-                    models: dict[str, ModelConfig] = {}  # Python 3.13.4 syntax
-                    for model_name, model_data in provider_data.get('models', {}).items():
-                        try:
-                            models[model_name] = ModelConfig(
-                                model_id=model_data['model_id'],
-                                max_tokens=model_data['max_tokens'],
-                                temperature=model_data['temperature'],
-                                cost_per_1k_tokens=model_data.get('cost_per_1k_tokens', 0.0)
-                            )
-                        except Exception as e:
-                            logger.error(f"❌ Error parsing model {model_name}: {e}")
-                            continue
-                    
-                    if api_key:  # Only add provider if API key is available
-                        providers[provider_name] = ProviderConfig(
-                            api_key_env=provider_data['api_key_env'],
-                            models=models,
-                            api_key=api_key,
-                            base_url=provider_data.get('base_url'),
-                            rate_limit_per_minute=provider_data.get('rate_limit_per_minute', 60),
-                            retry_attempts=provider_data.get('retry_attempts', 3)
-                        )
-                        logger.info(f"✅ Provider {provider_name} configured with {len(models)} models")
-                    else:
-                        logger.warning(f"⚠️ Provider {provider_name} skipped (no API key for {provider_data['api_key_env']})")
-                        
-                except Exception as e:
-                    logger.error(f"❌ Error parsing provider {provider_name}: {e}")
-                    continue
-            
-            # Parse nodes with enhanced validation
-            nodes: dict[str, NodeConfig] = {}  # Python 3.13.4 syntax
-            for node_name, node_data in config_data.get('nodes', {}).items():
-                try:
-                    # Validate that the provider exists
-                    provider_name = node_data['provider']
-                    if provider_name not in providers:
-                        logger.warning(f"⚠️ Node {node_name} references unknown provider {provider_name}")
-                        continue
-                    
-                    # Validate that the model exists for the provider
-                    model_name = node_data['model']
-                    if model_name not in providers[provider_name].models:
-                        logger.warning(f"⚠️ Node {node_name} references unknown model {model_name} for provider {provider_name}")
-                        continue
-                    
-                    nodes[node_name] = NodeConfig(
-                        provider=provider_name,
-                        model=model_name,
-                        max_tokens=node_data['max_tokens'],
-                        temperature=node_data['temperature'],
-                        description=node_data.get('description', ''),
-                        custom_system_prompt=node_data.get('custom_system_prompt'),
-                        tools_enabled=node_data.get('tools_enabled', True)
-                    )
-                    logger.debug(f"✅ Node {node_name} configured")
-                    
-                except Exception as e:
-                    logger.error(f"❌ Error parsing node {node_name}: {e}")
-                    continue
-            
-            global_settings = config_data.get('global', {})
-            
-            return providers, nodes, global_settings
-            
+            # 🔥 NEW: Check if using modular provider system
+            if 'provider_config_path' in config_data:
+                logger.info("🔧 Using modular provider configuration")
+                return cls._load_modular_config(config_file.parent, config_data)
+            else:
+                logger.info("🔧 Using traditional provider configuration")
+                return cls._load_traditional_config(config_data)
+                
         except yaml.YAMLError as e:
             logger.error(f"❌ YAML parsing error in {config_file}: {e}")
             return {}, {}, {}
         except Exception as e:
             logger.error(f"❌ Error loading LLM config: {e}")
             return {}, {}, {}
+
+    @classmethod  
+    def _load_modular_config(cls, config_dir: pathlib.Path, main_config: dict) -> tuple[dict[str, ProviderConfig], dict[str, NodeConfig], dict[str, Any]]:
+        """Load configuration from modular provider system"""
+        
+        try:
+            # Load provider registry
+            registry_path = config_dir / main_config['provider_config_path']
+            
+            if not registry_path.exists():
+                logger.error(f"❌ Provider registry file not found: {registry_path}")
+                return {}, {}, {}
+            
+            with open(registry_path, 'r') as f:
+                registry_data = yaml.safe_load(f)
+            
+            providers = {}
+            
+            # Load each provider configuration
+            active_providers = registry_data.get('active_providers', [])
+            logger.info(f"🔧 Loading {len(active_providers)} active providers: {active_providers}")
+            
+            for provider_name in active_providers:
+                provider_file = config_dir / 'providers' / f'{provider_name}.yaml'
+                
+                if not provider_file.exists():
+                    logger.warning(f"⚠️ Provider file not found: {provider_file}")
+                    continue
+                
+                try:
+                    with open(provider_file, 'r') as f:
+                        provider_data = yaml.safe_load(f)
+                    
+                    # Check if API key is available
+                    api_key_env = provider_data['connection']['api_key_env']
+                    api_key = os.getenv(api_key_env)
+                    
+                    if not api_key:
+                        logger.warning(f"⚠️ Provider {provider_name} skipped (no API key for {api_key_env})")
+                        continue
+                    
+                    # Convert modular format to ProviderConfig
+                    models = {}
+                    for model_name, model_data in provider_data['models'].items():
+                        models[model_name] = ModelConfig(
+                            model_id=model_name,  # 🔥 FIX: Use model_name, not nested model_id
+                            max_tokens=model_data['max_tokens'],
+                            temperature=0.7,  # Default
+                            cost_per_1k_tokens=model_data.get('cost_per_1k_tokens', 0.0)
+                        )
+                    
+                    providers[provider_name] = ProviderConfig(
+                        api_key_env=api_key_env,
+                        models=models,
+                        api_key=api_key,
+                        base_url=provider_data['connection']['base_url'],
+                        rate_limit_per_minute=provider_data['rate_limits']['requests_per_minute'],
+                        retry_attempts=provider_data['connection']['max_retries']
+                    )
+                    
+                    logger.info(f"✅ Provider {provider_name} configured with {len(models)} models")
+                    
+                except Exception as e:
+                    logger.error(f"❌ Error loading provider {provider_name}: {e}")
+                    continue
+            
+            # Process nodes with template expansion        
+            nodes = {}
+            for node_name, node_data in main_config.get('nodes', {}).items():
+                try:
+                    provider_name = node_data['provider']
+                    template_name = node_data.get('template', 'chat_default')
+                    
+                    if provider_name not in providers:
+                        logger.warning(f"⚠️ Node {node_name} references unknown provider {provider_name}")
+                        continue
+                    
+                    # Load provider file to get template
+                    provider_file = config_dir / 'providers' / f'{provider_name}.yaml'
+                    with open(provider_file, 'r') as f:
+                        provider_config = yaml.safe_load(f)
+                    
+                    template = provider_config.get('node_templates', {}).get(template_name, {})
+                    
+                    # Merge template with node overrides
+                    merged_config = {**template, **node_data}
+                    
+                    # 🔥 FIX: Use actual model names from provider
+                    model_name = merged_config['model']
+                    if model_name not in providers[provider_name].models:
+                        # Try to find a valid model
+                        available_models = list(providers[provider_name].models.keys())
+                        if available_models:
+                            model_name = available_models[0]
+                            logger.warning(f"⚠️ Node {node_name} model not found, using {model_name}")
+                        else:
+                            logger.warning(f"⚠️ No models available for provider {provider_name}")
+                            continue
+                    
+                    nodes[node_name] = NodeConfig(
+                        provider=provider_name,
+                        model=model_name,
+                        max_tokens=merged_config.get('max_tokens', 1500),
+                        temperature=merged_config.get('temperature', 0.7),
+                        description=merged_config.get('description', ''),
+                        tools_enabled=merged_config.get('enable_functions', False)
+                    )
+                    
+                    logger.debug(f"✅ Node {node_name} configured with model {model_name}")
+                    
+                except Exception as e:
+                    logger.error(f"❌ Error processing node {node_name}: {e}")
+                    continue
+            
+            # Global settings from registry
+            global_settings = registry_data.get('global', {})
+            
+            logger.info(f"✅ Modular config loaded: {len(providers)} providers, {len(nodes)} nodes")
+            return providers, nodes, global_settings
+            
+        except Exception as e:
+            logger.error(f"❌ Error loading modular config: {e}")
+            import traceback
+            traceback.print_exc()
+            return {}, {}, {}
+
+    @classmethod
+    def _load_traditional_config(cls, config_data: dict) -> tuple[dict[str, ProviderConfig], dict[str, NodeConfig], dict[str, Any]]:
+        """Load configuration from traditional format (your existing logic)"""
+        
+        # Parse providers with enhanced validation
+        providers: dict[str, ProviderConfig] = {}
+        for provider_name, provider_data in config_data.get('providers', {}).items():
+            try:
+                api_key = os.getenv(provider_data['api_key_env'])
+                
+                # Parse models for this provider
+                models: dict[str, ModelConfig] = {}
+                for model_name, model_data in provider_data.get('models', {}).items():
+                    try:
+                        models[model_name] = ModelConfig(
+                            model_id=model_data['model_id'],
+                            max_tokens=model_data['max_tokens'],
+                            temperature=model_data['temperature'],
+                            cost_per_1k_tokens=model_data.get('cost_per_1k_tokens', 0.0)
+                        )
+                    except Exception as e:
+                        logger.error(f"❌ Error parsing model {model_name}: {e}")
+                        continue
+                
+                if api_key:  # Only add provider if API key is available
+                    providers[provider_name] = ProviderConfig(
+                        api_key_env=provider_data['api_key_env'],
+                        models=models,
+                        api_key=api_key,
+                        base_url=provider_data.get('base_url'),
+                        rate_limit_per_minute=provider_data.get('rate_limit_per_minute', 60),
+                        retry_attempts=provider_data.get('retry_attempts', 3)
+                    )
+                    logger.info(f"✅ Provider {provider_name} configured with {len(models)} models")
+                else:
+                    logger.warning(f"⚠️ Provider {provider_name} skipped (no API key for {provider_data['api_key_env']})")
+                    
+            except Exception as e:
+                logger.error(f"❌ Error parsing provider {provider_name}: {e}")
+                continue
+        
+        # Parse nodes with enhanced validation
+        nodes: dict[str, NodeConfig] = {}
+        for node_name, node_data in config_data.get('nodes', {}).items():
+            try:
+                # Validate that the provider exists
+                provider_name = node_data['provider']
+                if provider_name not in providers:
+                    logger.warning(f"⚠️ Node {node_name} references unknown provider {provider_name}")
+                    continue
+                
+                # Validate that the model exists for the provider
+                model_name = node_data['model']
+                if model_name not in providers[provider_name].models:
+                    logger.warning(f"⚠️ Node {node_name} references unknown model {model_name} for provider {provider_name}")
+                    continue
+                
+                nodes[node_name] = NodeConfig(
+                    provider=provider_name,
+                    model=model_name,
+                    max_tokens=node_data['max_tokens'],
+                    temperature=node_data['temperature'],
+                    description=node_data.get('description', ''),
+                    custom_system_prompt=node_data.get('custom_system_prompt'),
+                    tools_enabled=node_data.get('tools_enabled', True)
+                )
+                logger.debug(f"✅ Node {node_name} configured")
+                
+            except Exception as e:
+                logger.error(f"❌ Error parsing node {node_name}: {e}")
+                continue
+        
+        global_settings = config_data.get('global', {})
+        
+        return providers, nodes, global_settings
+
     
     @classmethod
     def _create_database_config(cls) -> DatabaseConfig:
@@ -386,6 +592,10 @@ class MorteyConfig:
     def get_provider_config(self, provider_name: str) -> Optional[ProviderConfig]:
         """Get configuration for a specific provider"""
         return self.providers.get(provider_name)
+
+    def get_provider_config_from_registry(self, provider_name: str):
+        """Get configuration for a specific provider from registry (if needed)"""
+        return self.provider_registry.get_provider(provider_name)
     
     def get_node_config(self, node_name: str) -> Optional[NodeConfig]:
         """Get configuration for a specific node"""
@@ -398,9 +608,28 @@ class MorteyConfig:
             return provider.models.get(model_name)
         return None
     
-    def get_available_providers(self) -> list[str]:  # Python 3.13.4 syntax
+    def get_available_providers(self) -> list[str]:
         """Get list of available providers"""
-        return list(self.providers.keys())
+        return self.provider_registry.get_available_providers()
+
+    def get_node_config_with_provider(self, node_name: str) -> dict[str, Any]:
+        """Get node configuration merged with provider settings"""
+        node_config = self.llm_config['nodes'].get(node_name, {})
+        provider_name = node_config.get('provider')
+        
+        if provider_name:
+            provider_config = self.provider_registry.get_provider(provider_name)
+            if provider_config:
+                # Merge node config with provider template
+                template_name = node_config.get('template', 'chat_default')
+                template_config = provider_config.node_templates.get(template_name, {})
+                
+                # Merge: template -> node overrides
+                merged_config = {**template_config, **node_config}
+                merged_config['provider_info'] = provider_config
+                return merged_config
+        
+        return node_config
     
     def get_available_models(self, provider_name: str) -> list[str]:  # Python 3.13.4 syntax
         """Get list of available models for a provider"""
@@ -468,7 +697,7 @@ class MorteyConfig:
             logger.critical(f"❌ {error_msg}: {e}")
             raise RuntimeError(error_msg) from e
     
-    def get_configuration_summary(self) -> dict[str, any]:  # Python 3.13.4 syntax
+    def get_configuration_summary(self) -> dict[str, Any]:  # Python 3.13.4 syntax
         """Get a summary of the current configuration for debugging"""
         return {
             "project_root": str(self.project_root),

@@ -4,11 +4,12 @@ import logging
 import os
 import time
 from functools import wraps
-from typing import Optional, Union, Any
+from typing import Optional, Union, Any, Dict
 from collections.abc import Mapping  # Python 3.13.4 preferred import
 from asyncio import Semaphore, TaskGroup  # Python 3.13.4 TaskGroup
 from dataclasses import dataclass, field
 from enum import Enum
+from langchain_openai import ChatOpenAI
 
 from langchain.chat_models import init_chat_model
 
@@ -233,8 +234,14 @@ class LLMManager:
         """Create a new model instance with enhanced error handling"""
         # Get configurations
         node_config = config.get_node_config(node_name)
-        provider_config = config.get_provider_config(node_config.provider)
+        provider_config = config.get_provider_config(node_config.provider)  # Now returns ProviderConfig
         model_config = config.get_model_config(node_config.provider, node_config.model)
+        
+        if not provider_config:
+            raise ValueError(f"Provider config not found for {node_config.provider}")
+        
+        if not provider_config.api_key:
+            raise ValueError(f"API key not available for provider {node_config.provider}")
         
         try:
             # Set API key as environment variable
@@ -243,18 +250,23 @@ class LLMManager:
             # Use effective max_tokens (override or config default)
             effective_max_tokens = override_max_tokens or node_config.max_tokens
             
-            # Initialize model with proper configuration
-            model_string = f"{node_config.provider}:{model_config.model_id}"
+            model_name = model_config.model_id
+            temperature = node_config.temperature
             
-            # Enhanced model initialization with custom parameters
+            # Special handling for OpenAI models that only support temperature=1 
+            if "o3" in model_name.lower() and temperature != 1.0:
+                logger.warning(f"⚠️ Model {model_name} only supports temperature=1, adjusting from {temperature}")
+                temperature = 1.0
+            
             init_params = {
-                "temperature": node_config.temperature,
+                "temperature": temperature,
                 "max_tokens": effective_max_tokens
             }
             
-            # Add provider-specific configurations
             if hasattr(provider_config, 'base_url') and provider_config.base_url:
                 init_params["base_url"] = provider_config.base_url
+            
+            model_string = f"{node_config.provider}:{model_name}"
             
             model = init_chat_model(model_string, **init_params)
             
@@ -268,54 +280,68 @@ class LLMManager:
     async def generate_for_node(
         self,
         node_name: str,
-        prompt: str,
+        prompt: Union[str, list, Any],
         override_max_tokens: Optional[int] = None,
         metadata: Optional[dict[str, Any]] = None  # Python 3.13.4 syntax
     ) -> str:
         """
-        Generate response using cached models with enhanced concurrency control and error handling.
+        Generate response with flexible input handling
         """
-        
+        if isinstance(prompt, str):
+            # Already a string
+            normalized_prompt = prompt
+        elif isinstance(prompt, list):
+            # List of messages - extract content from last human message
+            last_human_content = None
+            for msg in reversed(prompt):
+                if hasattr(msg, 'content') and hasattr(msg, 'type'):
+                    if getattr(msg, 'type', '') == 'human':
+                        last_human_content = msg.content
+                        break
+            normalized_prompt = last_human_content or str(prompt[-1]) if prompt else "Hello"
+        elif hasattr(prompt, 'content'):
+            # Single message object
+            normalized_prompt = prompt.content
+        else:
+            # Fallback to string conversion
+            normalized_prompt = str(prompt)
+
+        # Continue with logic using normalized_prompt
+        return await self._generate_with_normalized_input(node_name, normalized_prompt, override_max_tokens, metadata)
+
+    async def _generate_with_normalized_input(
+        self,
+        node_name: str,
+        prompt: str,  # Now guaranteed to be string
+        override_max_tokens: Optional[int] = None,
+        metadata: Optional[dict[str, Any]] = None
+    ) -> str:
+        """Internal method with original logic"""
         # Get node configuration for logging and semaphore selection
         node_config = config.get_node_config(node_name)
         if not node_config:
             raise ValueError(f"Node {node_name} not configured")
         
-        # Get semaphores for concurrency control
-        provider_name = node_config.provider
-        global_semaphore = self._global_semaphore
-        provider_semaphore = self._provider_semaphores.get(provider_name, self._provider_semaphores["default"])
-        
-        # Use override or node-specific max_tokens
-        effective_max_tokens = override_max_tokens or node_config.max_tokens
-        
-        logger.info(f"🎯 {node_name} using cached model (max_tokens: {effective_max_tokens})")
-        
-        # Implement retry logic with exponential backoff
+        # Rest of your existing logic...
         max_retries = config.retry_attempts
         retry_delay = 1.0
         
         for attempt in range(max_retries + 1):
             try:
-                # Apply concurrency control with semaphores
-                async with global_semaphore, provider_semaphore:
-                    # Use circuit breaker for external API calls
+                async with self._global_semaphore, self._provider_semaphores.get(node_config.provider, self._provider_semaphores["default"]):
                     result = await global_circuit_breaker.call_with_circuit_breaker(
-                        f"llm_{provider_name}",
+                        f"llm_{node_config.provider}",
                         self._generate_with_model,
                         node_name,
-                        prompt,
+                        prompt,  # Using normalized string prompt
                         override_max_tokens,
                         metadata
                     )
-                    
                     return result
-                    
             except Exception as e:
                 if attempt < max_retries:
                     jitter = 0.1 * retry_delay * (2 * (0.5 - 0.5 * (attempt / max_retries)))
                     current_delay = retry_delay + jitter
-                    
                     logger.warning(f"Attempt {attempt+1}/{max_retries+1} failed: {e}. Retrying in {current_delay:.2f}s")
                     await asyncio.sleep(current_delay)
                     retry_delay *= 2
@@ -389,36 +415,76 @@ class LLMManager:
 
     async def generate_batch_for_nodes(
         self, 
-        requests: list[tuple[str, str, Optional[int]]]  # Python 3.13.4 syntax
-    ) -> list[str]:  # Python 3.13.4 syntax
-        """
-        Batch processing with TaskGroup (Python 3.13.4)
+        requests: list[tuple[str, str, Optional[int]]]
+    ) -> list[str]:
+        """Batch processing with TaskGroup - FIXED"""
+        final_results = [""] * len(requests)  # Pre-initialize
         
-        Args:
-            requests: List of (node_name, prompt, max_tokens) tuples
-        """
         try:
+            tasks_and_indices = []
+            
             async with TaskGroup() as tg:
-                tasks = [
-                    tg.create_task(
-                        self.generate_for_node(node_name, prompt, max_tokens)
-                    ) for node_name, prompt, max_tokens in requests
-                ]
+                for i, (node_name, prompt, max_tokens) in enumerate(requests):
+                    try:
+                        task = tg.create_task(
+                            self._safe_generate_for_node(node_name, prompt, max_tokens)
+                        )
+                        tasks_and_indices.append((i, task))
+                    except Exception as e:
+                        logger.warning(f"⚠️ Failed to create generation task {i}: {e}")
+                        final_results[i] = f"Error: {e}"
             
-            return [task.result() for task in tasks]
-            
-        except Exception as e:
-            logger.error(f"Batch generation failed: {e}")
-            # Fallback to sequential processing
-            results = []
-            for node_name, prompt, max_tokens in requests:
+            # Collect results
+            for i, task in tasks_and_indices:
                 try:
-                    result = await self.generate_for_node(node_name, prompt, max_tokens)
-                    results.append(result)
-                except Exception as req_error:
-                    logger.error(f"Request failed for {node_name}: {req_error}")
-                    results.append(f"Error: {req_error}")
-            return results
+                    final_results[i] = task.result()
+                except Exception as e:
+                    logger.warning(f"⚠️ Generation task {i} failed: {e}")
+                    final_results[i] = f"Error: {e}"
+            
+        except* Exception as eg:  # 🔥 FIX: Handle exception group without return
+            logger.error(f"❌ Batch generation TaskGroup failed with {len(eg.exceptions)} exceptions")
+            # Fill any remaining empty results with errors
+            for i, result in enumerate(final_results):
+                if not result:
+                    final_results[i] = "Error: TaskGroup exception"
+        
+        # 🔥 FIX: Return statement outside except* block
+        return final_results
+
+    # 🔥 NEW: Safe wrapper for generation
+    async def _safe_generate_for_node(self, node_name: str, prompt: str, max_tokens: Optional[int]) -> str:
+        """Safe wrapper that never raises exceptions"""
+        try:
+            return await self.generate_for_node(node_name, prompt, max_tokens)
+        except Exception as e:
+            logger.debug(f"Generation failed for {node_name}: {e}")
+            return f"Error: {e}"
+
+    async def _sequential_fallback(self, requests: list[tuple[str, str, Optional[int]]]) -> list[str]:
+        """Sequential fallback when TaskGroup fails"""
+        results = []
+        for node_name, prompt, max_tokens in requests:
+            try:
+                result = await self.generate_for_node(node_name, prompt, max_tokens)
+                results.append(result)
+            except Exception as e:
+                logger.error(f"Sequential request failed for {node_name}: {e}")
+                results.append(f"Error: {e}")
+        return results
+
+
+    async def get_openai_model(self, node_name: str) -> ChatOpenAI:
+        """Get ChatOpenAI instance for function calling"""
+        node_config = config.get_node_config(node_name)
+        if node_config.provider == 'openai':
+            return ChatOpenAI(
+                model=node_config.model,
+                temperature=node_config.temperature,
+                max_tokens=node_config.max_tokens,
+            )
+        else:
+            raise ValueError(f"Node {node_name} is not an OpenAI provider")
 
     def clear_cache(self):
         """Clear the model cache (useful for testing or memory management)"""
@@ -496,40 +562,45 @@ class LLMManager:
             }
         }
 
-    async def health_check(self) -> dict[str, Any]:  # Python 3.13.4 syntax
-        """Check health of all initialized providers with enhanced diagnostics"""
-        current_time = time.time()
-        
-        # Rate limit health checks
-        if current_time - self._last_health_check < self._health_check_interval:
-            logger.debug("Health check skipped due to rate limiting")
-            return {"status": "skipped", "reason": "rate_limited"}
-        
-        self._last_health_check = current_time
-        health_status: dict[str, Any] = {}  # Python 3.13.4 syntax
-        
+    # config/llm_manager.py - FIX HEALTH CHECK
+    async def _health_check_provider(self, provider_name: str) -> str:
+        """Health check for a specific provider"""
         try:
-            async with TaskGroup() as tg:
-                tasks = {}
-                for provider_name in config.get_available_providers():
-                    tasks[provider_name] = tg.create_task(
-                        self._health_check_provider(provider_name)
-                    )
+            provider_semaphore = self._provider_semaphores.get(provider_name, self._provider_semaphores["default"])
             
-            # Collect results
-            for provider_name, task in tasks.items():
-                health_status[provider_name] = task.result()
+            async with self._global_semaphore, provider_semaphore:
+                models = config.get_available_models(provider_name)
+                if not models:
+                    return "unhealthy: no models configured"
                 
-        except Exception as e:
-            logger.error(f"Health check failed: {e}")
-            # Fallback to sequential checks
-            for provider_name in config.get_available_providers():
+                model_name = models[0]
+                model_config = config.get_model_config(provider_name, model_name)
+                if not model_config:
+                    return "unhealthy: model configuration missing"
+                
+                # 🔥 FIX: Use existing nodes instead of creating temporary ones
+                existing_nodes = [name for name, node in config.nodes.items() if node.provider == provider_name]
+                if not existing_nodes:
+                    return "unhealthy: no nodes configured for provider"
+                
+                test_node = existing_nodes[0]
+                
                 try:
-                    health_status[provider_name] = await self._health_check_provider(provider_name)
-                except Exception as provider_error:
-                    health_status[provider_name] = f"unhealthy: {provider_error}"
-        
-        return health_status
+                    # Test with minimal tokens and safe temperature
+                    await asyncio.wait_for(
+                        self.generate_for_node(test_node, "Hi", override_max_tokens=5),
+                        timeout=10.0
+                    )
+                    return "healthy"
+                    
+                except Exception as e:
+                    return f"unhealthy: {str(e)}"
+                    
+        except asyncio.TimeoutError:
+            return "unhealthy: timeout"
+        except Exception as e:
+            return f"unhealthy: {str(e)}"
+
 
     async def _health_check_provider(self, provider_name: str) -> str:
         """Health check for a specific provider"""
@@ -606,6 +677,107 @@ class LLMManager:
         except Exception as e:
             logger.warning(f"Failed to warm up model {node_name}: {e}")
             return False
+
+    async def health_check(self) -> dict[str, Any]:
+        """
+        Comprehensive health check for LLM Manager - MISSING METHOD ADDED
+        """
+        try:
+            logger.debug("🔍 Starting LLM Manager health check...")
+            
+            # Get available providers from config
+            available_providers = config.get_available_providers()
+            
+            # Health check all providers using TaskGroup
+            provider_health = {}
+            
+            try:
+                async with asyncio.TaskGroup() as tg:
+                    tasks = []
+                    for provider in available_providers:
+                        task = tg.create_task(self._safe_health_check_provider(provider))
+                        tasks.append((provider, task))
+                
+                # Collect results
+                for provider, task in tasks:
+                    try:
+                        provider_health[provider] = task.result()
+                    except Exception as e:
+                        logger.warning(f"⚠️ Health check failed for provider {provider}: {e}")
+                        provider_health[provider] = f"unhealthy: {e}"
+                        
+            except* Exception as eg:
+                logger.error(f"❌ Provider health check TaskGroup failed: {len(eg.exceptions)} exceptions")
+                # Fill remaining providers with error status
+                for provider in available_providers:
+                    if provider not in provider_health:
+                        provider_health[provider] = "unhealthy: TaskGroup exception"
+            
+            # Calculate overall health
+            healthy_providers = sum(1 for status in provider_health.values() if status == "healthy")
+            total_providers = len(provider_health)
+            health_score = (healthy_providers / total_providers) if total_providers > 0 else 0
+            
+            # Determine overall health status
+            if health_score >= 0.8:
+                overall_status = "healthy"
+            elif health_score >= 0.5:
+                overall_status = "degraded"
+            else:
+                overall_status = "unhealthy"
+            
+            # Gather additional metrics
+            cache_info = self.get_cache_info()
+            usage_stats = self.get_usage_stats()
+            performance_metrics = self.get_performance_metrics()
+            
+            health_report = {
+                "healthy": overall_status == "healthy",
+                "overall_status": overall_status,
+                "health_score": health_score,
+                "provider_health": provider_health,
+                "providers": {
+                    "total": total_providers,
+                    "healthy": healthy_providers,
+                    "unhealthy": total_providers - healthy_providers
+                },
+                "cache": {
+                    "total_models": cache_info["total_models"],
+                    "models_by_state": cache_info["models_by_state"],
+                    "cache_hit_rate": performance_metrics.get("cache_hit_rate", 0)
+                },
+                "usage": {
+                    "total_tokens": usage_stats["token_usage"]["total_tokens"],
+                    "estimated_cost": usage_stats["token_usage"]["estimated_cost"],
+                    "providers_initialized": len(usage_stats["providers_initialized"])
+                },
+                "performance": {
+                    "error_rate": performance_metrics.get("error_rate", 0),
+                    "models_in_error_state": performance_metrics.get("models_in_error_state", 0)
+                },
+                "timestamp": time.time()
+            }
+            
+            logger.debug(f"✅ LLM Manager health check completed - Status: {overall_status}")
+            return health_report
+            
+        except Exception as e:
+            logger.error(f"❌ LLM Manager health check failed: {e}")
+            return {
+                "healthy": False,
+                "overall_status": "error",
+                "health_score": 0.0,
+                "error": str(e),
+                "timestamp": time.time()
+            }
+
+    async def _safe_health_check_provider(self, provider_name: str) -> str:
+        """Safe wrapper for provider health check that never raises exceptions"""
+        try:
+            return await self._health_check_provider(provider_name)
+        except Exception as e:
+            logger.debug(f"Provider health check failed for {provider_name}: {e}")
+            return f"unhealthy: {e}"
 
     def get_performance_metrics(self) -> dict[str, Any]:  # Python 3.13.4 syntax
         """Get detailed performance metrics"""

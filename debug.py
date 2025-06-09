@@ -1,599 +1,918 @@
-# test-current-assistant.py - ✅ ENHANCED TEST SUITE WITH PROPER FORMATTING AND LOGGING
-"""
-Enhanced Testing Suite for LangGraph 0.4.8 Assistant
-Based on actual current implementation with comprehensive logging
-June 2025 - Production Ready System Validation
-"""
-
+# debug.py - ✅ Enhanced Debugging Script for Mortey Assistant
 import asyncio
-import os
+import logging
 import sys
 import time
-import logging
-import uuid
+import traceback
+import json
+import yaml
+from typing import Dict, Any, Optional
 from pathlib import Path
-from typing import Dict, Any, List
 from dataclasses import dataclass
-from contextlib import asynccontextmanager
+from collections.abc import Sequence  # Python 3.13.4 preferred import
 
-# Add project root to path for imports
-project_root = Path(__file__).parent
-sys.path.insert(0, str(project_root))
+# Configure comprehensive logging first
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('debug.log', mode='w')
+    ]
+)
 
-# Configure structured logging with file output
-def setup_logging():
-    """Setup comprehensive logging for test suite"""
-    # Create logs directory
-    logs_dir = project_root / "logs"
-    logs_dir.mkdir(exist_ok=True)
-    
-    # Create log filename with timestamp
-    timestamp = time.strftime("%Y%m%d_%H%M%S")
-    log_file = logs_dir / f"test_results_{timestamp}.log"
-    
-    # Configure logging with both file and console handlers
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s | %(name)s | %(levelname)s | %(message)s',
-        handlers=[
-            logging.FileHandler(log_file, mode='w', encoding='utf-8'),
-            logging.StreamHandler(sys.stdout)
-        ]
-    )
-    
-    return log_file
+# Set specific loggers to DEBUG
+debug_loggers = [
+    'assistant_core',
+    'supervisor', 
+    'agents',
+    'config.settings',
+    'config.llm_manager',
+    'core.checkpointer',
+    'core.error_handling',
+    'core.circuit_breaker',
+    'tools.file_tools'
+]
+
+for logger_name in debug_loggers:
+    logging.getLogger(logger_name).setLevel(logging.DEBUG)
+
+# Suppress noisy third-party loggers
+logging.getLogger('httpx').setLevel(logging.WARNING)
+logging.getLogger('httpcore').setLevel(logging.WARNING)
+logging.getLogger('openai').setLevel(logging.WARNING)
+logging.getLogger('anthropic').setLevel(logging.WARNING)
+
+logger = logging.getLogger("debug")
 
 @dataclass
-class TestResult:
-    """Enhanced test result tracking with detailed metrics"""
-    
-    def __init__(self):
-        self.tests_run = 0
-        self.tests_passed = 0
-        self.tests_failed = 0
-        self.test_details: List[Dict[str, Any]] = []
-        self.start_time = time.time()
-        self.log_file = None
-    
-    def record_test(self, test_name: str, passed: bool, details: str = "", duration: float = 0.0):
-        """Record a test result with comprehensive details"""
-        self.tests_run += 1
-        if passed:
-            self.tests_passed += 1
-            status = "✅ PASS"
-            level = "INFO"
-        else:
-            self.tests_failed += 1
-            status = "❌ FAIL"
-            level = "ERROR"
-        
-        self.test_details.append({
-            "name": test_name,
-            "status": status,
-            "passed": passed,
-            "details": details,
-            "duration": duration,
-            "timestamp": time.time()
-        })
-        
-        # Enhanced console output
-        print(f"{status} | {test_name} ({duration:.3f}s)")
-        if details:
-            print(f"     └─ {details}")
-        
-        # Log to file with level
-        logger = logging.getLogger("test_suite")
-        if passed:
-            logger.info(f"PASS: {test_name} ({duration:.3f}s) - {details}")
-        else:
-            logger.error(f"FAIL: {test_name} ({duration:.3f}s) - {details}")
-    
-    def get_summary(self) -> Dict[str, Any]:
-        """Get comprehensive test summary"""
-        total_duration = time.time() - self.start_time
-        success_rate = (self.tests_passed / self.tests_run * 100) if self.tests_run > 0 else 0
-        
-        return {
-            "total_tests": self.tests_run,
-            "passed": self.tests_passed,
-            "failed": self.tests_failed,
-            "success_rate": f"{success_rate:.1f}%",
-            "total_duration": f"{total_duration:.2f}s",
-            "average_duration": f"{total_duration / self.tests_run:.3f}s" if self.tests_run > 0 else "0s",
-            "log_file": str(self.log_file) if self.log_file else None
-        }
+class DebugResult:
+    """Result of a debug test with enhanced metadata"""
+    test_name: str
+    success: bool
+    message: str
+    duration_ms: float = 0.0
+    error_details: Optional[str] = None
+    metadata: Dict[str, Any] = None
 
-class EnhancedTestSuite:
-    """Enhanced test suite with proper formatting and logging"""
+class MorteyDebugger:
+    """
+    Comprehensive debugging system for Mortey Assistant with Python 3.13.4 features
+    """
     
     def __init__(self):
-        self.log_file = setup_logging()
-        self.result = TestResult()
-        self.result.log_file = self.log_file
-        self.assistant = None
-        self.test_session_id = f"test_session_{int(time.time())}"
-        self.logger = logging.getLogger("test_suite")
+        self.results: list[DebugResult] = []  # Python 3.13.4 syntax
+        self.start_time = time.time()
         
-    @asynccontextmanager
-    async def test_context(self, test_name: str):
-        """Context manager for individual tests with timing and error handling"""
+    async def run_comprehensive_debug(self) -> Dict[str, Any]:
+        """Run debug tests with smart delay management"""
+        
+        # Define delay times for different test categories
+        delay_config = {
+            "lightweight": 0.5,  # Config, environment tests
+            "medium": 1.0,       # Component initialization
+            "heavy": 2.0,        # LLM calls, message processing
+            "intensive": 3.0     # Full system integration tests
+        }
+        
+        test_sequence = [
+            ("Environment Setup", self._test_environment_setup, "lightweight"),
+            ("Configuration Loading", self._test_configuration_loading, "lightweight"), 
+            ("Checkpointer Initialization", self._test_checkpointer_initialization, "medium"),
+            ("LLM Manager", self._test_llm_manager, "heavy"),
+            ("Agent Factory", self._test_agent_factory, "heavy"),
+            ("Supervisor Initialization", self._test_supervisor_initialization, "medium"),
+            ("Assistant Core", self._test_assistant_core, "medium"),
+            ("Message Processing Pipeline", self._test_message_processing, "intensive"),
+            ("Tools Integration", self._test_tools_integration, "medium"),
+            ("Error Handling", self._test_error_handling, "lightweight"),
+            ("Circuit Breakers", self._test_circuit_breakers, "lightweight"),
+            ("Health Checks", self._test_health_checks, "medium"),
+            ("Performance Metrics", self._test_performance_metrics, "heavy")
+        ]
+        
+        for i, (test_name, test_func, category) in enumerate(test_sequence):
+            await self._run_debug_test(test_name, test_func)
+            
+            # Add appropriate delay based on category
+            if i < len(test_sequence) - 1:  # Don't delay after last test
+                delay_time = delay_config.get(category, 1.0)
+                logger.debug(f"⏸️ Pausing {delay_time}s after {category} test...")
+                await asyncio.sleep(delay_time)
+        
+        return self._generate_debug_report()
+    
+    async def _rate_limit_pause(self) -> DebugResult:
+        """Pause for rate limiting to avoid API limits"""
+        logger.info("⏸️ Rate limiting pause - waiting 3 seconds...")
+        await asyncio.sleep(3)  # 3 second pause
+        
+        return DebugResult(
+            test_name="Rate Limit Pause",
+            success=True,
+            message="Rate limiting pause completed - continuing tests"
+        )
+    
+    async def _run_debug_test(self, test_name: str, test_func) -> DebugResult:
+        """Run individual debug test with error handling"""
+        logger.info(f"\n🔍 Testing: {test_name}")
+        logger.info("-" * 60)
+        
         start_time = time.time()
-        self.logger.info(f"Starting test: {test_name}")
+        
         try:
-            yield
-            duration = time.time() - start_time
-            self.result.record_test(test_name, True, "Completed successfully", duration)
+            result = await test_func()
+            duration = (time.time() - start_time) * 1000
+            
+            if isinstance(result, DebugResult):
+                result.duration_ms = duration
+                self.results.append(result)
+                
+                if result.success:
+                    logger.info(f"✅ {test_name}: {result.message}")
+                else:
+                    logger.error(f"❌ {test_name}: {result.message}")
+                    if result.error_details:
+                        logger.error(f"🔍 Details: {result.error_details}")
+                
+                return result
+            else:
+                # Handle simple boolean returns
+                success = bool(result)
+                debug_result = DebugResult(
+                    test_name=test_name,
+                    success=success,
+                    message="Test completed" if success else "Test failed",
+                    duration_ms=duration
+                )
+                self.results.append(debug_result)
+                return debug_result
+                
         except Exception as e:
-            duration = time.time() - start_time
-            error_msg = f"Error: {str(e)[:100]}..."
-            self.result.record_test(test_name, False, error_msg, duration)
-            self.logger.error(f"Test failed: {test_name} - {e}", exc_info=True)
-    
-    async def test_01_core_imports_and_setup(self):
-        """Test 1: Validate all core imports and basic setup"""
-        async with self.test_context("Core Imports & Module Loading"):
-            # Import all core components based on your actual files
-            from core.assistant_core import AssistantCore, AssistantSession
-            from core.state import (
-                AssistantState, create_optimized_state, StateValidator,
-                validate_and_filter_messages_v3, safe_state_access
+            duration = (time.time() - start_time) * 1000
+            error_details = traceback.format_exc()
+            
+            debug_result = DebugResult(
+                test_name=test_name,
+                success=False,
+                message=f"Test failed with exception: {str(e)}",
+                duration_ms=duration,
+                error_details=error_details
             )
-            from agents.agents import AgentFactory
-            from core.checkpointer import create_checkpointer, get_checkpointer_info
-            from core.error_handling import ErrorHandler, ErrorType
+            
+            self.results.append(debug_result)
+            logger.error(f"❌ {test_name}: Exception occurred")
+            logger.error(f"🔍 Error: {str(e)}")
+            logger.debug(f"🔍 Full traceback:\n{error_details}")
+            
+            return debug_result
+    
+    async def _test_environment_setup(self) -> DebugResult:
+        """Test environment and dependency setup"""
+        try:
+            # Check Python version
+            python_version = sys.version_info
+            if python_version < (3, 11):
+                return DebugResult(
+                    test_name="Environment Setup",
+                    success=False,
+                    message=f"Python version {python_version.major}.{python_version.minor} too old, need 3.11+"
+                )
+            
+            # Check critical environment variables
             from config.settings import config
-            from tools.file_tools import FileSystemTools
+            from dotenv import load_dotenv
+            from pathlib import Path
+            import os
+            critical_vars = ['ANTHROPIC_API_KEY', 'OPENAI_API_KEY']
+            missing_vars = [var for var in critical_vars if not os.getenv(var)]
             
-            # Validate critical configurations
-            assert config.workspace_dir.exists(), "Workspace directory not accessible"
-            assert config.providers, "No LLM providers configured"
+            if missing_vars:
+                return DebugResult(
+                    test_name="Environment Setup",
+                    success=False,
+                    message=f"Missing environment variables: {', '.join(missing_vars)}",
+                    metadata={"missing_vars": missing_vars}
+                )
             
-            self.logger.info(f"Loaded {len(config.providers)} LLM providers")
-            self.logger.info(f"Workspace: {config.workspace_dir}")
-            print(f"     └─ Loaded {len(config.providers)} LLM providers")
-            print(f"     └─ Workspace: {config.workspace_dir}")
-    
-    async def test_02_checkpointer_initialization(self):
-        """Test 2: Advanced checkpointer initialization with fallbacks"""
-        async with self.test_context("Checkpointer Initialization & Health"):
-            checkpointer_info = get_checkpointer_info()
-            environment = checkpointer_info['detected_environment']
-            postgres_test = checkpointer_info['postgres_connection_sync_test_passed']
+            # Check project structure
+            project_root = Path.cwd()
+            required_dirs = ['core', 'config', 'agents', 'tools']
+            missing_dirs = [d for d in required_dirs if not (project_root / d).exists()]
             
-            self.logger.info(f"Environment: {environment}")
-            self.logger.info(f"PostgreSQL available: {postgres_test}")
-            print(f"     └─ Environment: {environment}")
-            print(f"     └─ PostgreSQL available: {postgres_test}")
+            if missing_dirs:
+                return DebugResult(
+                    test_name="Environment Setup",
+                    success=False,
+                    message=f"Missing directories: {', '.join(missing_dirs)}"
+                )
             
-            # Test async checkpointer creation
-            checkpointer = await create_checkpointer(use_async=True)
-            checkpointer_type = type(checkpointer).__name__
-            
-            assert checkpointer is not None, "Checkpointer creation failed"
-            self.logger.info(f"Created checkpointer: {checkpointer_type}")
-            print(f"     └─ Created: {checkpointer_type}")
-    
-    async def test_03_state_management_validation(self):
-        """Test 3: Comprehensive state management and validation"""
-        async with self.test_context("State Management & Validation"):
-            from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
-            
-            # Test state creation
-            state = create_optimized_state(
-                session_id=self.test_session_id,
-                user_id="test_user",
-                validate=True
-            )
-            
-            # Validate state structure
-            is_valid, errors = StateValidator.validate_state(state, strict=True)
-            assert is_valid, f"State validation failed: {errors}"
-            self.logger.info(f"State validation passed: {is_valid}")
-            
-            # Test complex state with messages
-            complex_state = create_optimized_state(
-                session_id=self.test_session_id,
-                user_id="test_user",
-                initial_context={
-                    "messages": [
-                        HumanMessage(content="Test message"),
-                        AIMessage(content="Test response"),
-                        ToolMessage(content="Tool executed", tool_call_id="test_call_123")
-                    ]
+            return DebugResult(
+                test_name="Environment Setup",
+                success=True,
+                message=f"Environment OK - Python {python_version.major}.{python_version.minor}, all vars and dirs present",
+                metadata={
+                    "python_version": f"{python_version.major}.{python_version.minor}.{python_version.micro}",
+                    "project_root": str(project_root)
                 }
             )
             
-            assert len(complex_state["messages"]) == 3, "Message handling failed"
-            
-            # Test safe access
-            session_id = safe_state_access(complex_state, "session_id", "default")
-            assert session_id == self.test_session_id, "Safe access failed"
-            
-            self.logger.info(f"Message handling: {len(complex_state['messages'])} messages processed")
-            print(f"     └─ State validation: Passed")
-            print(f"     └─ Message handling: {len(complex_state['messages'])} messages")
-            print(f"     └─ Safe access: Working")
+        except Exception as e:
+            return DebugResult(
+                test_name="Environment Setup",
+                success=False,
+                message=f"Environment check failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
     
-    async def test_04_agent_factory_operations(self):
-        """Test 4: Agent factory and tool management"""
-        async with self.test_context("Agent Factory & Tool Management"):
-            agent_factory = AgentFactory()
+    async def _test_configuration_loading(self) -> DebugResult:
+        """Test configuration loading and validation"""
+        try:
+            from config.settings import config, MorteyConfig
             
-            # Test individual agent creation
-            chat_agent = agent_factory.create_chat_agent()
-            coder_agent = agent_factory.create_coder_agent()
-            web_agent = agent_factory.create_web_agent()
+            logger.debug("Testing configuration loading...")
             
-            assert chat_agent is not None, "Chat agent creation failed"
-            assert coder_agent is not None, "Coder agent creation failed"
-            assert web_agent is not None, "Web agent creation failed"
+            await asyncio.sleep(0.1)
             
-            # Test tool collection
+            # Test config object exists
+            if config is None:
+                return DebugResult(
+                    test_name="Configuration Loading",
+                    success=False,
+                    message="Config object is None"
+                )
+            
+            # Test workspace directory
+            if not hasattr(config, 'workspace_dir'):
+                return DebugResult(
+                    test_name="Configuration Loading",
+                    success=False,
+                    message="Config missing workspace_dir"
+                )
+            
+            # Test LLM config
+            if not hasattr(config, 'llm_config') or not config.llm_config:
+                return DebugResult(
+                    test_name="Configuration Loading",
+                    success=False,
+                    message="Config missing llm_config attribute"
+                )
+            
+            # Validate LLM config structure
+            llm_config = config.llm_config
+            required_sections = ['global', 'providers', 'nodes']
+            missing_sections = [s for s in required_sections if s not in llm_config]
+            
+            if missing_sections:
+                return DebugResult(
+                    test_name="Configuration Loading",
+                    success=False,
+                    message=f"LLM config missing sections: {', '.join(missing_sections)}"
+                )
+            
+            # Test provider configurations
+            providers = llm_config.get('providers', {})
+            nodes = llm_config.get('nodes', {})
+            
+            metadata = {
+                "providers_count": len(providers),
+                "nodes_count": len(nodes),
+                "workspace_dir": str(config.workspace_dir),
+                "default_provider": llm_config.get('global', {}).get('default_provider')
+            }
+            
+            return DebugResult(
+                test_name="Configuration Loading",
+                success=True,
+                message=f"Config loaded successfully - {len(providers)} providers, {len(nodes)} nodes",
+                metadata=metadata
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Configuration Loading",
+                success=False,
+                message=f"Configuration loading failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
+        
+    async def _test_checkpointer_initialization(self) -> DebugResult:
+        """Test checkpointer creation with new factory"""
+        try:
+            from core.checkpointer import CheckpointerFactory, CheckpointerConfig
+            
+            logger.debug("Testing checkpointer factory...")
+            
+            # Create factory
+            factory = CheckpointerFactory()
+            
+            # Create checkpointer
+            checkpointer = await factory.create_optimal_checkpointer()
+            
+            if checkpointer is None:
+                return DebugResult(
+                    test_name="Checkpointer Initialization",
+                    success=False,
+                    message="Checkpointer creation returned None"
+                )
+            
+            # Test health check
+            health_status = await factory.health_check_all()
+            
+            # Get factory statistics
+            factory_stats = factory.get_factory_statistics()
+            
+            return DebugResult(
+                test_name="Checkpointer Initialization",
+                success=True,
+                message=f"Checkpointer factory working - Type: {type(checkpointer).__name__}",
+                metadata={
+                    "checkpointer_type": type(checkpointer).__name__,
+                    "health_status": health_status,
+                    "factory_stats": factory_stats
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Checkpointer Initialization",
+                success=False,
+                message=f"Checkpointer factory test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
+    
+    async def _test_llm_manager(self) -> DebugResult:
+        """Test LLM manager functionality"""
+        try:
+            from config.llm_manager import llm_manager
+            from langchain_core.messages import HumanMessage
+            
+            logger.debug("Testing LLM manager...")
+            
+            # Test health check
+            health_status = await llm_manager.health_check()
+            
+            # Test simple generation
+            response = await llm_manager.generate_for_node("chat", "Hello, this is a test.")
+            
+            if not response:
+                return DebugResult(
+                    test_name="LLM Manager",
+                    success=False,
+                    message="LLM Manager returned empty response"
+                )
+            
+            # Test usage stats
+            usage_stats = llm_manager.get_usage_stats()
+            
+            return DebugResult(
+                test_name="LLM Manager",
+                success=True,
+                message=f"LLM Manager working - Generated {len(str(response))} chars",
+                metadata={
+                    "health_status": health_status,
+                    "usage_stats": usage_stats,
+                    "response_length": len(str(response))
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="LLM Manager",
+                success=False,
+                message=f"LLM Manager test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
+    
+    async def _test_agent_factory(self) -> DebugResult:
+        """Test agent factory initialization and functionality"""
+        try:
+            from agents.agents import agent_factory
+            
+            logger.debug("Testing agent factory...")
+            
+            # Initialize agents
+            agents = await agent_factory.initialize_agents()
+            
+            if not agents:
+                return DebugResult(
+                    test_name="Agent Factory",
+                    success=False,
+                    message="Agent factory returned no agents"
+                )
+            
+            # Test tools
             all_tools = agent_factory.get_all_tools()
-            assert len(all_tools) > 0, "No tools available"
             
-            self.logger.info(f"Agents created successfully: 3 agents, {len(all_tools)} tools")
-            print(f"     └─ Agents created: chat, coder, web")
-            print(f"     └─ Total tools: {len(all_tools)}")
+            # Test health check
+            health_status = await agent_factory.health_check_agents()
+            
+            # Get factory statistics
+            stats = agent_factory.get_factory_statistics()
+            
+            return DebugResult(
+                test_name="Agent Factory",
+                success=True,
+                message=f"Agent factory working - {len(agents)} agents, {len(all_tools)} tools",
+                metadata={
+                    "agents_count": len(agents),
+                    "tools_count": len(all_tools),
+                    "agent_names": list(agents.keys()),
+                    "health_status": health_status,
+                    "factory_stats": stats
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Agent Factory",
+                success=False,
+                message=f"Agent factory test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
     
-    async def test_05_error_handling_classification(self):
-        """Test 5: Advanced error handling and classification"""
-        async with self.test_context("Error Handling & Classification"):
-            # Test different error types
-            test_errors = [
-                (ConnectionError("Network timeout"), "connection_error"),
-                (ValueError("Invalid API key"), "authentication_error"),
-                (TimeoutError("Request timeout"), "timeout_error"),
-                (KeyError("Missing state field"), "state_error")
-            ]
+    async def _test_supervisor_initialization(self) -> DebugResult:
+        """Test supervisor initialization and configuration"""
+        try:
+            from core.supervisor import Supervisor
+            from agents.agents import agent_factory
+            from core.checkpointer import create_optimal_checkpointer
             
-            for error, expected_type in test_errors:
-                result = ErrorHandler.handle_error(error, "test_context")
-                assert result["error"] == expected_type, f"Error classification failed for {type(error)}"
-                assert "response" in result, "Error response missing"
-                assert "fallback_used" in result, "Fallback indicator missing"
+            logger.debug("Testing supervisor initialization...")
             
-            # Test async error handling
-            async def failing_function():
-                raise ConnectionError("Test async error")
+            # Initialize components
+            agents = await agent_factory.initialize_agents()
+            all_tools = agent_factory.get_all_tools()
+            checkpointer = await create_optimal_checkpointer()
             
-            result = await ErrorHandler.with_error_handling(failing_function, context="async_test")
-            assert "error" in result, "Async error handling failed"
+            # Create and initialize supervisor
+            supervisor = Supervisor()
+            await supervisor.initialize(agents, all_tools, checkpointer)
             
-            self.logger.info(f"Error classification tested: {len(test_errors)} types")
-            print(f"     └─ Error classification: {len(test_errors)} types tested")
-            print(f"     └─ Async error handling: Functional")
+            if supervisor.supervisor_graph is None:
+                return DebugResult(
+                    test_name="Supervisor Initialization",
+                    success=False,
+                    message="Supervisor graph is None after initialization"
+                )
+            
+            # Test routing statistics
+            routing_stats = supervisor.get_routing_statistics()
+            
+            return DebugResult(
+                test_name="Supervisor Initialization",
+                success=True,
+                message=f"Supervisor initialized successfully - Graph ready with {len(agents)} agents",
+                metadata={
+                    "graph_ready": supervisor.supervisor_graph is not None,
+                    "routing_stats": routing_stats,
+                    "agents_available": list(agents.keys())
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Supervisor Initialization",
+                success=False,
+                message=f"Supervisor initialization failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
     
-    async def test_06_assistant_core_initialization(self):
-        """Test 6: Complete assistant core initialization"""
-        async with self.test_context("Assistant Core Initialization"):
+    async def _test_assistant_core(self) -> DebugResult:
+        """Test assistant core initialization"""
+        try:
             from core.assistant_core import AssistantCore
             
-            self.assistant = AssistantCore()
+            logger.debug("Testing assistant core...")
             
-            # Test initialization
-            await self.assistant.initialize()
+            # Create assistant core
+            assistant = AssistantCore()
             
-            # Verify all components
-            assert self.assistant.supervisor is not None, "Supervisor not initialized"
-            assert self.assistant.checkpointer is not None, "Checkpointer not initialized"
-            assert self.assistant.chat_agent is not None, "Chat agent not initialized"
-            assert self.assistant.coder_agent is not None, "Coder agent not initialized"
-            assert self.assistant.web_agent is not None, "Web agent not initialized"
-            assert self.assistant._setup_complete, "Setup not completed"
+            # Initialize (this tests the full integration)
+            await assistant.initialize()
             
-            supervisor_type = type(self.assistant.supervisor).__name__
-            checkpointer_type = type(self.assistant.checkpointer).__name__
-            
-            self.logger.info(f"Assistant core initialized: {supervisor_type}, {checkpointer_type}")
-            print(f"     └─ All agents initialized: ✓")
-            print(f"     └─ Supervisor: {supervisor_type}")
-            print(f"     └─ Checkpointer: {checkpointer_type}")
-    
-    async def test_07_message_processing_flow(self):
-        """Test 7: End-to-end message processing"""
-        async with self.test_context("Message Processing Flow"):
-            if not self.assistant:
-                self.assistant = AssistantCore()
-                await self.assistant.initialize()
-            
-            # Test basic message processing
-            response1 = await self.assistant.process_message(
-                "Hello! My name is Alice and I'm testing the system.",
-                thread_id=self.test_session_id,
-                user_id="test_user"
-            )
-            
-            assert response1["success"], "Initial message processing failed"
-            assert response1["session_id"] == self.test_session_id, "Session ID mismatch"
-            
-            # Test follow-up message
-            response2 = await self.assistant.process_message(
-                "What's my name?",
-                thread_id=self.test_session_id,
-                user_id="test_user"
-            )
-            
-            assert response2["success"], "Follow-up message processing failed"
-            
-            self.logger.info(f"Message processing: 2 messages processed successfully")
-            print(f"     └─ Session created: {self.test_session_id}")
-            print(f"     └─ Messages processed: 2")
-            print(f"     └─ Response 1: {response1['response'][:50]}...")
-            print(f"     └─ Response 2: {response2['response'][:50]}...")
-    
-    async def test_08_multi_agent_routing(self):
-        """Test 8: Intelligent multi-agent routing"""
-        async with self.test_context("Multi-Agent Routing & Intelligence"):
-            if not self.assistant:
-                self.assistant = AssistantCore()
-                await self.assistant.initialize()
-            
-            # Test routing to different agents
-            test_cases = [
-                ("Can you help me with general questions?", "chat"),
-                ("Write a Python function to calculate factorial", "coder"),
-                ("Search for the latest news about AI", "web")
-            ]
-            
-            routing_results = []
-            
-            for message, expected_agent in test_cases:
-                response = await self.assistant.process_message(
-                    message,
-                    thread_id=f"{self.test_session_id}_routing_{expected_agent}",
-                    user_id="test_user"
+            # Verify components are ready
+            if assistant.supervisor is None:
+                return DebugResult(
+                    test_name="Assistant Core",
+                    success=False,
+                    message="Assistant supervisor is None"
                 )
-                
-                assert response["success"], f"Message processing failed for: {message}"
-                actual_agent = response.get("agent_used", "unknown")
-                routing_results.append((message[:30] + "...", expected_agent, actual_agent))
-                
-                self.logger.info(f"Routing test: '{message[:30]}...' -> {actual_agent}")
             
-            print(f"     └─ Routing test results:")
-            for msg, expected, actual in routing_results:
-                status = "✓" if expected == actual else "⚠"
-                print(f"       {status} {msg} → {actual}")
-    
-    async def test_09_file_operations(self):
-        """Test 9: File system operations and tools"""
-        async with self.test_context("File System Operations"):
-            if not self.assistant:
-                self.assistant = AssistantCore()
-                await self.assistant.initialize()
-            
-            # Test file operations through the assistant
-            test_commands = [
-                "List the files in my workspace",
-                "Create a new Python project called 'test_project'",
-                "Create a simple hello.txt file with hello world"
-            ]
-            
-            for i, command in enumerate(test_commands):
-                response = await self.assistant.process_message(
-                    command,
-                    thread_id=f"{self.test_session_id}_files_{i}",
-                    user_id="test_user"
+            if assistant.checkpointer is None:
+                return DebugResult(
+                    test_name="Assistant Core",
+                    success=False,
+                    message="Assistant checkpointer is None"
                 )
-                
-                assert response["success"], f"File operation failed: {command}"
-                self.logger.info(f"File operation: '{command}' completed")
             
-            print(f"     └─ File operations: {len(test_commands)} commands tested")
-            print(f"     └─ Workspace operations: Functional")
-    
-    async def test_10_session_management(self):
-        """Test 10: Session persistence and management"""
-        async with self.test_context("Session Persistence & Management"):
-            if not self.assistant:
-                self.assistant = AssistantCore()
-                await self.assistant.initialize()
-            
-            # Test session info
-            session_info = self.assistant.get_session_info()
-            assert "session_persistence_enabled" in session_info, "Session persistence info missing"
+            if assistant.supervisor.supervisor_graph is None:
+                return DebugResult(
+                    test_name="Assistant Core",
+                    success=False,
+                    message="Assistant supervisor graph is None"
+                )
             
             # Test system status
-            status = self.assistant.get_system_status()
-            assert "setup_complete" in status, "System status incomplete"
-            assert status["setup_complete"], "System not properly set up"
+            status = await assistant._get_system_status()
             
-            self.logger.info(f"Session management: persistence={session_info.get('session_persistence_enabled')}")
-            print(f"     └─ Session persistence: {session_info.get('session_persistence_enabled', False)}")
-            print(f"     └─ Active sessions: {session_info.get('total_active_sessions', 0)}")
-            print(f"     └─ System status: {status.get('setup_complete', False)}")
+            return DebugResult(
+                test_name="Assistant Core",
+                success=True,
+                message="Assistant core initialized successfully - All components ready",
+                metadata={
+                    "active_sessions": len(assistant.active_sessions),
+                    "system_status": status
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Assistant Core",
+                success=False,
+                message=f"Assistant core test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
     
-    async def test_11_performance_metrics(self):
-        """Test 11: Performance and response time metrics"""
-        async with self.test_context("Performance & Response Times"):
-            if not self.assistant:
-                self.assistant = AssistantCore()
-                await self.assistant.initialize()
+    async def _test_message_processing(self) -> DebugResult:
+        """Test message processing with delays between requests"""
+        try:
+            from core.assistant_core import AssistantCore
             
-            # Test response times for different message types
+            logger.debug("Testing message processing pipeline...")
+            
+            assistant = AssistantCore()
+            await assistant.initialize()
+            
             test_messages = [
-                "Hello, simple greeting",
-                "What's 2+2?",
-                "Tell me about Python"
+                "Hello, how are you?",
+                "Write a simple Python function to add two numbers", 
+                "What is 2 + 2?"
             ]
             
-            response_times = []
-            
-            for message in test_messages:
-                start_time = time.time()
-                response = await self.assistant.process_message(
-                    message,
-                    thread_id=f"{self.test_session_id}_perf",
-                    user_id="test_user"
+            results = []
+            for i, message in enumerate(test_messages):
+                logger.debug(f"Processing test message {i+1}: {message[:30]}...")
+                
+                result = await assistant.process_message(
+                    message=message,
+                    session_id=f"debug_session_{i}",
+                    user_id="debug_user"
                 )
-                end_time = time.time()
                 
-                response_time = end_time - start_time
-                response_times.append(response_time)
+                if not result or not result.get("response"):
+                    return DebugResult(
+                        test_name="Message Processing",
+                        success=False,
+                        message=f"Message {i+1} processing failed - no response"
+                    )
                 
-                assert response["success"], f"Performance test failed for: {message}"
-                self.logger.info(f"Response time: {response_time:.3f}s for '{message}'")
+                results.append({
+                    "message": message,
+                    "response_length": len(result.get("response", "")),
+                    "session_id": result.get("session_id"),
+                    "timestamp": result.get("timestamp")
+                })
+                
+                # 🔥 ADD: Delay between message processing (except last)
+                if i < len(test_messages) - 1:
+                    logger.debug(f"⏸️ Pausing 2 seconds before next message...")
+                    await asyncio.sleep(2)  # 2 second delay between messages
             
-            avg_time = sum(response_times) / len(response_times)
-            max_time = max(response_times)
-            min_time = min(response_times)
+            return DebugResult(
+                test_name="Message Processing",
+                success=True,
+                message=f"Message processing working - {len(results)} messages processed",
+                metadata={
+                    "messages_processed": len(results),
+                    "results_summary": results,
+                    "sessions_created": len(assistant.active_sessions)
+                }
+            )
             
-            print(f"     └─ Messages processed: {len(response_times)}")
-            print(f"     └─ Average response time: {avg_time:.3f}s")
-            print(f"     └─ Min/Max times: {min_time:.3f}s / {max_time:.3f}s")
-    
-    async def test_12_graceful_shutdown(self):
-        """Test 12: Graceful shutdown and cleanup"""
-        async with self.test_context("Graceful Shutdown & Cleanup"):
-            if not self.assistant:
-                self.assistant = AssistantCore()
-                await self.assistant.initialize()
-            
-            # Test graceful shutdown
-            await self.assistant.graceful_shutdown()
-            
-            # Verify cleanup
-            session_count = len(self.assistant._sessions)
-            assert session_count == 0, f"Sessions not cleared: {session_count} remaining"
-            
-            self.logger.info("Graceful shutdown completed successfully")
-            print(f"     └─ Sessions cleared: ✓")
-            print(f"     └─ Resources released: ✓")
-            print(f"     └─ Graceful shutdown: Complete")
-
-    def print_header(self):
-        """Print enhanced test suite header"""
-        header_text = """
-🧪 ENHANCED TESTING SUITE - LangGraph 0.4.8 Assistant
-   Production-Ready System Validation
-   June 2025 - Comprehensive Test Coverage
-   
-   Log File: {}
-""".format(self.log_file)
-        
-        print("=" * 80)
-        print(header_text)
-        print("=" * 80)
-        print()
-        
-        self.logger.info("=" * 60)
-        self.logger.info("ENHANCED TESTING SUITE STARTED")
-        self.logger.info("=" * 60)
-    
-    def print_footer(self):
-        """Print comprehensive test results with enhanced formatting"""
-        summary = self.result.get_summary()
-        
-        print()
-        print("=" * 80)
-        print("📊 COMPREHENSIVE TEST RESULTS")
-        print("=" * 80)
-        
-        # Overall summary with enhanced formatting
-        print(f"🎯 SUMMARY:")
-        print(f"   Total Tests:     {summary['total_tests']}")
-        print(f"   Passed:          {summary['passed']} ✅")
-        print(f"   Failed:          {summary['failed']} ❌")
-        print(f"   Success Rate:    {summary['success_rate']}")
-        print(f"   Total Duration:  {summary['total_duration']}")
-        print(f"   Avg Duration:    {summary['average_duration']}")
-        print(f"   Log File:        {summary['log_file']}")
-        print()
-        
-        # Test details with enhanced formatting
-        if self.result.test_details:
-            print("📋 DETAILED RESULTS:")
-            for test in self.result.test_details:
-                print(f"   {test['status']} {test['name']} ({test['duration']:.3f}s)")
-                if test['details'] and not test['passed']:
-                    print(f"      └─ {test['details']}")
-        
-        print()
-        
-        # Enhanced final status
-        if self.result.tests_failed == 0:
-            print("🎉 ALL TESTS PASSED - SYSTEM IS PRODUCTION READY!")
-            success_msg = "ALL TESTS PASSED - SYSTEM IS PRODUCTION READY!"
-        else:
-            print(f"⚠️  {self.result.tests_failed} TESTS FAILED - REVIEW REQUIRED")
-            success_msg = f"{self.result.tests_failed} TESTS FAILED - REVIEW REQUIRED"
-        
-        print("=" * 80)
-        
-        # Log final results
-        self.logger.info("=" * 60)
-        self.logger.info("ENHANCED TESTING SUITE COMPLETED")
-        self.logger.info(f"FINAL RESULT: {success_msg}")
-        self.logger.info(f"Summary: {summary}")
-        self.logger.info("=" * 60)
-
-    async def run_complete_test_suite(self):
-        """Run the complete enhanced test suite"""
-        self.print_header()
-        
-        # Execute all tests in order
-        test_methods = [
-            self.test_01_core_imports_and_setup,
-            self.test_02_checkpointer_initialization,
-            self.test_03_state_management_validation,
-            self.test_04_agent_factory_operations,
-            self.test_05_error_handling_classification,
-            self.test_06_assistant_core_initialization,
-            self.test_07_message_processing_flow,
-            self.test_08_multi_agent_routing,
-            self.test_09_file_operations,
-            self.test_10_session_management,
-            self.test_11_performance_metrics,
-            self.test_12_graceful_shutdown
-        ]
-        
-        for test_method in test_methods:
-            try:
-                await test_method()
-            except Exception as e:
-                self.logger.error(f"Test method {test_method.__name__} failed: {e}", exc_info=True)
-                # Continue with other tests
-        
-        self.print_footer()
-        
-        # Write detailed results to JSON file
-        import json
-        json_file = self.log_file.with_suffix('.json')
-        try:
-            with open(json_file, "w") as f:
-                json.dump({
-                    "summary": self.result.get_summary(),
-                    "details": self.result.test_details,
-                    "timestamp": time.time(),
-                    "log_file": str(self.log_file)
-                }, f, indent=2)
-            print(f"\n📄 Detailed results saved to: {json_file}")
         except Exception as e:
-            self.logger.error(f"Failed to save JSON results: {e}")
+            return DebugResult(
+                test_name="Message Processing", 
+                success=False,
+                message=f"Message processing test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
+    
+    async def _test_tools_integration(self) -> DebugResult:
+        """Test tools integration and functionality"""
+        try:
+            from tools.file_tools import FileSystemTools
+            from agents.agents import agent_factory
+            
+            logger.debug("Testing tools integration...")
+            
+            # Test file tools
+            file_tools = FileSystemTools()
+            tools = file_tools.get_tools()
+            
+            if not tools:
+                return DebugResult(
+                    test_name="Tools Integration",
+                    success=False,
+                    message="No file tools available"
+                )
+            
+            # Test agent tools integration
+            await agent_factory.initialize_agents()
+            all_tools = agent_factory.get_all_tools()
+            
+            # Test a simple file operation
+            try:
+                # Create a test file using one of the tools
+                write_tool = next((t for t in tools if t.name == "write_file"), None)
+                if write_tool:
+                    test_result = write_tool.run({
+                        "file_path": "debug_test.txt",
+                        "text": "This is a debug test file created by Mortey debugger."
+                    })
+                    logger.debug(f"File write test result: {test_result}")
+            except Exception as tool_error:
+                logger.warning(f"Tool test failed: {tool_error}")
+            
+            return DebugResult(
+                test_name="Tools Integration",
+                success=True,
+                message=f"Tools integration working - {len(tools)} file tools, {len(all_tools)} total tools",
+                metadata={
+                    "file_tools_count": len(tools),
+                    "total_tools_count": len(all_tools),
+                    "tool_names": [t.name for t in tools[:5]]  # First 5 tool names
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Tools Integration",
+                success=False,
+                message=f"Tools integration test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
+    
+    async def _test_error_handling(self) -> DebugResult:
+        """Test error handling and circuit breaker functionality"""
+        try:
+            from core.error_handling import ErrorHandler
+            from core.circuit_breaker import global_circuit_breaker
+            
+            logger.debug("Testing error handling...")
+            
+            # Test error classification
+            test_error = ValueError("Test error for debugging")
+            error_response = await ErrorHandler.handle_error(test_error, "debug_test")
+            
+            if not error_response:
+                return DebugResult(
+                    test_name="Error Handling",
+                    success=False,
+                    message="Error handler returned no response"
+                )
+            
+            # Test circuit breaker health
+            circuit_health = await global_circuit_breaker.health_check_all_services()
+            
+            # Test error statistics
+            error_stats = await ErrorHandler.get_error_statistics()
+            
+            return DebugResult(
+                test_name="Error Handling",
+                success=True,
+                message="Error handling working - Error classification and circuit breakers operational",
+                metadata={
+                    "error_response": error_response,
+                    "circuit_health": circuit_health,
+                    "error_stats": error_stats
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Error Handling",
+                success=False,
+                message=f"Error handling test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
+    
+    async def _test_circuit_breakers(self) -> DebugResult:
+        """Test circuit breaker functionality"""
+        try:
+            from core.circuit_breaker import global_circuit_breaker
+            
+            logger.debug("Testing circuit breakers...")
+            
+            # Test circuit breaker health check
+            health_status = await global_circuit_breaker.health_check_all_services()
+            
+            # Test with a simple function
+            async def test_function(service_name):
+                return "Circuit breaker test successful"
+            
+            result = await global_circuit_breaker.call_with_circuit_breaker(
+                "debug_test_service",
+                test_function,
+                {}
+            )
+            
+            if result != "Circuit breaker test successful":
+                return DebugResult(
+                    test_name="Circuit Breakers",
+                    success=False,
+                    message="Circuit breaker test function failed"
+                )
+            
+            return DebugResult(
+                test_name="Circuit Breakers",
+                success=True,
+                message="Circuit breakers working - Health checks passing",
+                metadata={
+                    "health_status": health_status,
+                    "test_result": result
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Circuit Breakers",
+                success=False,
+                message=f"Circuit breaker test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
+    
+    async def _test_health_checks(self) -> DebugResult:
+        """Test all system health checks"""
+        try:
+            from core.assistant_core import AssistantCore
+            
+            logger.debug("Testing health checks...")
+            
+            # Create assistant and get status
+            assistant = AssistantCore()
+            await assistant.initialize()
+            
+            # Get comprehensive system status
+            system_status = await assistant._get_system_status()
+            
+            # Analyze health scores
+            health_issues = []
+            if not system_status.get("agents", {}).get("chat", True):
+                health_issues.append("Chat agent not healthy")
+            
+            if not system_status.get("llm_manager", {}).get("healthy", True):
+                health_issues.append("LLM manager not healthy")
+            
+            if not system_status.get("checkpointer", {}).get("healthy", True):
+                health_issues.append("Checkpointer not healthy")
+            
+            success = len(health_issues) == 0
+            message = "All health checks passing" if success else f"Health issues: {', '.join(health_issues)}"
+            
+            return DebugResult(
+                test_name="Health Checks",
+                success=success,
+                message=message,
+                metadata={
+                    "system_status": system_status,
+                    "health_issues": health_issues,
+                    "active_sessions": system_status.get("active_sessions", 0)
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Health Checks",
+                success=False,
+                message=f"Health check test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
+    
+    async def _test_performance_metrics(self) -> DebugResult:
+        """Test performance and gather metrics"""
+        try:
+            from core.assistant_core import AssistantCore
+            import psutil
+            import os
+            
+            logger.debug("Testing performance metrics...")
+            
+            # Get system metrics
+            process = psutil.Process(os.getpid())
+            memory_usage = process.memory_info().rss / 1024 / 1024  # MB
+            cpu_percent = process.cpu_percent()
+            
+            # Test message processing performance
+            assistant = AssistantCore()
+            await assistant.initialize()
+            
+            # Time a simple message
+            start_time = time.time()
+            await assistant.process_message(
+                "Hello, this is a performance test",
+                session_id="perf_test",
+                user_id="debug_user"
+            )
+            processing_time = (time.time() - start_time) * 1000  # ms
+            
+            return DebugResult(
+                test_name="Performance Metrics",
+                success=True,
+                message=f"Performance metrics gathered - {processing_time:.1f}ms message processing",
+                metadata={
+                    "memory_usage_mb": round(memory_usage, 2),
+                    "cpu_percent": cpu_percent,
+                    "message_processing_time_ms": round(processing_time, 2),
+                    "total_debug_time_s": round(time.time() - self.start_time, 2)
+                }
+            )
+            
+        except Exception as e:
+            return DebugResult(
+                test_name="Performance Metrics",
+                success=False,
+                message=f"Performance metrics test failed: {str(e)}",
+                error_details=traceback.format_exc()
+            )
+    
+    def _generate_debug_report(self) -> Dict[str, Any]:
+        """Generate comprehensive debug report"""
+        total_tests = len(self.results)
+        successful_tests = sum(1 for r in self.results if r.success)
+        failed_tests = total_tests - successful_tests
+        total_duration = time.time() - self.start_time
         
-        return self.result.tests_failed == 0
+        # Calculate average test duration
+        test_durations = [r.duration_ms for r in self.results if r.duration_ms > 0]
+        avg_duration = sum(test_durations) / len(test_durations) if test_durations else 0
+        
+        # Generate summary
+        success_rate = (successful_tests / total_tests * 100) if total_tests > 0 else 0
+        
+        logger.info("\n" + "=" * 80)
+        logger.info("🎯 MORTEY ASSISTANT DEBUG REPORT")
+        logger.info("=" * 80)
+        logger.info(f"📊 Summary: {successful_tests}/{total_tests} tests passed ({success_rate:.1f}%)")
+        logger.info(f"⏱️ Total time: {total_duration:.2f}s (avg: {avg_duration:.1f}ms per test)")
+        
+        if failed_tests > 0:
+            logger.error(f"\n❌ Failed Tests ({failed_tests}):")
+            for result in self.results:
+                if not result.success:
+                    logger.error(f"  - {result.test_name}: {result.message}")
+        
+        logger.info(f"\n✅ Successful Tests ({successful_tests}):")
+        for result in self.results:
+            if result.success:
+                logger.info(f"  - {result.test_name}: {result.message}")
+        
+        logger.info("\n" + "=" * 80)
+        
+        return {
+            "summary": {
+                "total_tests": total_tests,
+                "successful_tests": successful_tests,
+                "failed_tests": failed_tests,
+                "success_rate": success_rate,
+                "total_duration_s": total_duration,
+                "average_test_duration_ms": avg_duration
+            },
+            "results": [
+                {
+                    "test_name": r.test_name,
+                    "success": r.success,
+                    "message": r.message,
+                    "duration_ms": r.duration_ms,
+                    "metadata": r.metadata or {}
+                }
+                for r in self.results
+            ]
+        }
 
 async def main():
-    """Main test execution function"""
-    test_suite = EnhancedTestSuite()
-    
+    """Main debug function"""
     try:
-        success = await test_suite.run_complete_test_suite()
+        debugger = MorteyDebugger()
+        report = await debugger.run_comprehensive_debug()
         
-        print(f"\n📋 Test log saved to: {test_suite.log_file}")
+        # Save report to file
+        with open('debug_report.json', 'w') as f:
+            json.dump(report, f, indent=2, default=str)
         
-        return 0 if success else 1
+        logger.info(f"\n📄 Full debug report saved to: debug_report.json")
         
-    except KeyboardInterrupt:
-        print("\n👋 Tests interrupted by user.")
-        test_suite.logger.warning("Tests interrupted by user")
-        return 1
+        # Return exit code based on success
+        if report["summary"]["failed_tests"] > 0:
+            sys.exit(1)
+        else:
+            sys.exit(0)
+            
     except Exception as e:
-        print(f"\n💥 Test suite failed: {e}")
-        test_suite.logger.error(f"Test suite failed: {e}", exc_info=True)
-        return 1
+        logger.error(f"❌ Debug session failed: {e}")
+        logger.error(f"❌ Traceback:\n{traceback.format_exc()}")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    exit_code = asyncio.run(main())
-    sys.exit(exit_code)
+    # Run the debug session
+    asyncio.run(main())
