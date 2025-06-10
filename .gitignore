@@ -11,6 +11,9 @@ logs/
 devstuff/
 txt/
 tests/
+api/
+.sesskey
+logs/
 
 # Audio cache
 *.wav

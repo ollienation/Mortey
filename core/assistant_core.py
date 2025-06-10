@@ -5,7 +5,7 @@ import uuid
 import logging
 import time
 import traceback
-from typing import dict, Any, Optional
+from typing import Any, Optional
 from dataclasses import dataclass
 from contextlib import asynccontextmanager
 
