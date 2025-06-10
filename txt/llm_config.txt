@@ -28,7 +28,7 @@ nodes:
     
   web:
     provider: "openai"
-    template: "chat_default"
+    template: "reasoning_default"
     temperature: 0.3
     max_tokens: 1000
     

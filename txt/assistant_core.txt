@@ -5,7 +5,7 @@ import uuid
 import logging
 import time
 import traceback
-from typing import Dict, Any, Optional
+from typing import Any, Optional
 from dataclasses import dataclass
 from contextlib import asynccontextmanager
 
@@ -34,7 +34,7 @@ class AssistantCore:
         self.supervisor = Supervisor()
         self.checkpointer_factory = CheckpointerFactory()
         self.checkpointer: Optional[Checkpointer] = None
-        self.active_sessions: Dict[str, AssistantState] = {}
+        self.active_sessions: dict[str, AssistantState] = {}
         self._setup_routes()
         logger.debug("✅ AssistantCore instance created")
         
@@ -224,7 +224,7 @@ class AssistantCore:
         message: str,
         session_id: Optional[str] = None,
         user_id: str = "anonymous"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Main message processing pipeline with comprehensive logging"""
         logger.info(f"🔄 Starting message processing - Session: {session_id}, User: {user_id}")
         logger.debug(f"📝 Message content: {message[:100]}...")
@@ -364,7 +364,7 @@ class AssistantCore:
         return self.active_sessions[session_id]
 
 
-    async def _get_system_status(self) -> Dict[str, Any]:
+    async def _get_system_status(self) -> dict[str, Any]:
         """Get comprehensive system status with TaskGroup - FIXED"""
         logger.debug("📊 Gathering system status...")
         
