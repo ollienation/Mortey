@@ -261,22 +261,22 @@ class LLMManager:
             self.models[node_name] = await self._initialize_model(node_name)
         
         return self.models[node_name]
-
+        
     @traceable(name="llm_generation", run_type="llm")
     async def generate_for_node(
         self,
         node_name: str,
         prompt: Union[str, list, Any],
         override_max_tokens: Optional[int] = None,
+        override_timeout: Optional[float] = None, 
         metadata: Optional[dict[str, Any]] = None
     ) -> str:
-        """Generate response - simplified with LangChain caching"""
+        """Generate response - enhanced with timeout and token handling"""
         
-        # Normalize prompt to string
+        # Normalize prompt to string (your existing logic - keep it!)
         if isinstance(prompt, str):
             normalized_prompt = prompt
         elif isinstance(prompt, list):
-            # Extract content from last human message
             last_human_content = None
             for msg in reversed(prompt):
                 if hasattr(msg, 'content') and hasattr(msg, 'type'):
@@ -294,22 +294,39 @@ class LLMManager:
         if not node_config:
             raise ValueError(f"Node {node_name} not configured")
         
-        # Retry logic with exponential backoff
+        # ✅ MINIMAL ADDITION: Calculate timeout (addresses timeout issues)
+        generation_timeout = (
+            override_timeout or
+            getattr(node_config, 'timeout', None) or
+            config.timeout_seconds
+        )
+        
+        # Retry logic with exponential backoff (keep your existing logic!)
         max_retries = config.retry_attempts
         retry_delay = 1.0
         
         for attempt in range(max_retries + 1):
             try:
-                async with self._global_semaphore, self._provider_semaphores.get(node_config.provider, self._provider_semaphores["default"]):
-                    result = await global_circuit_breaker.call_with_circuit_breaker(
-                        f"llm_{node_config.provider}",
-                        self._generate_with_model,
-                        node_name,
-                        normalized_prompt,
-                        override_max_tokens,
-                        metadata
-                    )
-                    return result
+                # ✅ MINIMAL ADDITION: Add timeout wrapper (fixes 30s timeout issue)
+                async with asyncio.timeout(generation_timeout):
+                    async with self._global_semaphore, self._provider_semaphores.get(node_config.provider, self._provider_semaphores["default"]):
+                        result = await global_circuit_breaker.call_with_circuit_breaker(
+                            f"llm_{node_config.provider}",
+                            self._generate_with_model,
+                            node_name,
+                            normalized_prompt,
+                            override_max_tokens,
+                            metadata
+                        )
+                        return result
+            except asyncio.TimeoutError:
+                if attempt < max_retries:
+                    logger.warning(f"⏱️ Generation timeout ({generation_timeout}s) - Attempt {attempt+1}/{max_retries+1}")
+                    await asyncio.sleep(retry_delay)
+                    retry_delay *= 1.5
+                else:
+                    logger.error(f"❌ All attempts timed out after {generation_timeout}s")
+                    raise TimeoutError(f"Generation timed out after {generation_timeout}s")
             except Exception as e:
                 if attempt < max_retries:
                     jitter = 0.1 * retry_delay * (2 * (0.5 - 0.5 * (attempt / max_retries)))
@@ -332,19 +349,26 @@ class LLMManager:
         model = await self.get_model(node_name)
         node_config = config.get_node_config(node_name)
         
-        # Prepare messages
+        # ✅ MINIMAL ADDITION: Handle max_tokens (fixes token limit issues)
+        max_tokens = override_max_tokens or getattr(node_config, 'max_tokens', None)
+        
+        # Prepare messages (keep your existing dict format - it works!)
         messages = [{"role": "user", "content": prompt}]
         
         # Add custom system prompt if configured
         if hasattr(node_config, 'custom_system_prompt') and node_config.custom_system_prompt:
             messages.insert(0, {"role": "system", "content": node_config.custom_system_prompt})
         
-        # Generate response - LangChain handles caching automatically
+        # ✅ MINIMAL ADDITION: Apply max_tokens if specified
+        if max_tokens:
+            model = model.bind(max_tokens=max_tokens)
+        
+        # Generate response - LangChain handles caching automatically (keep this!)
         start_time = time.time()
         response = await model.ainvoke(messages)
         generation_time = time.time() - start_time
         
-        # Track token usage if available
+        # Track token usage if available (keep your existing logic!)
         if hasattr(response, "usage") and response.usage:
             usage = response.usage
             model_config = config.get_model_config(node_config.provider, node_config.model)
@@ -358,7 +382,7 @@ class LLMManager:
                 cost
             )
         
-        # Log performance metrics
+        # Log performance metrics (keep your existing logic!)
         if metadata:
             metadata.update({
                 "generation_time": generation_time,
@@ -366,7 +390,7 @@ class LLMManager:
                 "model": node_config.model
             })
         
-        # Extract content
+        # Extract content (keep your existing logic!)
         content = response.content if hasattr(response, "content") else str(response)
         return content
 
@@ -409,86 +433,97 @@ class LLMManager:
             logger.debug(f"Generation failed for {node_name}: {e}")
             return f"Error: {e}"
 
+    # TOKEN LIMITED health checks
     async def health_check(self) -> dict[str, Any]:
-        """Rate-limited health check with debouncing"""
+        """Rate-limited health check with much longer cooldown"""
         current_time = time.time()
         
-        # Check if we can skip health check due to cooldown
+        # Cooldown
+        self._health_check_cooldown = 300.0  # 5 minutes
+        
         if current_time - self._last_health_check < self._health_check_cooldown:
-            return self._health_check_cache.get('result', {
-                "healthy": False,
-                "overall_status": "unknown",
-                "error": "Health check in cooldown",
+            cached_result = self._health_check_cache.get('result', {
+                "healthy": True,  # Assume healthy if recently checked
+                "overall_status": "cached",
+                "note": f"Cached result (checked {int(current_time - self._last_health_check)}s ago)",
                 "timestamp": current_time
             })
+            return cached_result
         
         try:
-            logger.debug("🔍 Starting LLM Manager health check...")
+            logger.debug("🔍 Starting TOKEN-LIMITED LLM health check...")
             
-            # Get available providers
+            # Test only one provider, not all
             available_providers = config.get_available_providers()
-            provider_health = {}
+            test_provider = available_providers[0] if available_providers else None
             
-            # Health check providers using existing models
-            for provider in available_providers:
-                try:
-                    provider_health[provider] = await self._health_check_provider(provider)
-                except Exception as e:
-                    logger.warning(f"⚠️ Health check failed for provider {provider}: {e}")
-                    provider_health[provider] = f"unhealthy: {e}"
+            if not test_provider:
+                return self._create_unhealthy_result("No providers available")
             
-            # Calculate overall health
-            healthy_providers = sum(1 for status in provider_health.values() if status == "healthy")
-            total_providers = len(provider_health)
-            health_score = (healthy_providers / total_providers) if total_providers > 0 else 0
-            
-            # Determine overall status
-            if health_score >= 0.8:
-                overall_status = "healthy"
-            elif health_score >= 0.5:
-                overall_status = "degraded"
-            else:
-                overall_status = "unhealthy"
+            # Minimal test
+            provider_status = await self._lightweight_provider_test(test_provider)
             
             health_report = {
-                "healthy": overall_status == "healthy",
-                "overall_status": overall_status,
-                "health_score": health_score,
-                "provider_health": provider_health,
-                "providers": {
-                    "total": total_providers,
-                    "healthy": healthy_providers,
-                    "unhealthy": total_providers - healthy_providers
-                },
-                "models": {
-                    "total_initialized": len(self.models),
-                    "cache_enabled": True  # LangChain caching always enabled
-                },
-                "usage": {
+                "healthy": provider_status == "healthy",
+                "overall_status": provider_status,
+                "test_provider": test_provider,
+                "models_initialized": len(self.models),
+                "token_usage_summary": {
                     "total_tokens": self.token_usage.total_tokens,
-                    "estimated_cost": self.token_usage.cost_estimate
+                    "estimated_cost": round(self.token_usage.cost_estimate, 4)
                 },
-                "timestamp": current_time
+                "timestamp": current_time,
+                "note": "Lightweight health check (limited scope for efficiency)"
             }
             
-            # Cache result and update last check time
             self._health_check_cache['result'] = health_report
             self._last_health_check = current_time
             
-            logger.debug(f"✅ LLM Manager health check completed - Status: {overall_status}")
+            logger.debug(f"✅ LLM health check completed - Status: {provider_status}")
             return health_report
             
         except Exception as e:
-            logger.error(f"❌ LLM Manager health check failed: {e}")
-            error_result = {
-                "healthy": False,
-                "overall_status": "error",
-                "health_score": 0.0,
-                "error": str(e),
-                "timestamp": current_time
-            }
+            error_result = self._create_unhealthy_result(f"Health check failed: {e}")
             self._health_check_cache['result'] = error_result
             return error_result
+
+    async def _lightweight_provider_test(self, provider_name: str) -> str:
+        """Ultra-lightweight provider test with strict token limits"""
+        try:
+            # Find any node for this provider
+            test_nodes = [name for name, node in config.nodes.items() if node.provider == provider_name]
+            
+            if not test_nodes:
+                return "unhealthy: no nodes configured"
+            
+            test_node = test_nodes[0]
+            
+            # ✅ ULTRA LIMITED: 1 token response maximum
+            await asyncio.wait_for(
+                self.generate_for_node(
+                    test_node, 
+                    "Hi",  # Minimal prompt
+                    override_max_tokens=1  # ✅ KEY FIX: Limit to 1 token
+                ),
+                timeout=10.0  # Shorter timeout
+            )
+            
+            return "healthy"
+            
+        except asyncio.TimeoutError:
+            return "unhealthy: timeout"
+        except Exception as e:
+            return f"unhealthy: {str(e)[:50]}"  # Truncate error messages
+
+    def _create_unhealthy_result(self, error_msg: str) -> dict[str, Any]:
+        """Create standardized unhealthy result"""
+        return {
+            "healthy": False,
+            "overall_status": "unhealthy",
+            "error": error_msg,
+            "models_initialized": len(self.models),
+            "timestamp": time.time()
+        }
 
     async def _health_check_provider(self, provider_name: str) -> str:
         try:

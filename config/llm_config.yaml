@@ -5,17 +5,17 @@ global:
   default_provider: "openai"
   fallback_provider: "anthropic"
   retry_attempts: 3
-  timeout_seconds: 30
+  timeout_seconds: 180
   enable_caching: true
   log_requests: true
   max_concurrent_requests: 10
-  request_timeout: 30.0
+  request_timeout: 180.0
   circuit_breaker_enabled: true
 
 # Node configurations using provider templates
 nodes:
   chat:
-    provider: "anthropic"
+    provider: "openai"
     template: "chat_default"
     # Override specific settings if needed
     temperature: 0.7
@@ -25,18 +25,23 @@ nodes:
     template: "coder_default"
     # Tool-enabled configuration
     enable_functions: true
+    max_tokens: 10000
+    timeout: 240
     
   web:
     provider: "openai"
     template: "reasoning_default"
     temperature: 0.3
-    max_tokens: 1000
+    max_tokens: 3000
+    timeout: 180  
     
   file_manager:
     provider: "openai"
     template: "reasoning_default"
     temperature: 0.2
     enable_functions: true
+    max_tokens: 3500
+    timeout: 240
 
 # Custom node configurations (override templates)
 custom_nodes:

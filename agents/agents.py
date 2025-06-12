@@ -25,7 +25,7 @@ class AgentType(Enum):
     """Types of agents available in the system"""
     CHAT = "chat"
     CODER = "coder"
-    WEB_SEARCH = "web_search"
+    WEB_SEARCH = "web"
     FILE_MANAGER = "file_manager"
     SUPERVISOR = "supervisor"
 
@@ -670,43 +670,95 @@ You prioritize data safety and organization efficiency.""",
             for name in self._agent_configs.keys()
         }
 
+    # agents/agents.py - FIXED agent health checks
     async def health_check_agents(self) -> dict[str, bool]:
-        """Perform health check on all agents using TaskGroup - FIXED"""
+        """Optimized agent health check with intelligent caching"""
+        
+        # ✅ CACHE: Don't check agents that were recently healthy
+        current_time = time.time()
+        if not hasattr(self, '_agent_health_cache'):
+            self._agent_health_cache = {}
+            self._last_agent_check = {}
+        
         results = {}
+        agents_to_check = []
+        
+        # Check cache first (5 minute cache for healthy agents)
+        for agent_name in self.agents.keys():
+            last_check = self._last_agent_check.get(agent_name, 0)
+            cached_result = self._agent_health_cache.get(agent_name)
+            
+            if cached_result is True and (current_time - last_check) < 300:  # 5 min cache
+                results[agent_name] = True
+                logger.debug(f"✅ Agent {agent_name} health: cached (healthy)")
+            else:
+                agents_to_check.append(agent_name)
+        
+        # Only check agents that need checking
+        if not agents_to_check:
+            return results
+        
+        logger.debug(f"🔍 Checking health for {len(agents_to_check)} agents...")
+        
+        # ✅ FIXED: Proper TaskGroup usage and exception handling
+        task_exceptions = None
         
         try:
-            tasks_and_names = []
-            
             async with asyncio.TaskGroup() as tg:
-                for agent_name in self.agents.keys():
-                    try:
-                        task = tg.create_task(self._safe_health_check_agent(agent_name))
-                        tasks_and_names.append((agent_name, task))
-                    except Exception as e:
-                        logger.warning(f"⚠️ Failed to create health check task for agent {agent_name}: {e}")
-                        results[agent_name] = False
+                # Create tasks with proper mapping
+                tasks = {
+                    agent_name: tg.create_task(self._ultra_lightweight_agent_check(agent_name))
+                    for agent_name in agents_to_check
+                }
             
-            # Collect results
-            for agent_name, task in tasks_and_names:
-                try:
-                    results[agent_name] = task.result()
-                except Exception as e:
-                    logger.warning(f"⚠️ Agent health check failed for {agent_name}: {e}")
-                    results[agent_name] = False
+            # ✅ FIXED: Tasks are completed when TaskGroup exits successfully
+            # Collect results and update cache
+            for agent_name, task in tasks.items():
+                result = task.result()  # This is safe after TaskGroup exits
+                results[agent_name] = result
+                self._agent_health_cache[agent_name] = result
+                self._last_agent_check[agent_name] = current_time
             
             return results
             
-        except* Exception as eg:  # 🔥 FIX: Handle exception group without return
-            logger.error(f"❌ Agent health check TaskGroup failed with {len(eg.exceptions)} exceptions")
-            for exc in eg.exceptions:
-                logger.error(f"  Agent health check exception: {exc}")
-            
-            # Set all agents as unhealthy and fall through to return
-            for agent_name in self.agents.keys():
+        except* Exception as eg:
+            # ✅ FIXED: Store exceptions and handle outside the except* block
+            task_exceptions = eg
+        
+        # ✅ FIXED: Handle exceptions outside except* block
+        if task_exceptions:
+            logger.error(f"❌ Agent health check failed: {len(task_exceptions.exceptions)} exceptions")
+            # Mark unchecked agents as unhealthy
+            for agent_name in agents_to_check:
                 if agent_name not in results:
                     results[agent_name] = False
+                    self._agent_health_cache[agent_name] = False
+                    self._last_agent_check[agent_name] = current_time
         
         return results
+
+    async def _ultra_lightweight_agent_check(self, agent_name: str) -> bool:
+        """Ultra-lightweight agent check - no LLM calls"""
+        try:
+            if agent_name not in self.agents:
+                return False
+            
+            agent = self.agents[agent_name]
+            
+            # ✅ LIGHTWEIGHT: Just check if agent has required structure
+            has_ainvoke = hasattr(agent, 'ainvoke')
+            has_config = agent_name in getattr(self, '_agent_configs', {})
+            
+            if not (has_ainvoke and has_config):
+                return False
+            
+            # ✅ NO LLM CALLS: Skip expensive testing
+            logger.debug(f"✅ Agent {agent_name}: structure check passed")
+            return True
+            
+        except Exception as e:
+            logger.debug(f"Agent {agent_name} lightweight check failed: {e}")
+            return False
 
     async def _safe_health_check_agent(self, agent_name: str) -> bool:
         """Safe wrapper for agent health check that never raises exceptions"""

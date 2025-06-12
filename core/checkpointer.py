@@ -209,7 +209,7 @@ class CheckpointerFactory:
                 )
                 logger.info(f"✅ Development sync SQLite checkpointer created: {db_path}")
             
-            return checkpointer
+            return NamespacedCheckpointer(checkpointer)
             
         except Exception as e:
             logger.error(f"❌ SQLite checkpointer creation failed: {e}")
@@ -402,7 +402,7 @@ class CheckpointerFactory:
                 else:
                     status = "invalid_context_manager"
                     healthy = False
-                    
+                    uuuh, 
             elif "postgres_async" in conn_name:
                 # FIX: Validate actual checkpointer instance
                 if hasattr(connection, 'aget') and hasattr(connection, 'aput'):
@@ -531,3 +531,24 @@ async def health_check_checkpointers() -> dict[str, Any]:
         "warning": "Function requires CheckpointerFactory instance",
         "recommendation": "Use factory.health_check_all() instead"
     }
+
+class NamespacedCheckpointer:
+    """Wrapper around LangGraph checkpointers to support namespaced keys"""
+
+    def __init__(self, base_checkpointer):
+        self.base = base_checkpointer
+        
+    async def aget(self, config_dict):
+        return await self.base.aget(config_dict)
+        
+    async def aput(self, state, config_dict):
+        # Add namespace metadata to state before saving
+        if isinstance(state, dict) and "messages" in state:
+            thread_id = config_dict.get("configurable", {}).get("thread_id", "")
+            for msg in state["messages"]:
+                if hasattr(msg, 'additional_kwargs'):
+                    msg.additional_kwargs['_namespace'] = thread_id
+        return await self.base.aput(state, config_dict)
+        
+    async def adelete(self, config_dict):
+        return await self.base.adelete(config_dict)

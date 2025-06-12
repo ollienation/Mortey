@@ -15,7 +15,7 @@ from fastapi.responses import HTMLResponse
 from sse_starlette.sse import EventSourceResponse
 
 from core.state import AssistantState
-from core.supervisor import Supervisor
+from core.supervisor import Supervisor, SupervisorConfig
 from agents.agents import agent_factory, get_agent
 from core.checkpointer import CheckpointerFactory, CheckpointerConfig, Checkpointer
 from core.error_handling import ErrorHandler, handle_error
@@ -35,6 +35,7 @@ class AssistantCore:
         self.checkpointer_factory = CheckpointerFactory()
         self.checkpointer: Optional[Checkpointer] = None
         self.active_sessions: dict[str, AssistantState] = {}
+        self._initialized: bool = False   
         self._setup_routes()
         logger.debug("✅ AssistantCore instance created")
         
@@ -48,7 +49,12 @@ class AssistantCore:
         await self.graceful_shutdown()
     
     async def initialize(self):
-        """Initialize all components with enhanced error handling and logging"""
+        # ------------------------------------------------------------------  
+        # Guard: skip when another coroutine (e.g. lifespan) already ran init
+        # ------------------------------------------------------------------
+        if self._initialized:
+            logger.debug("🔄 AssistantCore already initialised – skipping")
+            return
         try:
             logger.info("🚀 Starting Assistant Core Initialization")
             
@@ -69,9 +75,9 @@ class AssistantCore:
             
             # Initialize agents first with detailed logging
             logger.info("🤖 Initializing agents...")
-            agents = await agent_factory.initialize_agents()
-            logger.info(f"✅ Agents initialized: {len(agents)} agents")
-            logger.debug(f"📊 Available agents: {list(agents.keys())}")
+            self.agents = await agent_factory.initialize_agents()
+            logger.info(f"✅ Agents initialized: {len(self.agents)} agents")
+            logger.debug(f"📊 Available agents: {list(self.agents.keys())}")
             
             # Get all tools with logging
             logger.info("🔧 Gathering tools...")
@@ -81,11 +87,19 @@ class AssistantCore:
             # Initialize supervisor with required arguments and detailed logging
             logger.info("🎯 Initializing supervisor...")
             logger.debug(f"🔧 Supervisor initialization inputs:")
-            logger.debug(f"  - Agents count: {len(agents)}")
+            logger.debug(f"  - Agents count: {len(self.agents)}")
             logger.debug(f"  - Tools count: {len(all_tools)}")
             logger.debug(f"  - Checkpointer: {self.checkpointer is not None}")
             
-            await self.supervisor.initialize(agents, all_tools, self.checkpointer)
+            supervisor_config = SupervisorConfig(
+                default_agent="chat",
+                enable_routing_logs=True,
+                enable_context_aware_routing=True,
+                conversation_history_limit=6,
+                continuity_bonus_weight=1.0,  # Reduced from 1.5
+                keyword_match_weight=3.0      # Increased from 2.0
+            )
+            await self.supervisor.initialize(self.agents, all_tools, self.checkpointer)
             logger.info("✅ Supervisor initialized successfully")
             
             # Verify supervisor graph is ready
@@ -102,6 +116,7 @@ class AssistantCore:
             logger.debug("✅ Background tasks started")
             
             logger.info("✅ Assistant Core Initialization Complete")
+            self._initialized = True
             
         except Exception as e:
             logger.error(f"❌ CRITICAL: Initialization failed")
@@ -222,7 +237,7 @@ class AssistantCore:
         except Exception as e:
             logger.error(f"❌ API message handling error: {e}")
             return await handle_error(e, "api_message_handler")
-        
+
     async def process_message(
         self,
         message: str,
@@ -239,40 +254,49 @@ class AssistantCore:
             logger.debug(f"  - Supervisor initialized: {self.supervisor.supervisor_graph is not None}")
             logger.debug(f"  - Checkpointer available: {self.checkpointer is not None}")
             logger.debug(f"  - Active sessions: {len(self.active_sessions)}")
+
+            if not self._initialized:
+                logger.warning("AssistantCore not initialised – performing lazy start-up")
+                await self.initialize()
             
             # Get or create session state with detailed logging
             logger.debug("📂 Retrieving session state...")
             session_state = await self._get_session_state(session_id, user_id)
             logger.debug(f"✅ Session state retrieved: {session_state['session_id']}")
             
+            if self._is_new_conversation(message):
+                logger.info(f"🔄 Creating new session for conversation starter")
+                session_id = str(uuid.uuid4())  # Generate new session ID
+                session_state = await self._get_session_state(session_id, user_id)
+            
             # Add new message to state
             logger.debug("💬 Adding message to state...")
             from langchain_core.messages import HumanMessage
-            new_messages = list(session_state.get("messages", [])) + [HumanMessage(content=message)]
+            human_msg = HumanMessage(content=message)
+            human_msg.additional_kwargs = {'session_id': session_state["session_id"], 'timestamp': time.time()}
+            new_messages = list(session_state.get("messages", [])) + [human_msg]
             
             updated_state = {
                 "messages": new_messages,
                 "session_id": session_state["session_id"],
                 "user_id": session_state["user_id"],
-                "current_agent": session_state.get("current_agent", "chat")
+                "current_agent": session_state.get("current_agent", "chat"),
             }
             logger.debug(f"📊 State updated - Messages: {len(new_messages)}, Agent: {updated_state['current_agent']}")
             
             # Process through supervisor with proper LangGraph config
             logger.debug("🎯 Preparing supervisor invocation...")
-            config_dict = {"configurable": {"thread_id": session_state["session_id"]}}
-            logger.debug(f"🔧 LangGraph config: {config_dict}")
-            
-            # CRITICAL: Log before supervisor call
-            logger.info("🚀 Invoking supervisor graph...")
-            
-            # Validate supervisor graph before calling
+            # In process_message method
+            unique_thread_id = f"{session_state['user_id']}:{session_state['session_id']}"
+            config_dict     = {"configurable": {"thread_id": unique_thread_id}}
+            logger.debug(f"🔧 Using thread ID: {unique_thread_id}")
+
+            # Fail fast if the graph never compiled
             if self.supervisor.supervisor_graph is None:
-                logger.error("❌ CRITICAL: Supervisor graph is None")
-                raise RuntimeError("Supervisor graph not initialized")
-            
-            result = await self.supervisor.supervisor_graph.ainvoke(updated_state, config_dict)
-            logger.info("✅ Supervisor graph completed successfully")
+                raise RuntimeError("Supervisor graph not initialised – startup must succeed before use")
+
+            # Always go through the Supervisor façade
+            result = await self.supervisor.process(updated_state, config_dict)
             
             # Log result structure
             logger.debug(f"📋 Result type: {type(result)}")
@@ -326,6 +350,18 @@ class AssistantCore:
             logger.error(f"❌ Full traceback:\n{traceback.format_exc()}")
             
             return await handle_error(e, "message_processing")
+
+    def _tag_messages_with_session(self, messages: list, session_id: str) -> list:
+        """Add session metadata to messages for better tracking"""
+        tagged_messages = []
+        for msg in messages:
+            # Clone the message to avoid modifying original
+            if not hasattr(msg, 'additional_kwargs'):
+                msg.additional_kwargs = {}
+            msg.additional_kwargs['session_id'] = session_id
+            msg.additional_kwargs['timestamp'] = time.time()
+            tagged_messages.append(msg)
+        return tagged_messages
     
     async def _get_session_state(
         self,
@@ -338,9 +374,16 @@ class AssistantCore:
             
             if self.checkpointer and session_id:
                 try:
-                    # Load state using LangGraph's checkpointer format
-                    config = {"configurable": {"thread_id": session_id}}
+                    # Use namespaced thread ID for retrieval
+                    namespaced_id = f"{user_id}:{session_id}"
+                    config = {"configurable": {"thread_id": namespaced_id}}
+                    logger.debug(f"🔍 Retrieving session with namespaced ID: {namespaced_id}")
                     raw_state = await self.checkpointer.aget(config)
+                    
+                    # Validate state integrity before using
+                    if not self._validate_session_state(raw_state, session_id, user_id):
+                        logger.warning(f"⚠️ Session validation failed, creating new state")
+                        raise ValueError("Session validation failed")
                     
                     # Normalize to AssistantState format
                     state = {
@@ -367,6 +410,40 @@ class AssistantCore:
         
         return self.active_sessions[session_id]
 
+    def _validate_session_state(self, state: dict, expected_session_id: str, user_id: str) -> bool:
+        """Validate that the retrieved state belongs to the expected session"""
+        if not isinstance(state, dict):
+            logger.warning(f"Invalid state type: {type(state)}")
+            return False
+            
+        if state.get("session_id") != expected_session_id:
+            logger.warning(f"Session ID mismatch: expected {expected_session_id}, got {state.get('session_id')}")
+            return False
+            
+        if state.get("user_id") != user_id:
+            logger.warning(f"User ID mismatch: expected {user_id}, got {state.get('user_id')}")
+            return False
+
+        if state is None:
+            return False
+            
+        return True
+
+    def _is_new_conversation(self, message: str) -> bool:
+        """Detect if this is a new conversation based on message content"""
+        # Check for conversation starters
+        starters = ["hello", "hi", "start", "reset", "new conversation", "let's talk about"]
+        message_lower = message.lower()
+        
+        for starter in starters:
+            if message_lower.startswith(starter):
+                logger.info(f"🔄 New conversation detected: '{message[:20]}...'")
+                return True
+                
+        # Check if no conversation in last 30 minutes
+        # (implement timestamp check)
+        
+        return False
 
     async def _get_system_status(self) -> dict[str, Any]:
         """Get comprehensive system status with TaskGroup - FIXED"""
@@ -460,7 +537,7 @@ class AssistantCore:
                 logger.debug("🔍 Checking for expired sessions...")
                 
                 expired = []
-                for session_id, state in self.active_sessions.items():
+                for session_id, state in list(self.active_sessions.items()):
                     # Simple expiration check - sessions older than 1 hour
                     if hasattr(state, 'get') and 'timestamp' in state:
                         if time.time() - state.get('timestamp', 0) > 3600:
@@ -469,11 +546,10 @@ class AssistantCore:
                 for session_id in expired:
                     logger.debug(f"🗑️ Cleaning up expired session: {session_id}")
                     del self.active_sessions[session_id]
-                    if self.checkpointer and hasattr(self.checkpointer, 'adelete'):
-                        try:
-                            await self.checkpointer.adelete(session_id)
-                        except Exception as e:
-                            logger.warning(f"⚠️ Failed to delete session from checkpointer: {e}")
+                    if self.checkpointer and hasattr(self.checkpointer, "adelete"):
+                        cached_state  = self.active_sessions.get(session_id, {})
+                        namespaced_id = f"{cached_state.get('user_id','')}:{session_id}"
+                        await self.checkpointer.adelete({"configurable": {"thread_id": namespaced_id}})
                 
                 if expired:
                     logger.info(f"🧹 Cleaned up {len(expired)} expired sessions")
@@ -484,44 +560,95 @@ class AssistantCore:
                 logger.error(f"❌ Session cleanup error: {e}")
                 await asyncio.sleep(60)
     
+    # core/assistant_core.py - OPTIMIZED health monitoring
     async def _health_monitoring_task(self):
-        """Less aggressive health monitoring"""
-        logger.debug("❤️ Starting health monitoring task...")
+        """Optimized health monitoring with configurable intervals"""
+        logger.debug("❤️ Starting optimized health monitoring...")
+        
+        # ✅ MUCH longer intervals and smarter triggers
+        base_interval = 180  # 3 minutes instead of 30 seconds
+        degraded_interval = 90  # 1.5 minutes when degraded
+        critical_interval = 60  # 1 minute when critical
+        
+        consecutive_failures = 0
+        last_full_check = 0
         
         while True:
             try:
-                logger.debug("🔍 Performing health check...")
-                status = await self._get_system_status()
+                current_time = time.time()
                 
-                # FIX: Less aggressive health calculation
-                health_score = 1.0
+                # ✅ SMART: Skip full checks if recent
+                if current_time - last_full_check < 60:  # Minimum 1 minute between full checks
+                    await asyncio.sleep(30)
+                    continue
                 
-                # Only penalize critical failures
-                if not status.get("agents", {}).get("chat", False):
-                    health_score -= 0.2  # Reduced from 0.3
+                logger.debug("🔍 Performing lightweight health check...")
                 
-                llm_status = status.get("llm_manager", {})
-                if not llm_status.get("healthy", True):
-                    # Check if it's just degraded vs completely broken
-                    if llm_status.get("health_score", 0) < 0.3:  # Only critical issues
-                        health_score -= 0.3  # Reduced from 0.4
-                    else:
-                        health_score -= 0.1  # Minor degradation
+                # ✅ LIGHTWEIGHT: Basic connectivity check only
+                health_score = await self._lightweight_health_check()
                 
-                # FIX: Lower threshold for recovery trigger
-                if health_score < 0.4:  # Changed from 0.7
-                    logger.warning(f"⚠️ System health critical: {health_score:.2f} - triggering recovery")
-                    await self._trigger_health_recovery()
-                elif health_score < 0.6:  # New threshold for monitoring
-                    logger.info(f"ℹ️ System health degraded: {health_score:.2f} - monitoring")
+                # ✅ ADAPTIVE: Adjust interval based on health
+                if health_score >= 0.8:
+                    next_interval = base_interval
+                    consecutive_failures = 0
+                elif health_score >= 0.5:
+                    next_interval = degraded_interval
+                    consecutive_failures = 0
                 else:
-                    logger.debug(f"✅ System health good: {health_score:.2f}")
+                    next_interval = critical_interval
+                    consecutive_failures += 1
+                    
+                    # ✅ RECOVERY: Only trigger recovery after multiple failures
+                    if consecutive_failures >= 3:
+                        logger.warning(f"⚠️ Health critical for {consecutive_failures} checks - triggering recovery")
+                        await self._trigger_health_recovery()
+                        consecutive_failures = 0
+                        last_full_check = current_time
                 
-                await asyncio.sleep(30)  # Reduced from 60 for better responsiveness
+                logger.debug(f"✅ Health check complete - Score: {health_score:.2f}, Next check in {next_interval}s")
+                await asyncio.sleep(next_interval)
                 
             except Exception as e:
                 logger.error(f"❌ Health monitoring error: {e}")
-                await asyncio.sleep(15)  # Reduced from 30
+                await asyncio.sleep(60)  # Fallback interval
+
+    def initialize_sync(self) -> None:
+        """Blocking wrapper that guarantees the assistant is ready.
+
+        If called inside a running event loop, it schedules `initialize()`
+        as a background task; otherwise it runs it synchronously.
+        """
+        if self._initialized:
+            return
+
+        try:
+            loop = asyncio.get_running_loop()
+            # Inside an async context → schedule and return immediately
+            loop.create_task(self.initialize())
+        except RuntimeError:
+            # No running loop → we can safely block
+            asyncio.run(self.initialize())
+
+
+    async def _lightweight_health_check(self) -> float:
+        """Lightweight health check without expensive LLM calls"""
+        try:
+            # ✅ FAST: Check component availability only
+            checks = {
+                "supervisor": self.supervisor.supervisor_graph is not None,
+                "checkpointer": self.checkpointer is not None,
+                "agents": len(self.agents) > 0,
+                "llm_manager": hasattr(llm_manager, 'models') and len(llm_manager.models) > 0
+            }
+            
+            healthy_components = sum(checks.values())
+            total_components = len(checks)
+            
+            return healthy_components / total_components if total_components > 0 else 0.0
+            
+        except Exception as e:
+            logger.debug(f"Lightweight health check failed: {e}")
+            return 0.0
 
     # ADD THIS METHOD for better error handling:
     async def get_system_status(self) -> dict[str, Any]:

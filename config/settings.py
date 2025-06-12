@@ -84,6 +84,29 @@ class DatabaseConfig:
         if self.type not in valid_types:
             raise ValueError(f"Database type must be one of {valid_types}, got {self.type}")
 
+@dataclass
+class HealthCheckConfig:
+    """Configuration for system health monitoring"""
+    enabled: bool = True
+    base_interval_seconds: int = 180  # 3 minutes
+    degraded_interval_seconds: int = 90  # 1.5 minutes  
+    critical_interval_seconds: int = 60  # 1 minute
+    
+    # Token limits for health checks
+    max_health_check_tokens: int = 1
+    health_check_timeout_seconds: int = 10
+    
+    # Caching
+    healthy_agent_cache_seconds: int = 300  # 5 minutes
+    llm_health_cache_seconds: int = 300  # 5 minutes
+    
+    # Recovery settings
+    failures_before_recovery: int = 3
+    recovery_cooldown_seconds: int = 600  # 10 minutes
+
+# Add to main config
+health_config: HealthCheckConfig = HealthCheckConfig()
+
 @runtime_checkable  
 class ProviderRegistryProtocol(Protocol):
     """Interface for provider registry"""
@@ -110,7 +133,7 @@ class MorteyConfig:
     default_provider: str = "openai"
     fallback_provider: str = "anthropic"
     retry_attempts: int = 3
-    timeout_seconds: int = 30
+    timeout_seconds: int = 180
     enable_caching: bool = True
     log_requests: bool = True
     
@@ -130,7 +153,7 @@ class MorteyConfig:
     
     # Performance settings
     max_concurrent_requests: int = 10
-    request_timeout: float = 30.0
+    request_timeout: float = 180.0
     circuit_breaker_enabled: bool = True
     
     # Security settings

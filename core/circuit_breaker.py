@@ -247,7 +247,7 @@ class AdvancedCircuitBreaker:
             "anthropic": ServiceConfig(
                 failure_threshold=3,
                 recovery_timeout=30.0,
-                call_timeout=30.0,
+                call_timeout=240.0,
                 error_rate_threshold=0.4,
                 min_throughput=5,
                 adaptive_threshold=True,
@@ -256,7 +256,7 @@ class AdvancedCircuitBreaker:
             "openai": ServiceConfig(
                 failure_threshold=3,
                 recovery_timeout=30.0, 
-                call_timeout=30.0,
+                call_timeout=240.0,
                 error_rate_threshold=0.4,
                 min_throughput=5,
                 adaptive_threshold=True,
@@ -265,7 +265,7 @@ class AdvancedCircuitBreaker:
             "google": ServiceConfig(
                 failure_threshold=4,
                 recovery_timeout=45.0,
-                call_timeout=25.0,
+                call_timeout=240.0,
                 error_rate_threshold=0.5,
                 min_throughput=3,
                 adaptive_threshold=True
@@ -273,7 +273,7 @@ class AdvancedCircuitBreaker:
             "tavily": ServiceConfig(
                 failure_threshold=5,
                 recovery_timeout=60.0,
-                call_timeout=10.0,
+                call_timeout=60.0,
                 error_rate_threshold=0.6,
                 min_throughput=3,
                 adaptive_threshold=False  # Search API is more volatile
@@ -281,7 +281,7 @@ class AdvancedCircuitBreaker:
             "file_system": ServiceConfig(
                 failure_threshold=10,
                 recovery_timeout=5.0,
-                call_timeout=5.0,
+                call_timeout=10.0,
                 error_rate_threshold=0.7,
                 min_throughput=5,
                 adaptive_threshold=True
@@ -289,12 +289,19 @@ class AdvancedCircuitBreaker:
             "database": ServiceConfig(
                 failure_threshold=8,
                 recovery_timeout=15.0,
-                call_timeout=10.0,
+                call_timeout=60.0,
                 error_rate_threshold=0.6,
                 min_throughput=5,
                 adaptive_threshold=True
             ),
-            "default": ServiceConfig()
+            "default": ServiceConfig(
+                failure_threshold=5,
+                recovery_timeout=60.0,
+                call_timeout=180.0,
+                error_rate_threshold=0.5,
+                min_throughput=5,
+                adaptive_threshold=True
+            )
         }
     
     def get_circuit(self, service_name: str) -> CircuitBreakerState:
