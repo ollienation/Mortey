@@ -15,7 +15,7 @@ global:
 # Node configurations using provider templates
 nodes:
   chat:
-    provider: "openai"
+    provider: "anthropic"
     template: "chat_default"
     # Override specific settings if needed
     temperature: 0.7
@@ -36,6 +36,7 @@ nodes:
     provider: "openai"
     template: "reasoning_default"
     temperature: 0.2
+    enable_functions: true
 
 # Custom node configurations (override templates)
 custom_nodes:

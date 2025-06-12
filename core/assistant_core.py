@@ -62,6 +62,10 @@ class AssistantCore:
             logger.info("📂 Initializing checkpointer...")
             self.checkpointer = await self.checkpointer_factory.create_optimal_checkpointer()
             logger.info(f"✅ Checkpointer initialized: {type(self.checkpointer).__name__}")
+
+            # Pre-initialize all models before starting
+            logger.info("🔥 Pre-initializing LLM models...")
+            await llm_manager.initialize_models()
             
             # Initialize agents first with detailed logging
             logger.info("🤖 Initializing agents...")
@@ -481,7 +485,7 @@ class AssistantCore:
                 await asyncio.sleep(60)
     
     async def _health_monitoring_task(self):
-        """Background health monitoring task"""
+        """Less aggressive health monitoring"""
         logger.debug("❤️ Starting health monitoring task...")
         
         while True:
@@ -489,24 +493,52 @@ class AssistantCore:
                 logger.debug("🔍 Performing health check...")
                 status = await self._get_system_status()
                 
-                # Simple health calculation
+                # FIX: Less aggressive health calculation
                 health_score = 1.0
-                if not status.get("agents", {}).get("chat", False):
-                    health_score -= 0.3
-                if not status.get("llm_manager", {}).get("healthy", True):
-                    health_score -= 0.4
                 
-                if health_score < 0.7:
-                    logger.warning(f"⚠️ System health degraded: {health_score:.2f} - triggering recovery")
+                # Only penalize critical failures
+                if not status.get("agents", {}).get("chat", False):
+                    health_score -= 0.2  # Reduced from 0.3
+                
+                llm_status = status.get("llm_manager", {})
+                if not llm_status.get("healthy", True):
+                    # Check if it's just degraded vs completely broken
+                    if llm_status.get("health_score", 0) < 0.3:  # Only critical issues
+                        health_score -= 0.3  # Reduced from 0.4
+                    else:
+                        health_score -= 0.1  # Minor degradation
+                
+                # FIX: Lower threshold for recovery trigger
+                if health_score < 0.4:  # Changed from 0.7
+                    logger.warning(f"⚠️ System health critical: {health_score:.2f} - triggering recovery")
                     await self._trigger_health_recovery()
+                elif health_score < 0.6:  # New threshold for monitoring
+                    logger.info(f"ℹ️ System health degraded: {health_score:.2f} - monitoring")
                 else:
                     logger.debug(f"✅ System health good: {health_score:.2f}")
                 
-                await asyncio.sleep(60)
+                await asyncio.sleep(30)  # Reduced from 60 for better responsiveness
                 
             except Exception as e:
                 logger.error(f"❌ Health monitoring error: {e}")
-                await asyncio.sleep(30)
+                await asyncio.sleep(15)  # Reduced from 30
+
+    # ADD THIS METHOD for better error handling:
+    async def get_system_status(self) -> dict[str, Any]:
+        """Public method for system status with better error handling"""
+        try:
+            return await self._get_system_status()
+        except Exception as e:
+            logger.error(f"❌ System status check failed: {e}")
+            return {
+                "error": str(e),
+                "agents": {"chat": False},
+                "circuit_breakers": {},
+                "checkpointer": {"error": "status_check_failed"},
+                "llm_manager": {"healthy": False, "error": str(e)},
+                "active_sessions": len(self.active_sessions),
+                "versions": {"python": "3.13.4", "langgraph": "0.4.8", "postgres": "17"}
+            }
     
     async def _trigger_health_recovery(self):
         """Attempt system health recovery"""

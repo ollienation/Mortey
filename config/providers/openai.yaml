@@ -45,7 +45,7 @@ models:
     display_name: "o3"
     max_tokens: 100000
     supports_functions: true
-    cost_per_1k_tokens: 0.04 # Hurts in the wallet  
+    cost_per_1k_tokens: 0.04 # Hurts in the wallet. this got cheaper, to lazy to check how much/  
 
 # Node templates for easy reuse
 node_templates:

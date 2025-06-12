@@ -107,8 +107,8 @@ class MorteyConfig:
     nodes: dict[str, NodeConfig] = field(default_factory=dict)  # Python 3.13.4 syntax
     
     # Global LLM settings
-    default_provider: str = "anthropic"
-    fallback_provider: str = "openai"
+    default_provider: str = "openai"
+    fallback_provider: str = "anthropic"
     retry_attempts: int = 3
     timeout_seconds: int = 30
     enable_caching: bool = True

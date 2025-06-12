@@ -301,7 +301,7 @@ You prioritize data safety and organization efficiency.""",
         """Get LLM instance using unified 2025 approach"""
         try:
             # ✅ 2025: Use LLM manager for ALL providers (OpenAI, Anthropic, etc.)
-            model = await llm_manager._get_model(llm_node)
+            model = await llm_manager.get_model(llm_node)
             
             # Test the model
             test_response = await llm_manager.generate_for_node(llm_node, "test")
@@ -372,7 +372,7 @@ You prioritize data safety and organization efficiency.""",
                 return await self._get_anthropic_model(llm_node)
             else:
                 # Fallback to LLM manager for other providers
-                return await llm_manager._get_model(llm_node)
+                return await llm_manager.get_model(llm_node)
                 
         except Exception as e:
             logger.error(f"Failed to get LLM for node {llm_node}: {e}")
@@ -461,9 +461,9 @@ You prioritize data safety and organization efficiency.""",
                 self.agent_config = agent_config
             
             async def ainvoke(self, state, config=None):
-                """Preserve ainvoke method with proper state conversion"""
+                """Preserve ainvoke method with proper state conversion and response extraction"""
                 try:
-                    # 🔥 CRITICAL FIX: Convert state format based on agent type
+                    # Convert state format based on agent type
                     if self.agent_config and self.agent_config.tools_enabled:
                         # Tool agents need input format
                         converted_state = self._convert_state_for_tool_agent(state)
@@ -473,9 +473,32 @@ You prioritize data safety and organization efficiency.""",
                     
                     result = await self.agent.ainvoke(converted_state, config)
                     
-                    # Ensure result is always a dict with messages
+                    # 🔥 ENHANCED: Better tool agent response extraction
                     if isinstance(result, dict):
-                        return result
+                        # Check for tool agent output format
+                        if "output" in result:
+                            content = result["output"]
+                            from langchain_core.messages import AIMessage
+                            return {"messages": [AIMessage(content=content)]}
+                        # Check for existing messages
+                        elif "messages" in result:
+                            return result
+                        # Extract from intermediate steps if available
+                        elif "intermediate_steps" in result:
+                            # Get the final response from intermediate steps
+                            steps = result["intermediate_steps"]
+                            if steps and len(steps) > 0:
+                                final_step = steps[-1]
+                                if isinstance(final_step, tuple) and len(final_step) > 1:
+                                    content = str(final_step[1])  # Action result
+                                else:
+                                    content = str(final_step)
+                                from langchain_core.messages import AIMessage
+                                return {"messages": [AIMessage(content=content)]}
+                        # Fallback: convert entire result
+                        else:
+                            from langchain_core.messages import AIMessage
+                            return {"messages": [AIMessage(content=str(result))]}
                     elif hasattr(result, 'content'):
                         return {"messages": [result]}
                     else:
@@ -484,6 +507,8 @@ You prioritize data safety and organization efficiency.""",
                         
                 except Exception as e:
                     logger.error(f"❌ Agent {self.name} execution failed: {e}")
+                    logger.error(f"❌ Result type: {type(result) if 'result' in locals() else 'undefined'}")
+                    logger.error(f"❌ Result content: {str(result)[:200] if 'result' in locals() else 'undefined'}")
                     from langchain_core.messages import AIMessage
                     return {
                         "messages": [AIMessage(content="I encountered an issue. Please try rephrasing your request.")]
@@ -592,15 +617,19 @@ You prioritize data safety and organization efficiency.""",
                 "messages": [AIMessage(content="I encountered an issue processing your request.")]
             }
     
-    async def _create_fallback_agent(self, name: str) -> Any:  # Python 3.13.4 syntax
-        """Create fallback agent when normal initialization fails"""
-        async def fallback_agent(state: AssistantState) -> dict[str, Any]:  # Python 3.13.4 syntax
-            return {
-                "messages": [AIMessage(content=f"The {name} agent is currently unavailable. Please try again later.")]
-            }
+    async def _create_fallback_agent(self, name: str) -> Any:
+        """Create fallback agent with proper ainvoke method"""
+        class FallbackAgent:
+            def __init__(self, name):
+                self.name = name
+            
+            async def ainvoke(self, state, config=None):
+                return {
+                    "messages": [AIMessage(content=f"The {self.name} agent is currently unavailable. Please try again later.")]
+                }
         
-        return fallback_agent
-    
+        return FallbackAgent(name)
+
     async def _create_fallback_agents(self) -> dict[str, Any]:  # Python 3.13.4 syntax
         """Create minimal fallback agents when initialization fails"""
         fallback_agents = {}
@@ -686,31 +715,74 @@ You prioritize data safety and organization efficiency.""",
         except Exception as e:
             logger.debug(f"Agent health check failed for {agent_name}: {e}")
             return False
-    
+
     async def _health_check_agent(self, agent_name: str) -> bool:
-        """Health check for individual agent"""
+        """Enhanced health check with tool agent handling"""
         try:
             if agent_name not in self.agents:
                 return False
             
-            # Create test state
+            agent_config = self._agent_configs.get(agent_name)
+            
+            # 🔥 NEW: Special handling for tool agents
+            if agent_config and agent_config.tools_enabled:
+                return await self._health_check_tool_agent(agent_name, agent_config)
+            else:
+                return await self._health_check_simple_agent(agent_name)
+                
+        except Exception as e:
+            logger.debug(f"Health check failed for {agent_name}: {e}")
+            return False
+
+    async def _health_check_tool_agent(self, agent_name: str, agent_config: AgentConfig) -> bool:
+        """Simplified health check for tool agents"""
+        try:
+            # 🔥 STRATEGY: Just check if agent exists and has proper structure
+            agent = self.agents[agent_name]
+            
+            # Validate agent has required methods
+            if not hasattr(agent, 'ainvoke'):
+                return False
+            
+            # 🔥 OPTIONAL: Quick LLM connectivity check instead of full agent test
+            llm_node = agent_config.llm_node
+            try:
+                # Test the underlying LLM directly (faster)
+                await asyncio.wait_for(
+                    llm_manager.generate_for_node(llm_node, "test", override_max_tokens=5),
+                    timeout=15.0
+                )
+                logger.debug(f"✅ Tool agent {agent_name} LLM connectivity verified")
+                return True
+            except Exception as e:
+                logger.debug(f"⚠️ Tool agent {agent_name} LLM test failed: {e}")
+                return False
+                
+        except Exception as e:
+            logger.debug(f"Tool agent health check failed for {agent_name}: {e}")
+            return False
+
+    async def _health_check_simple_agent(self, agent_name: str) -> bool:
+        """Health check for simple chat agents"""
+        try:
             test_state = {
-                "messages": [HumanMessage(content="health check")],
+                "messages": [HumanMessage(content="hi")],
                 "session_id": "health_check",
                 "user_id": "system",
                 "current_agent": agent_name
             }
             
-            # Test agent with timeout
-            result = await asyncio.wait_for(
-                self.agents[agent_name].ainvoke(test_state),
-                timeout=10.0
+            result = await asyncio.shield(
+                asyncio.wait_for(
+                    self.agents[agent_name].ainvoke(test_state),
+                    timeout=10.0
+                )
             )
             
             return isinstance(result, dict) and "messages" in result
             
         except Exception as e:
-            logger.debug(f"Health check failed for {agent_name}: {e}")
+            logger.debug(f"Simple agent health check failed for {agent_name}: {e}")
             return False
     
     def add_custom_agent(self, name: str, agent_config: AgentConfig, agent_instance: Any) -> None:

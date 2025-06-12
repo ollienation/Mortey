@@ -585,14 +585,21 @@ class AdvancedCircuitBreaker:
         """Enhanced health check for OpenAI API"""
         try:
             from config.llm_manager import llm_manager
-            # Check if we have OpenAI configured
             from config.settings import config
-            if "openai" not in config.get_available_providers():
+            
+            # FIX: Use actual node names, not provider-prefixed names
+            openai_nodes = [name for name, node in config.nodes.items() if node.provider == "openai"]
+            if not openai_nodes:
+                logger.debug("No OpenAI nodes configured")
                 return False
+            
+            # Use first available OpenAI node
+            test_node = openai_nodes[0]
+            logger.debug(f"Testing OpenAI with node: {test_node}")
             
             # Try a minimal request
             await asyncio.wait_for(
-                llm_manager.generate_for_node("openai_chat", "Hi", override_max_tokens=1),
+                llm_manager.generate_for_node(test_node, "Hi", override_max_tokens=1),
                 timeout=10.0
             )
             return True

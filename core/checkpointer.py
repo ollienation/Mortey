@@ -387,48 +387,43 @@ class CheckpointerFactory:
             )
 
     
-    # 🔥 CORRECTED: Health check for new checkpointer structure
+    # MODIFY THIS METHOD:
     async def _health_check_connection(self, conn_name: str, connection: Any) -> CheckpointerHealth:
-        """Health check for individual connection - CORRECTED FOR DIRECT CHECKPOINTER"""
+        """Improved health check for LangGraph 0.4.8 checkpointers"""
         start_time = asyncio.get_event_loop().time()
         
         try:
-            if "postgres_async" in conn_name:
-                # 🔥 CORRECTED: Connection is now the checkpointer directly
-                if hasattr(connection, 'aget'):
-                    # Test by trying to get a dummy config
+            if "postgres_async_context" in conn_name:
+                # FIX: Better validation for context manager
+                if hasattr(connection, '__aenter__') and hasattr(connection, '__aexit__'):
+                    # This is a context manager, mark as healthy if it exists
+                    status = "context_manager_ready"
+                    healthy = True
+                else:
+                    status = "invalid_context_manager"
+                    healthy = False
+                    
+            elif "postgres_async" in conn_name:
+                # FIX: Validate actual checkpointer instance
+                if hasattr(connection, 'aget') and hasattr(connection, 'aput'):
                     try:
-                        test_config = {"configurable": {"thread_id": "health_check"}}
-                        result = await connection.aget(test_config)
+                        # Test with a simple get operation
+                        test_config = {"configurable": {"thread_id": "health_check_test"}}
+                        await asyncio.wait_for(connection.aget(test_config), timeout=2.0)
                         status = "connected"
                         healthy = True
+                    except asyncio.TimeoutError:
+                        status = "timeout"
+                        healthy = False
                     except Exception:
-                        # It's ok if the config doesn't exist, means DB is accessible
+                        # Not finding the config is OK - means DB is accessible
                         status = "connected"
                         healthy = True
                 else:
                     status = "invalid_checkpointer"
                     healthy = False
-                    
-            elif "postgres_sync" in conn_name:
-                # 🔥 CORRECTED: Test sync checkpointer in thread
-                if hasattr(connection, 'get'):
-                    def test_sync_checkpointer():
-                        try:
-                            test_config = {"configurable": {"thread_id": "health_check"}}
-                            connection.get(test_config)
-                            return True
-                        except Exception:
-                            # It's ok if the config doesn't exist
-                            return True
-                    
-                    healthy = await asyncio.to_thread(test_sync_checkpointer)
-                    status = "connected" if healthy else "disconnected"
-                else:
-                    healthy = False
-                    status = "invalid_checkpointer"
             else:
-                # For SQLite and Memory savers (unchanged)
+                # SQLite and Memory savers (unchanged)
                 healthy = connection is not None
                 status = "available" if healthy else "unavailable"
             
