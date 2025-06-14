@@ -51,6 +51,17 @@ class SupervisorConfig:
                 "file_manager": [
                     "file", "document", "upload", "download", "analyze",
                     "backup", "organize", "folder", "directory", "archive"
+                ],
+                "project_management": [
+                    "project", "schedule", "activity", "resource", "primavera", "p6",
+                    "critical path", "milestone", "baseline", "progress", "completion",
+                    "allocation", "utilization", "wbs", "work breakdown", "gantt",
+                    "task", "assignment", "calendar", "budget", "cost", "duration",
+                    "start date", "finish date", "float", "slack", "dependency",
+                    "relationship", "predecessor", "successor", "constraint",
+                    "portfolio", "program", "subproject", "phase", "deliverable",
+                    "risk", "issue", "change", "approval", "status report",
+                    "dashboard", "kpi", "performance", "variance", "forecast"
                 ]
             }
 

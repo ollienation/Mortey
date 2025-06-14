@@ -192,6 +192,82 @@ class AssistantCore:
         async def get_system_status():
             return await self._get_system_status()
         
+        @self.app.get("/api/p6/status")
+        async def get_p6_status():
+            """Get P6 system status and connection health"""
+            try:
+                from tools.p6_tools import p6_tools_manager
+                
+                if not p6_tools_manager.client:
+                    return {
+                        "status": "disconnected",
+                        "message": "P6 client not initialized",
+                        "connection_healthy": False
+                    }
+                
+                # Test connectivity
+                start_time = time.time()
+                test_result = await p6_tools_manager._get_system_status_async()
+                response_time = (time.time() - start_time) * 1000
+                
+                return {
+                    "status": "connected",
+                    "connection_healthy": True,
+                    "response_time_ms": response_time,
+                    "operation_stats": p6_tools_manager.operation_stats,
+                    "current_project": p6_tools_manager.current_project_context
+                }
+                
+            except Exception as e:
+                return {
+                    "status": "error", 
+                    "connection_healthy": False,
+                    "error": str(e)
+                }
+
+        @self.app.post("/api/p6/initialize")
+        async def initialize_p6_connection(credentials: dict):
+            """Initialize P6 connection with user credentials"""
+            try:
+                from tools.p6_tools import p6_tools_manager
+                
+                username = credentials.get("username")
+                password = credentials.get("password") 
+                database = credentials.get("database", "PMDB")
+                
+                if not username or not password:
+                    return {"success": False, "error": "Username and password required"}
+                
+                await p6_tools_manager.initialize(username, password, database)
+
+                # hot-plug real tools
+                p6_tools = p6_tools_manager.get_tools()
+                agent_factory.tools["p6_tools"] = p6_tools
+
+                # rebuild the project_management agent in place
+                new_agent = await agent_factory._create_agent_async(
+                    "project_management",
+                    agent_factory._agent_configs["project_management"],
+                )
+                agent_factory.add_custom_agent(
+                    "project_management",
+                    agent_factory._agent_configs["project_management"],
+                    new_agent,
+                )
+
+                # recompile supervisor so new tools are reachable
+                await assistant_core.supervisor.initialize(
+                    agent_factory.agents,
+                    agent_factory.get_all_tools(),
+                    assistant_core.checkpointer,
+                )
+
+                return {"success": True, "message": "P6 connection initialised and tools activated"}
+                
+            except Exception as e:
+                logger.error(f"P6 initialization failed: {e}")
+                return {"success": False, "error": str(e)}
+                
         logger.debug("✅ FastAPI routes configured")
     
     async def _handle_websocket(self, websocket: WebSocket):
@@ -471,6 +547,7 @@ class AssistantCore:
                 tasks['circuit_breakers'] = tg.create_task(self._safe_circuit_status())
                 tasks['checkpointer'] = tg.create_task(self._safe_checkpointer_status())
                 tasks['llm_manager'] = tg.create_task(self._safe_llm_status())
+                tasks['p6_status'] = tg.create_task(self._safe_p6_status())
             
             # Collect results
             for key, task in tasks.items():
@@ -527,6 +604,31 @@ class AssistantCore:
         except Exception as e:
             logger.debug(f"LLM manager status check failed: {e}")
             return {"error": str(e)}
+
+    async def _safe_p6_status(self):
+        """Safe P6 status check for health monitoring"""
+        try:
+            from tools.p6_tools import p6_tools_manager
+            
+            if not p6_tools_manager.client:
+                return {"status": "not_initialized", "healthy": False}
+            
+            # Lightweight connectivity test
+            start_time = time.time()
+            test_projects = await p6_tools_manager.client.get_projects(limit=1)
+            response_time = (time.time() - start_time) * 1000
+            
+            return {
+                "status": "connected",
+                "healthy": True,
+                "response_time_ms": response_time,
+                "projects_accessible": len(test_projects) >= 0,
+                "operation_count": sum(p6_tools_manager.operation_stats.values())
+            }
+            
+        except Exception as e:
+            logger.debug(f"P6 health check failed: {e}")
+            return {"status": "error", "healthy": False, "error": str(e)}
     
     async def _session_cleanup_task(self):
         """Background task to clean up expired sessions"""

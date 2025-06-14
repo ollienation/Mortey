@@ -1,5 +1,5 @@
 # core/state.py - ✅ ENHANCED WITH PYTHON 3.13.4 COMPATIBILITY
-from typing import Annotated, Optional, Union, TypedDict, Self
+from typing import Annotated, Optional, Union, TypedDict, Self, Any
 from collections.abc import Sequence  # Python 3.13.4 preferred import
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMessage, SystemMessage
 from langgraph.graph.message import add_messages
@@ -26,6 +26,12 @@ class AssistantState(TypedDict):
     session_id: str
     user_id: str
     current_agent: str
+
+    # P6-specific state fields
+    p6_session_active: Optional[bool]
+    current_project_id: Optional[str] 
+    current_project_name: Optional[str]
+    p6_user_preferences: Optional[dict[str, Any]]
 
 class StateValidationError(Exception):
     """Custom exception for state validation errors"""
@@ -312,6 +318,52 @@ class StateValidator:
         
         result.metadata["fields_validation"] = "completed"
         return result
+
+# Add P6 state validation
+def _validate_p6_state(state: dict) -> ValidationResult:
+    """Validate P6-specific state fields"""
+    result = ValidationResult(is_valid=True)
+    
+    # Validate P6 session state
+    if "p6_session_active" in state:
+        if not isinstance(state["p6_session_active"], (bool, type(None))):
+            result.errors.append("p6_session_active must be boolean or None")
+            result.is_valid = False
+    
+    # Validate project context
+    if "current_project_id" in state and state["current_project_id"]:
+        if not isinstance(state["current_project_id"], str):
+            result.errors.append("current_project_id must be string")
+            result.is_valid = False
+    
+    return result
+
+# Add P6 context helpers
+def get_p6_context(state: AssistantState) -> dict[str, Any]:
+    """Extract P6 context from state"""
+    return {
+        "session_active": safe_state_access(state, "p6_session_active", False),
+        "project_id": safe_state_access(state, "current_project_id"),
+        "project_name": safe_state_access(state, "current_project_name"),
+        "preferences": safe_state_access(state, "p6_user_preferences", {})
+    }
+
+def set_p6_context(
+    state: AssistantState, 
+    project_id: Optional[str] = None,
+    project_name: Optional[str] = None,
+    session_active: bool = True
+) -> AssistantState:
+    """Update P6 context in state"""
+    updated_state = dict(state)
+    updated_state["p6_session_active"] = session_active
+    
+    if project_id:
+        updated_state["current_project_id"] = project_id
+    if project_name:
+        updated_state["current_project_name"] = project_name
+        
+    return updated_state
 
 def create_optimized_state(
     session_id: str = "",

@@ -43,6 +43,13 @@ nodes:
     max_tokens: 3500
     timeout: 240
 
+  project_management:
+    provider: "openai"
+    template: "coder_default"
+    enable_functions: true
+    max_tokens: 30000
+    timeout: 240
+
 # Custom node configurations (override templates)
 custom_nodes:
   creative_writer:

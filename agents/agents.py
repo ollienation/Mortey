@@ -1,6 +1,7 @@
 # agents/agents.py - ✅ ENHANCED WITH PYTHON 3.13.4 COMPATIBILITY
 import logging
 import asyncio
+import os
 from typing import Optional, Union, Any
 from collections.abc import Sequence  # Python 3.13.4 preferred import
 from dataclasses import dataclass, field
@@ -27,6 +28,7 @@ class AgentType(Enum):
     CODER = "coder"
     WEB_SEARCH = "web"
     FILE_MANAGER = "file_manager"
+    PROJECT_MANAGEMENT = "project_management"
     SUPERVISOR = "supervisor"
 
 @dataclass
@@ -181,6 +183,44 @@ You prioritize data safety and organization efficiency.""",
                 tools_enabled=True,
                 tool_names=["file_tools"],
                 max_iterations=12
+            ),
+
+            "project_management": AgentConfig(
+                name="project_management",
+                agent_type=AgentType.PROJECT_MANAGEMENT,
+                llm_node="chat",
+                system_prompt="""You are Mortey's project management specialist, expert at working with Primavera P6 project data.
+
+Your expertise includes:
+- Project portfolio analysis and reporting
+- Schedule analysis and critical path identification  
+- Resource utilization and allocation analysis
+- Activity tracking and progress monitoring
+- Data extraction and reporting from P6 systems
+- Project performance metrics and KPIs
+
+You have access to Primavera P6 REST API tools to:
+- Search and filter projects across the enterprise
+- Analyze project schedules and critical paths
+- Track activity status and progress
+- Examine resource allocations and utilization
+- Export project data for further analysis
+- Generate comprehensive project reports
+
+When helping with project management:
+
+1. **Context Awareness**: Remember the current project context across conversation turns
+2. **Natural Language**: Translate business questions into appropriate P6 API queries
+3. **Comprehensive Analysis**: Provide insights beyond raw data, including trends and recommendations
+4. **Security First**: Operate in read-only mode, require confirmation for any write operations
+5. **Performance**: Use efficient queries with appropriate filtering and field selection
+6. **Error Handling**: Gracefully handle P6 connectivity issues and provide alternatives
+
+Always explain your analysis methodology and highlight any limitations in the data or query scope.
+When users ask about projects, help them navigate from high-level portfolio questions down to specific activity details.""",
+                tools_enabled=True,
+                tool_names=["p6_tools"],
+                max_iterations=12
             )
         }
     
@@ -231,6 +271,35 @@ You prioritize data safety and organization efficiency.""",
             except Exception as e:
                 logger.warning(f"⚠️ Web search tools not available: {e}")
                 self.tools["web_search"] = []
+
+            try:
+                from tools.p6_tools import p6_tools_manager
+
+                self.tools["p6_tools"] = [] 
+                
+                # Try auth key first, then username/password
+                p6_auth_key = os.getenv("P6_AUTH_KEY")
+                p6_database = os.getenv("P6_DATABASE", "PMDB")
+                
+                if p6_auth_key:
+                    await p6_tools_manager.initialize_with_auth_key(p6_auth_key, p6_database)
+                else:
+                    p6_username = os.getenv("P6_USERNAME")
+                    p6_password = os.getenv("P6_PASSWORD")
+                    
+                    if p6_username and p6_password:
+                        await p6_tools_manager.initialize(p6_username, p6_password, p6_database)
+                    else:
+                        logger.warning("⚠️ P6 credentials not found, P6 tools unavailable")
+                        self.tools["p6_tools"] = []
+                        return
+                
+                p6_tools = p6_tools_manager.get_tools()   # now always safe
+                self.tools["p6_tools"] = p6_tools
+                logger.info("✅ P6 tools initialised: %s tools", len(p6_tools))
+            except Exception as e:
+                logger.warning("⚠️ P6 not ready (%s) – using stub tools", e)
+                self.tools["p6_tools"] = p6_tools_manager.get_stub_tools()
             
         except Exception as e:
             logger.error(f"❌ Tool initialization failed: {e}")

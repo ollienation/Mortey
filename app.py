@@ -3,7 +3,7 @@ import logging
 import time
 import uuid
 import traceback
-from typing import Optional, Dict, Any, List, Tuple
+from typing import Optional, Any, List, Tuple
 from pathlib import Path
 import gradio as gr
 import json
@@ -28,7 +28,7 @@ class GradioAssistantInterface:
     
     def __init__(self):
         self.assistant_core = assistant
-        self.session_cache: Dict[str, Dict[str, Any]] = {}
+        self.session_cache: dict[str, dict[str, Any]] = {}
         self.is_initialized = False
         
     async def initialize_assistant(self):
@@ -314,6 +314,59 @@ class GradioAssistantInterface:
                             lines=3,
                             visible=False
                         )
+
+                with gr.Tab("📊 Project Management (P6)", id="p6"):
+                    with gr.Row():
+                        with gr.Column(scale=2):
+                            gr.Markdown("### 🔌 P6 Connection")
+                            
+                            with gr.Row():
+                                p6_username = gr.Textbox(
+                                    label="P6 Username",
+                                    type="text",
+                                    placeholder="Enter P6 username"
+                                )
+                                p6_password = gr.Textbox(
+                                    label="P6 Password", 
+                                    type="password",
+                                    placeholder="Enter P6 password"
+                                )
+                                p6_database = gr.Textbox(
+                                    label="Database Name",
+                                    value="PMDB",
+                                    placeholder="P6 database name"
+                                )
+                            
+                            connect_p6_btn = gr.Button("Connect to P6 🔌", variant="primary")
+                            p6_connection_status = gr.Markdown("Status: Not connected")
+                            
+                            gr.Markdown("### 🎯 Quick P6 Actions")
+                            
+                            with gr.Row():
+                                search_projects_btn = gr.Button("🔍 Search Projects", variant="outline")
+                                project_schedule_btn = gr.Button("📅 Analyze Schedule", variant="outline") 
+                                resource_analysis_btn = gr.Button("👥 Resource Analysis", variant="outline")
+                                export_data_btn = gr.Button("📤 Export Data", variant="outline")
+                            
+                            project_query = gr.Textbox(
+                                label="Project Management Query",
+                                placeholder="Ask about projects, schedules, resources, or activities...",
+                                lines=3
+                            )
+                            
+                            execute_p6_query_btn = gr.Button("Execute Query 🚀", variant="primary")
+                            
+                        with gr.Column(scale=3):
+                            p6_results = gr.Textbox(
+                                label="P6 Query Results",
+                                lines=20,
+                                max_lines=25,
+                                interactive=False
+                            )
+                            
+                            with gr.Row():
+                                clear_p6_btn = gr.Button("Clear Results 🧹", variant="secondary")
+                                export_results_btn = gr.Button("Export Results 💾", variant="secondary")
             
             # Event handlers - Fixed for Gradio 5.33.2
             async def send_message(message, history, session_state):
@@ -330,7 +383,58 @@ class GradioAssistantInterface:
                 }
                 message = quick_messages.get(action_type, "Hello!")
                 return await self.process_chat_message(message, history, session_state)
-            
+
+            async def connect_to_p6(username, password, database):
+                """Connect to P6 system"""
+                try:
+                    if not username or not password:
+                        return "❌ Please provide username and password"
+                    
+                    from tools.p6_tools import p6_tools_manager
+                    await p6_tools_manager.initialize(username, password, database)
+                    
+                    return f"✅ Connected to P6 database: {database}"
+                    
+                except Exception as e:
+                    return f"❌ Connection failed: {str(e)}"
+
+            async def execute_p6_query(query, session_state):
+                """Execute P6 query through assistant"""
+                try:
+                    if not query.strip():
+                        return "Please enter a query", session_state
+                    
+                    # Process through assistant with P6 context
+                    session_id, session_state = self.get_or_create_session_id(session_state)
+                    
+                    result = await self.assistant_core.process_message(
+                        message=f"[P6 Query] {query}",
+                        session_id=session_id,
+                        user_id="gradio_p6_user"
+                    )
+                    
+                    response = result.get('response', 'No response generated')
+                    return response, session_state
+                    
+                except Exception as e:
+                    error_msg = f"❌ P6 query failed: {str(e)}"
+                    logger.error(error_msg)
+                    return error_msg, session_state
+
+
+            # Wire up P6 events
+            connect_p6_btn.click(
+                connect_to_p6,
+                inputs=[p6_username, p6_password, p6_database],
+                outputs=[p6_connection_status]
+            )
+
+            execute_p6_query_btn.click(
+                execute_p6_query,
+                inputs=[project_query, session_state],
+                outputs=[p6_results, session_state]
+            )
+
             # Wire up events - Gradio 5.33.2 compatible
             send_btn.click(
                 send_message,
