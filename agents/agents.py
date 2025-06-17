@@ -199,7 +199,7 @@ Your expertise includes:
 - Data extraction and reporting from P6 systems
 - Project performance metrics and KPIs
 
-You have access to Primavera P6 REST API tools to:
+You have access to Primavera P6 REST API tools that use synchronous operations:
 - Search and filter projects across the enterprise
 - Analyze project schedules and critical paths
 - Track activity status and progress
@@ -208,16 +208,15 @@ You have access to Primavera P6 REST API tools to:
 - Generate comprehensive project reports
 
 When helping with project management:
-
 1. **Context Awareness**: Remember the current project context across conversation turns
-2. **Natural Language**: Translate business questions into appropriate P6 API queries
+2. **Natural Language**: Translate business questions into appropriate P6 API queries  
 3. **Comprehensive Analysis**: Provide insights beyond raw data, including trends and recommendations
 4. **Security First**: Operate in read-only mode, require confirmation for any write operations
 5. **Performance**: Use efficient queries with appropriate filtering and field selection
 6. **Error Handling**: Gracefully handle P6 connectivity issues and provide alternatives
 
-Always explain your analysis methodology and highlight any limitations in the data or query scope.
-When users ask about projects, help them navigate from high-level portfolio questions down to specific activity details.""",
+All P6 operations are now synchronous and follow established session management patterns.
+Always explain your analysis methodology and highlight any limitations in the data or query scope.""",
                 tools_enabled=True,
                 tool_names=["p6_tools"],
                 max_iterations=12
@@ -256,13 +255,13 @@ When users ask about projects, help them navigate from high-level portfolio ques
             return await self._create_fallback_agents()
     
     async def _initialize_tools(self) -> None:
-        """Initialize tools for agents with enhanced error handling"""
+        """Initialize tools for agents with synchronous P6 integration"""
         try:
             # File management tools
             file_tools = self.file_tools.get_tools()
             self.tools["file_tools"] = file_tools
             logger.info(f"✅ File tools initialized: {len(file_tools)} tools")
-            
+
             # Web search tools (if available)
             try:
                 web_tools = await self._initialize_web_tools()
@@ -272,38 +271,49 @@ When users ask about projects, help them navigate from high-level portfolio ques
                 logger.warning(f"⚠️ Web search tools not available: {e}")
                 self.tools["web_search"] = []
 
+            # ✅ FIXED: Synchronous P6 tools initialization
             try:
                 from tools.p6_tools import p6_tools_manager
-
-                self.tools["p6_tools"] = [] 
                 
-                # Try auth key first, then username/password
+                # Initialize P6 client synchronously
                 p6_auth_key = os.getenv("P6_AUTH_KEY")
                 p6_database = os.getenv("P6_DATABASE", "PMDB")
                 
                 if p6_auth_key:
-                    await p6_tools_manager.initialize_with_auth_key(p6_auth_key, p6_database)
+                    # Use synchronous initialization method
+                    p6_tools_manager.initialize_with_auth_key(p6_auth_key, p6_database)
+                    logger.info("✅ P6 tools initialized with auth key")
                 else:
                     p6_username = os.getenv("P6_USERNAME")
                     p6_password = os.getenv("P6_PASSWORD")
                     
                     if p6_username and p6_password:
-                        await p6_tools_manager.initialize(p6_username, p6_password, p6_database)
+                        # Use synchronous initialization method
+                        p6_tools_manager.initialize(p6_username, p6_password, p6_database)
+                        logger.info("✅ P6 tools initialized with credentials")
                     else:
-                        logger.warning("⚠️ P6 credentials not found, P6 tools unavailable")
-                        self.tools["p6_tools"] = []
+                        logger.warning("⚠️ P6 credentials not found, using stub tools")
+                        self.tools["p6_tools"] = p6_tools_manager.get_stub_tools()
                         return
-                
-                p6_tools = p6_tools_manager.get_tools()   # now always safe
+
+                # Get initialized P6 tools
+                p6_tools = p6_tools_manager.get_tools()
                 self.tools["p6_tools"] = p6_tools
-                logger.info("✅ P6 tools initialised: %s tools", len(p6_tools))
+                logger.info(f"✅ P6 tools initialized: {len(p6_tools)} tools")
+                
             except Exception as e:
-                logger.warning("⚠️ P6 not ready (%s) – using stub tools", e)
+                logger.warning(f"⚠️ P6 initialization failed ({e}) – using stub tools")
+                from tools.p6_tools import p6_tools_manager
                 self.tools["p6_tools"] = p6_tools_manager.get_stub_tools()
-            
+
         except Exception as e:
             logger.error(f"❌ Tool initialization failed: {e}")
-            self.tools = {"file_tools": [], "web_search": []}
+            # Provide minimal fallback tools
+            self.tools = {
+                "file_tools": self.file_tools.get_tools(),
+                "web_search": [],
+                "p6_tools": []
+            }
     
     async def _initialize_web_tools(self) -> list[Any]:  # Python 3.13.4 syntax
         """Initialize web search tools if available"""
@@ -335,19 +345,18 @@ When users ask about projects, help them navigate from high-level portfolio ques
     async def _create_agent_async(self, name: str, agent_config: AgentConfig) -> Any:
         """Create individual agent with 2025 unified approach"""
         try:
-            # ✅ 2025: Use LLM manager for ALL providers (no special cases)
+            # Get LLM using unified approach
             llm = await self._get_agent_llm_unified(agent_config.llm_node)
             
             # Create prompt template
             prompt = await self._create_agent_prompt(agent_config)
             
-            # Get tools for this agent
+            # Get tools for this agent (now includes synchronized P6 tools)
             agent_tools = self._get_agent_tools(agent_config)
             
             if agent_config.tools_enabled and agent_tools:
                 # ✅ 2025: Unified tool agent creation for ALL providers
                 agent = create_tool_calling_agent(llm, agent_tools, prompt)
-                
                 executor = AgentExecutor(
                     agent=agent,
                     tools=agent_tools,
@@ -355,7 +364,6 @@ When users ask about projects, help them navigate from high-level portfolio ques
                     verbose=agent_config.verbose,
                     return_intermediate_steps=True
                 )
-                
                 return self._wrap_agent_with_protection(executor, name)
             else:
                 # Simple conversational agent
@@ -856,19 +864,35 @@ When users ask about projects, help them navigate from high-level portfolio ques
             return False
 
     async def _health_check_tool_agent(self, agent_name: str, agent_config: AgentConfig) -> bool:
-        """Simplified health check for tool agents"""
+        """Simplified health check for tool agents including P6"""
         try:
-            # 🔥 STRATEGY: Just check if agent exists and has proper structure
             agent = self.agents[agent_name]
             
             # Validate agent has required methods
             if not hasattr(agent, 'ainvoke'):
                 return False
-            
-            # 🔥 OPTIONAL: Quick LLM connectivity check instead of full agent test
+
+            # Special handling for P6 tools
+            if "p6_tools" in agent_config.tool_names:
+                from tools.p6_tools import p6_tools_manager
+                
+                # Simple connectivity test using synchronous methods
+                try:
+                    if p6_tools_manager.client:
+                        # Test P6 connectivity with minimal query
+                        projects = p6_tools_manager.client.get_projects(limit=1)
+                        logger.debug(f"✅ P6 agent {agent_name} connectivity verified")
+                        return True
+                    else:
+                        logger.debug(f"⚠️ P6 agent {agent_name} client not initialized")
+                        return False
+                except Exception as e:
+                    logger.debug(f"⚠️ P6 agent {agent_name} connectivity test failed: {e}")
+                    return False
+
+            # Test underlying LLM for other tool agents
             llm_node = agent_config.llm_node
             try:
-                # Test the underlying LLM directly (faster)
                 await asyncio.wait_for(
                     llm_manager.generate_for_node(llm_node, "test", override_max_tokens=5),
                     timeout=15.0
