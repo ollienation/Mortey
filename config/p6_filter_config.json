@@ -1,0 +1,140 @@
+{
+  "filter_operators": {
+    "equals": {
+      "symbol": ":eq:",
+      "description": "Exact match",
+      "example": "Status:eq:'Active'",
+      "url_encoded": "%3Aeq%3A"
+    },
+    "not_equals": {
+      "symbol": "!=",
+      "description": "Not equal to",
+      "example": "Status!=Active",
+      "url_encoded": "!%3D"
+    },
+    "greater_than": {
+      "symbol": ":gt:",
+      "description": "Greater than (for numeric and date values)",
+      "example": "StartDate:gt:'2024-01-01'",
+      "url_encoded": "%3Agt%3A"
+    },
+    "greater_than_or_equal": {
+      "symbol": ":gte:",
+      "description": "Greater than or equal to (for numeric and date values)",
+      "example": "StartDate:gte:'2024-01-01'",
+      "url_encoded": "%3Agte%3A"
+    },
+    "less_than": {
+      "symbol": ":lt:",
+      "description": "Less than (for numeric and date values)",
+      "example": "FinishDate:lt:'2024-12-31'",
+      "url_encoded": "%3Alt%3A"
+    },
+    "less_than_or_equal": {
+      "symbol": ":lte:",
+      "description": "Less than or equal to (for numeric and date values)",
+      "example": "FinishDate:lte:'2024-12-31'",
+      "url_encoded": "%3Alte%3A"
+    },
+    "like": {
+      "symbol": ":like:",
+      "description": "Contains substring (with % as wildcard)",
+      "example": "Name:like:'Project%'",
+      "url_encoded": "%3Alike%3A"
+    },
+    "contains": {
+      "symbol": "contains",
+      "description": "Field contains the specified value",
+      "example": "Name contains 'Project'",
+      "url_encoded": "contains"
+    }
+  },
+  "logical_operators": {
+    "and": {
+      "symbol": ":and:",
+      "description": "Logical AND - all conditions must be met",
+      "example": "Status:eq:'Active' :and: StartDate:gte:'2024-01-01'",
+      "url_encoded": "%3Aand%3A"
+    },
+    "or": {
+      "symbol": ":or:",
+      "description": "Logical OR - any condition can be met",
+      "example": "Status:eq:'Active' :or: Status:eq:'Planning'",
+      "url_encoded": "%3Aor%3A"
+    }
+  },
+  "date_fields": {
+    "StartDate": "Project or activity start date",
+    "FinishDate": "Project or activity finish date",
+    "ActualStartDate": "Actual start date (if started)",
+    "ActualFinishDate": "Actual finish date (if completed)",
+    "PlannedStartDate": "Planned start date",
+    "PlannedFinishDate": "Planned finish date",
+    "CreateDate": "Date the object was created",
+    "LastUpdateDate": "Date the object was last updated"
+  },
+  "status_values": [
+    "Active",
+    "Inactive",
+    "Completed",
+    "Not Started",
+    "In Progress",
+    "Planning"
+  ],
+  "nl_to_filter_mappings": {
+    "starting after": {
+      "field": "StartDate",
+      "operator": ":gte:",
+      "example": "StartDate:gte:'2024-01-01'"
+    },
+    "starting before": {
+      "field": "StartDate",
+      "operator": ":lte:",
+      "example": "StartDate:lte:'2024-12-31'"
+    },
+    "finishing after": {
+      "field": "FinishDate",
+      "operator": ":gte:",
+      "example": "FinishDate:gte:'2024-01-01'"
+    },
+    "finishing before": {
+      "field": "FinishDate",
+      "operator": ":lte:",
+      "example": "FinishDate:lte:'2024-12-31'"
+    },
+    "active": {
+      "field": "Status",
+      "operator": ":eq:",
+      "value": "'Active'",
+      "example": "Status:eq:'Active'"
+    },
+    "completed": {
+      "field": "Status",
+      "operator": ":eq:",
+      "value": "'Completed'",
+      "example": "Status:eq:'Completed'"
+    },
+    "in progress": {
+      "field": "Status",
+      "operator": ":eq:",
+      "value": "'In Progress'",
+      "example": "Status:eq:'In Progress'"
+    },
+    "not started": {
+      "field": "Status",
+      "operator": ":eq:",
+      "value": "'Not Started'",
+      "example": "Status:eq:'Not Started'"
+    },
+    "named": {
+      "field": "Name",
+      "operator": ":like:",
+      "example": "Name:like:'%Project%'"
+    },
+    "with id": {
+      "field": "Id",
+      "operator": ":eq:",
+      "example": "Id:eq:'1001'"
+    }
+  }
+}
