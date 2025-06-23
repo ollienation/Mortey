@@ -433,31 +433,29 @@ class P6Client:
             "AuthToken": self._auth_token
         }
 
-    def make_request(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Make authenticated request"""
+    def make_request(self, endpoint: str,
+                    params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Make authenticated request with HTTP timing / logging"""
         if not self._authenticated:
             raise P6AuthenticationError("Client not authenticated")
 
         url = f"{self.config.base_url}/{endpoint.lstrip('/')}"
-        
-        # Add database name to params
         request_params = {"DatabaseName": self._database}
         if params:
             request_params.update(params)
 
         try:
+            start = time.time()                              # <- start timer
             response = self.session.get(
                 url,
                 params=request_params,
                 headers=self._get_headers(),
                 timeout=self.config.timeout
             )
-
-            self._log_request_response(response)
-
+            elapsed_ms = (time.time() - start) * 1000        # <- stop timer
+            self._log_request_response(response, elapsed_ms) # <- pass duration
             if response.status_code != 200:
                 raise P6APIError(f"API request failed: {response.status_code} - {response.text}")
-
             return response.json()
 
         except requests.exceptions.Timeout:
@@ -466,15 +464,23 @@ class P6Client:
             logger.error(f"❌ P6 API request failed: {e}")
             raise P6APIError(f"Request failed: {e}")
 
-    def _log_request_response(self, response: requests.Response):
-        """Log request/response details"""
+    # --- 3. replace old helper with timed variant ------------------------------
+    def _log_request_response(self,
+                            response: requests.Response,
+                            duration_ms: float) -> None:
+        """Write concise INFO line plus verbose DEBUG dump."""
         req = response.request
+        # human-friendly one-liner
+        logger.info(f"[HTTP] {req.method} {req.url} → {response.status_code} "
+                    f"in {duration_ms:.1f} ms")
+
+        # full headers / body (first 400 B) for deep debugging
         logger.debug(
-            f"{req.method} {req.url}\n"
-            f"Req-Hdrs: {dict(req.headers)}\n"
-            f"Resp-{response.status_code}: {dict(response.headers)}\n"
-            f"Body: {response.text[:400]}\n"
+            f"Req-Headers: {dict(req.headers)}\n"
+            f"Resp-Headers: {dict(response.headers)}\n"
+            f"Resp-Body: {response.text[:400]}\n"
         )
+
 
     def get_projects(self, 
                     filter_builder: Optional[FilterBuilder] = None,
@@ -504,36 +510,38 @@ class P6Client:
         result = self.make_request("project", params)
         return result if isinstance(result, list) else []
 
-    def get_activities(self, 
-                      project_id: str,
-                      filter_builder: Optional[FilterBuilder] = None,
-                      filter_query: Optional[str] = None,
-                      fields: Optional[List[str]] = None,
-                      order_by: Optional[str] = None,
-                      limit: int = 500) -> List[Dict[str, Any]]:
-        """Get activities with enhanced filtering support"""
-        params = {}
-        
-        # Build project filter
-        project_filter = f"ProjectObjectId = {project_id}"
-        
-        if filter_builder:
-            # Combine project filter with builder filter
-            builder_params = filter_builder.build_query_params()
-            existing_filter = builder_params.get("Filter")
-            if existing_filter:
-                combined_filter = f"{project_filter} :and: ({existing_filter})"
-            else:
-                combined_filter = project_filter
-            params["Filter"] = combined_filter
-            
-            # Add other builder params
-            if "OrderBy" in builder_params:
-                params["OrderBy"] = builder_params["OrderBy"]
-            if "Fields" in builder_params:
-                params["Fields"] = builder_params["Fields"]
+    def get_activities(
+        self,
+        project_id: Union[str, int],           # accept numeric or alphanumeric
+        filter_builder: Optional[FilterBuilder] = None,
+        filter_query: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        order_by: Optional[str] = None,
+        limit: int = 500
+    ) -> List[Dict[str, Any]]:
+        """Return activities for one project with robust ID handling"""
+        params: Dict[str, Any] = {}
+
+        # ── PROJECT FILTER ──────────────────────────────────────────────
+        if isinstance(project_id, (int, float)) or (
+            isinstance(project_id, str) and project_id.isdigit()
+        ):
+            project_filter = f"ProjectObjectId:eq:{project_id}"
         else:
-            # Legacy support
+            project_filter = f"ProjectObjectId:eq:'{project_id}'"
+        # ────────────────────────────────────────────────────────────────
+
+        if filter_builder:
+            builder_params = filter_builder.build_query_params()
+            # merge project filter with any existing filter
+            existing_filter = builder_params.get("Filter")
+            params["Filter"] = (
+                f"{project_filter} :and: ({existing_filter})"
+                if existing_filter
+                else project_filter
+            )
+            params.update({k: v for k, v in builder_params.items() if k != "Filter"})
+        else:
             params["Filter"] = project_filter
             if filter_query:
                 params["Filter"] = f"{project_filter} :and: ({filter_query})"
@@ -542,9 +550,7 @@ class P6Client:
             if order_by:
                 params["OrderBy"] = order_by
 
-        if limit:
-            params["PageSize"] = limit
-
+        params["PageSize"] = limit
         result = self.make_request("activity", params)
         return result if isinstance(result, list) else []
 

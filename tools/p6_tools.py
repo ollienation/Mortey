@@ -178,68 +178,64 @@ class P6ToolsManager:
         max_results: int,
         order_by_field: Optional[str] = None,
         order_direction: Optional[str] = "asc",
-        additional_filters: Optional[str] = None
+        additional_filters: Optional[str] = None,
     ) -> str:
         """Enhanced project search using FilterBuilder"""
         start_time = time.time()
+
+        # ── NEW: parameter normalisation ───────────────────────────────
+        search_query       = self._ensure_string_parameter(search_query, "search_query", allow_none=True)
+        status_filter      = self._ensure_string_parameter(status_filter, "status_filter", allow_none=True)
+        order_by_field     = self._ensure_string_parameter(order_by_field, "order_by_field", allow_none=True)
+        order_direction    = self._ensure_string_parameter(order_direction, "order_direction", default="asc")
+        additional_filters = self._ensure_string_parameter(additional_filters, "additional_filters", allow_none=True)
+        # ───────────────────────────────────────────────────────────────
+
         is_valid, message = self._validate_operation("search")
         if not is_valid:
             return f"❌ {message}"
 
         try:
-            # 2. Create filter builder
             filter_builder = FilterBuilder()
             filter_explanation = ""
 
-            # Try using the enhanced filter mapper first
+            # Natural-language base filter
             try:
-                # Add base search query
-                # ✅ FIX: Get a FilterBuilder object from the mapper
-                nl_builder = self.filter_mapper.build_filter(search_query, status_filter) # [6]
-                # ✅ FIX: Extract the filter string from the FilterBuilder for methods expecting a string
-                nl_filter_string = nl_builder.build_filter() # [3]
+                nl_builder = self.filter_mapper.build_filter(search_query, status_filter)
+                nl_filter  = nl_builder.build_filter()
+                if nl_filter:
+                    self._add_raw_filter_to_builder(filter_builder, nl_filter)
+                    filter_explanation = self.filter_mapper.get_filter_explanation(nl_filter)
 
-                if nl_filter_string: # Check if the filter string is not empty
-                    self._add_raw_filter_to_builder(filter_builder, nl_filter_string) # Pass the string
-                    filter_explanation = self.filter_mapper.get_filter_explanation(nl_filter_string) # Pass the string [6]
-
-                # Add additional filters
                 if additional_filters:
-                    additional_nl_builder = self.filter_mapper.build_filter(additional_filters) # [6]
-                    additional_nl_filter_string = additional_nl_builder.build_filter() # [3]
-
-                    if additional_nl_filter_string: # Check if the additional filter string is not empty
-                        if filter_builder._conditions: # Check if there are existing conditions in filter_builder
-                            filter_builder.and_() # [3]
-                        self._add_raw_filter_to_builder(filter_builder, additional_nl_filter_string) # Pass the string
-                        filter_explanation += "\n" + self.filter_mapper.get_filter_explanation(additional_nl_filter_string) # Pass the string [6]
-
+                    add_builder = self.filter_mapper.build_filter(additional_filters)
+                    add_filter  = add_builder.build_filter()
+                    if add_filter:
+                        if filter_builder._conditions:
+                            filter_builder.and_()
+                        self._add_raw_filter_to_builder(filter_builder, add_filter)
+                        filter_explanation += "\n" + self.filter_mapper.get_filter_explanation(add_filter)
                 self.filter_stats["total_filters"] += 1
-
             except Exception as e:
-                # Mapper failures should NEVER break the tool – just log & fall back
-                logger.warning(f"⚠️ Filter mapper error → creating simple filter: {e}")
+                logger.warning(f"⚠️ Filter mapper error → fallback: {e}")
                 self.filter_stats["errors"] += 1
                 filter_explanation = "Using simplified filter due to mapper error."
 
-            # Fallback to simple name-based search if no conditions were added by the mapper
             if not filter_builder._conditions and search_query:
-                 filter_builder.field("Name").contains(search_query) # [3]
-
-            # Add status filter if provided (Note: This might be redundant if the mapper already handles status_filter)
+                filter_builder.field("Name").contains(search_query)
             if status_filter:
                 if filter_builder._conditions:
                     filter_builder.and_()
                 filter_builder.field("Status").eq(status_filter)
 
-            # Add ordering if specified
+            # ordering
             if order_by_field:
-                is_desc = order_direction and order_direction.lower() == "desc"
-                filter_builder.order_by(order_by_field, desc=is_desc) # [3]
+                is_desc = order_direction.lower() == "desc"
+                filter_builder.order_by(order_by_field, desc=is_desc)
 
-            # 3. Execute the P6 query with default fields
+            # default fields
             fields = ["Id", "Name", "Description", "Status", "StartDate", "FinishDate"]
-            filter_builder.select(*fields) # [3]
+            filter_builder.select(*fields)
 
             projects = self.client.get_projects(
                 filter_builder=filter_builder,
@@ -248,19 +244,15 @@ class P6ToolsManager:
 
             duration = (time.time() - start_time) * 1000
             self._record_operation("project_search", True)
-            # 4. Format the response
+
             if not projects:
-                return (
-                    f"No projects found matching '{search_query}' "
-                    f"(searched in {duration:.1f} ms)"
-                )
+                return f"No projects found matching '{search_query}' (searched in {duration:.1f} ms)"
 
             response: list[str] = [
                 f"Found {len(projects)} projects (in {duration:.1f} ms)",
                 f"Filter applied: {filter_explanation}",
                 "",
             ]
-
             for i, project in enumerate(projects, 1):
                 response.append(
                     f"{i}. **{project.get('Name', 'Unknown')}** "
@@ -271,13 +263,9 @@ class P6ToolsManager:
                     f"Start: {project.get('StartDate', 'Not set')}"
                 )
                 response.append("")
-
-            # Store project context if only one result
             if len(projects) == 1:
                 self.current_project_context = projects[0]
-
             return "\n".join(response)
-
         except P6APIError as e:
             self._record_operation("project_search", False)
             return f"❌ P6 API error during project search: {e}"
@@ -305,11 +293,14 @@ class P6ToolsManager:
                 
             # Parse the natural language description into a P6 filter
             try:
-                # Use the mapper to build a filter string
-                filter_string = self.filter_mapper.build_filter(filter_description)
-                if filter_string:
-                    # Add the raw filter to the builder
-                    self._add_raw_filter_to_builder(filter_builder, filter_string)
+                # Use the mapper to build a FilterBuilder object
+                mapper_filter_builder = self.filter_mapper.build_filter(filter_description)
+                # Extract the filter string from the FilterBuilder for methods expecting a string
+                filter_string_from_mapper = mapper_filter_builder.build_filter()
+
+                if filter_string_from_mapper:
+                    # Add the raw filter string to the main builder
+                    self._add_raw_filter_to_builder(filter_builder, filter_string_from_mapper)
                 else:
                     # If no filter was built, provide guidance
                     return (
@@ -427,232 +418,214 @@ class P6ToolsManager:
                 raise ValueError(f"Cannot convert {param_name} to string: {e}")
 
     def _analyze_schedule_sync(
-        self, 
-        project_identifier: str, 
-        analysis_type: str, 
+        self,
+        project_identifier: str,
+        analysis_type: str,
         include_activities: bool,
-        activity_filter: Optional[str] = None
+        activity_filter: Optional[str] = None,
     ) -> str:
-        """Synchronous schedule analysis with enhanced filtering"""
+        """Analyze project schedule with ObjectId-aware activity lookup"""
         start_time = time.time()
-
         try:
-            # Find project by ID or name
             project = self._find_project_sync(project_identifier)
             if not project:
                 return f"❌ Project '{project_identifier}' not found"
 
-            project_id = project['Id']
-            project_name = project.get('Name', 'Unknown')
+            project_id   = project.get("ObjectId", project.get("Id"))
+            project_name = project.get("Name", "Unknown")
 
-            # Get activities if requested with optional filtering
-            activities = []
+            activities: list[Dict[str, Any]] = []
             if include_activities:
-                activity_fields = [
-                    "Id", "Name", "Status", "ActualStartDate", "ActualFinishDate",
-                    "PlannedStartDate", "PlannedFinishDate", "PercentComplete",
-                    "Duration", "RemainingDuration"
+                act_fields = [
+                    "ObjectId", "Id", "Name", "Status", "ActualStartDate",
+                    "ActualFinishDate", "PlannedStartDate", "PlannedFinishDate",
+                    "PercentComplete", "Duration", "RemainingDuration", "TotalFloat",
                 ]
-                
-                # Create activity filter builder
-                filter_builder = FilterBuilder().select(*activity_fields)
-                
-                # Add custom activity filter if provided
+                fb = FilterBuilder().select(*act_fields)
+
+                # optional NL filter
                 if activity_filter:
                     try:
-                        nl_filter = self.filter_mapper.build_filter(activity_filter)
-                        if nl_filter:
-                            self._add_raw_filter_to_builder(filter_builder, nl_filter)
-                    except Exception as filter_err:
-                        logger.warning(f"Activity filter error: {filter_err}")
-                
-                # Add ordering based on analysis type
+                        nl_fb   = self.filter_mapper.build_filter(activity_filter)
+                        nl_str  = nl_fb.build_filter()
+                        if nl_str:
+                            self._add_raw_filter_to_builder(fb, nl_str)
+                    except Exception as e:
+                        logger.warning(f"Activity filter error: {e}")
+
+                # analysis-specific ordering
                 if analysis_type == "critical_path":
-                    filter_builder.order_by("TotalFloat")
+                    fb.order_by("TotalFloat")
                 elif analysis_type == "progress":
-                    filter_builder.order_by("PercentComplete", desc=True)
+                    fb.order_by("PercentComplete", desc=True)
                 else:
-                    filter_builder.order_by("StartDate")
-                
+                    fb.order_by("StartDate")
+
                 activities = self.client.get_activities(
                     project_id=project_id,
-                    filter_builder=filter_builder,
-                    limit=100
+                    filter_builder=fb,
+                    limit=100,
                 )
 
             duration = (time.time() - start_time) * 1000
             self._record_operation("schedule_analysis", True)
 
-            # Format analysis results
             response = [
                 f"📊 Schedule Analysis for {project_name}",
-                f"Query completed in {duration:.1f}ms\n",
-                f"**Project Details:**",
+                f"Query completed in {duration:.1f} ms\n",
+                "**Project Details:**",
                 f"- ID: {project_id}",
                 f"- Status: {project.get('Status', 'Unknown')}",
                 f"- Start Date: {project.get('StartDate', 'Not set')}",
-                f"- Finish Date: {project.get('FinishDate', 'Not set')}\n"
+                f"- Finish Date: {project.get('FinishDate', 'Not set')}\n",
             ]
 
             if activities:
-                response.append(f"**Activities Summary:**")
+                response.append("**Activities Summary:**")
                 response.append(f"- Total Activities: {len(activities)}")
-                
-                # Count by status
                 status_counts = {}
-                for activity in activities:
-                    status = activity.get('Status', 'Unknown')
-                    status_counts[status] = status_counts.get(status, 0) + 1
-                
-                for status, count in status_counts.items():
-                    response.append(f"- {status}: {count}")
-                
-                # Add analysis-specific details
+                for a in activities:
+                    status_counts[a.get("Status", "Unknown")] = status_counts.get(a.get("Status", "Unknown"), 0) + 1
+                for st, cnt in status_counts.items():
+                    response.append(f"- {st}: {cnt}")
+
                 if analysis_type == "critical_path":
-                    critical_activities = [a for a in activities if a.get('TotalFloat', 999) < 5]
-                    response.append(f"\n**Critical Path Analysis:**")
-                    response.append(f"- Critical Activities: {len(critical_activities)}")
-                    
-                    if critical_activities:
-                        response.append(f"\nTop Critical Activities:")
-                        for i, activity in enumerate(critical_activities[:5], 1):
-                            response.append(f"{i}. {activity.get('Name')} (Float: {activity.get('TotalFloat', 'N/A')})")
-                
+                    crit = [a for a in activities if a.get("TotalFloat", 999) < 5]
+                    response.append("\n**Critical Path Analysis:**")
+                    response.append(f"- Critical Activities: {len(crit)}")
+                    for i, c in enumerate(crit[:5], 1):
+                        response.append(f"{i}. {c.get('Name')} (Float: {c.get('TotalFloat', 'N/A')})")
+
                 elif analysis_type == "progress":
-                    completed = sum(1 for a in activities if a.get('PercentComplete', 0) == 100)
-                    not_started = sum(1 for a in activities if a.get('PercentComplete', 0) == 0)
-                    in_progress = len(activities) - completed - not_started
-                    
-                    avg_progress = sum(a.get('PercentComplete', 0) for a in activities) / len(activities) if activities else 0
-                    
-                    response.append(f"\n**Progress Analysis:**")
+                    completed    = sum(1 for a in activities if a.get("PercentComplete", 0) == 100)
+                    not_started  = sum(1 for a in activities if a.get("PercentComplete", 0) == 0)
+                    in_progress  = len(activities) - completed - not_started
+                    avg_progress = (
+                        sum(a.get("PercentComplete", 0) for a in activities) / len(activities)
+                        if activities else 0
+                    )
+                    response.append("\n**Progress Analysis:**")
                     response.append(f"- Completed: {completed} ({completed/len(activities)*100:.1f}%)")
                     response.append(f"- In Progress: {in_progress} ({in_progress/len(activities)*100:.1f}%)")
                     response.append(f"- Not Started: {not_started} ({not_started/len(activities)*100:.1f}%)")
                     response.append(f"- Average Completion: {avg_progress:.1f}%")
 
             return "\n".join(response)
-
         except Exception as e:
             self._record_operation("schedule_analysis", False)
             logger.error(f"Schedule analysis failed: {e}")
             return f"❌ Error analyzing schedule: {e}"
 
     def _find_project_sync(self, identifier: str) -> Optional[Dict[str, Any]]:
-        """Find project by ID or name with enhanced search"""
+        """Find project by ID or name, returning ObjectId when available"""
         try:
-            # Try exact ID match first
-            filter_builder = FilterBuilder().field("Id").eq(identifier)
-            projects = self.client.get_projects(
-                filter_builder=filter_builder,
-                limit=1
-            )
+            project_fields = [
+                "ObjectId",   # <─ added
+                "Id", "Name", "Description", "Status",
+                "StartDate", "FinishDate",
+            ]
 
+            # 1. exact ID
+            fb_id = FilterBuilder().field("Id").eq(identifier).select(*project_fields)
+            projects = self.client.get_projects(filter_builder=fb_id, limit=1)
             if projects:
                 return projects[0]
 
-            # Try exact name match
-            filter_builder = FilterBuilder().field("Name").eq(identifier)
-            projects = self.client.get_projects(
-                filter_builder=filter_builder,
-                limit=1
-            )
-
+            # 2. exact Name
+            fb_nm = FilterBuilder().field("Name").eq(identifier).select(*project_fields)
+            projects = self.client.get_projects(filter_builder=fb_nm, limit=1)
             if projects:
                 return projects[0]
 
-            # Try partial name match
-            filter_builder = FilterBuilder().field("Name").contains(identifier)
-            projects = self.client.get_projects(
-                filter_builder=filter_builder,
-                limit=5
-            )
-
+            # 3. partial Name
+            fb_part = FilterBuilder().field("Name").contains(identifier).select(*project_fields)
+            projects = self.client.get_projects(filter_builder=fb_part, limit=5)
             return projects[0] if projects else None
         except Exception as e:
             logger.error(f"Error finding project '{identifier}': {e}")
             return None
 
     def _get_activity_status_sync(
-        self, 
-        project_identifier: str, 
-        activity_filter: Optional[str], 
+        self,
+        project_identifier: str,
+        activity_filter: Optional[str],
         status_type: str,
-        order_by: Optional[str] = None
+        order_by: Optional[str] = None,
     ) -> str:
-        """Get activity status with enhanced filtering"""
+        """Return detailed activity status for one project"""
         try:
             project = self._find_project_sync(project_identifier)
             if not project:
                 return f"❌ Project '{project_identifier}' not found"
-            
-            # Create filter builder with field selection
+
+            # Prefer numeric ObjectId; fall back to Id
+            project_id = project.get("ObjectId", project.get("Id"))
+            if not project_id:
+                return "❌ Could not determine ProjectObjectId for selected project"
+
             filter_builder = FilterBuilder().select(
-                "Id", "Name", "Status", "PercentComplete", 
+                "Id", "Name", "Status", "PercentComplete",
                 "ActualStartDate", "ActualFinishDate"
             )
-            
-            # Add status type filter
+
+            # status-type filter
             if status_type != "all":
                 status_map = {
                     "in_progress": ["In Progress", "Started"],
                     "completed": ["Completed", "Finished"],
                     "not_started": ["Not Started", "Planning"],
-                    "delayed": ["Delayed", "Behind Schedule"]
+                    "delayed": ["Delayed", "Behind Schedule"],
                 }
-                
                 if status_type in status_map:
                     statuses = status_map[status_type]
                     if len(statuses) == 1:
                         filter_builder.field("Status").eq(statuses[0])
                     else:
                         filter_builder.field("Status").in_(*statuses)
-            
-            # Add custom activity filter if provided
+
+            # optional NL activity filter
             if activity_filter:
                 try:
-                    nl_filter = self.filter_mapper.build_filter(activity_filter)
+                    nl_fb = self.filter_mapper.build_filter(activity_filter)
+                    nl_filter = nl_fb.build_filter()
                     if nl_filter:
                         if filter_builder._conditions:
                             filter_builder.and_()
                         self._add_raw_filter_to_builder(filter_builder, nl_filter)
-                except Exception as filter_err:
-                    logger.warning(f"Activity filter error: {filter_err}")
-            
-            # Add ordering if specified
-            if order_by:
-                parts = order_by.split()
-                field = parts[0]
-                is_desc = len(parts) > 1 and parts[1].lower() == "desc"
-                filter_builder.order_by(field, desc=is_desc)
-            else:
-                # Default ordering
-                filter_builder.order_by("Name")
-            
-            activities = self.client.get_activities(
-                project_id=project['Id'],
-                filter_builder=filter_builder,
-                limit=500
-            )
+                except Exception as e:
+                    logger.warning(f"Activity filter error: {e}")
 
+            # ordering
+            if order_by:
+                ob = self._ensure_string_parameter(order_by, "order_by", allow_none=True)
+                if ob:
+                    parts = ob.split()
+                    field = parts[0]
+                    is_desc = len(parts) > 1 and parts[1].lower() == "desc"
+                    filter_builder.order_by(field, desc=is_desc)
+            else:
+                filter_builder.order_by("Name")
+
+            activities = self.client.get_activities(
+                project_id=project_id,
+                filter_builder=filter_builder,
+                limit=500,
+            )
             if not activities:
                 return f"No activities found for project {project.get('Name', project_identifier)}"
 
             response = [
                 f"📋 Activity Status for {project.get('Name', 'Unknown Project')}",
-                f"Found {len(activities)} activities\n"
+                f"Found {len(activities)} activities\n",
             ]
-
-            for i, activity in enumerate(activities[:20], 1):  # Limit to first 20
-                name = activity.get('Name', 'Unknown')
-                status = activity.get('Status', 'Unknown')
-                percent = activity.get('PercentComplete', 0)
-                response.append(f"{i}. **{name}**")
-                response.append(f" Status: {status} | Progress: {percent}%")
-
+            for i, act in enumerate(activities[:20], 1):
+                response.append(
+                    f"{i}. **{act.get('Name', 'Unknown')}** "
+                    f"(Status: {act.get('Status', 'Unknown')}, "
+                    f"Progress: {act.get('PercentComplete', 0)}%)"
+                )
             if len(activities) > 20:
                 response.append(f"\n... and {len(activities) - 20} more activities")
-
             return "\n".join(response)
         except Exception as e:
             logger.error(f"Activity status failed: {e}")
