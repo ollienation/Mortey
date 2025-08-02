@@ -1,3 +1,7 @@
+# Binned
+
+This repo has been achrived. We had fun, I learned a lot, but as with every hello, a time comes to say goodbye.
+
 # Mortey Voice Assistant 🤖
 
 Mortey is an AI-powered voice assistant with chat, web search, and code generation capabilities. It features a sleek GUI for text and voice interaction, file system tools, and a safety controller.
